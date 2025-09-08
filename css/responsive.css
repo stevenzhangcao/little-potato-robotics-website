@@ -31,7 +31,8 @@
     
     .robot-grid,
     .programs-grid,
-    .resources-grid {
+    .resources-grid,
+    .team-members {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
 }
@@ -209,6 +210,20 @@
     .resources-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+    }
+    
+    .team-members {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .team-member {
+        padding: 1rem;
+    }
+    
+    .member-photo {
+        width: 100px;
+        height: 100px;
     }
     
     .resource-card {
