@@ -107,16 +107,18 @@ function initSmoothScrolling() {
     });
 }
 
-// Form Handling
+// Form Handling with EmailJS
 function initFormHandling() {
     const contactForm = document.querySelector('.contact-form .form');
     
     if (contactForm) {
+        // Initialize EmailJS with your public key
+        emailjs.init('kC8ZSRXZbiWrr_FRy');
+        
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
             // Get form data
-            const formData = new FormData(this);
             const name = this.querySelector('input[type="text"]').value;
             const email = this.querySelector('input[type="email"]').value;
             const subject = this.querySelector('input[placeholder="Subject"]').value;
@@ -133,11 +135,36 @@ function initFormHandling() {
                 return;
             }
             
-            // Simulate form submission (replace with actual form handling)
-            showNotification('Thank you for your message! We\'ll get back to you soon.', 'success');
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
             
-            // Reset form
-            this.reset();
+            // Prepare template parameters
+            const templateParams = {
+                from_name: name,
+                from_email: email,
+                subject: subject || 'Contact Form Message',
+                message: message,
+                to_email: 'littlepotatorobotics@gmail.com'
+            };
+            
+            // Send email using EmailJS
+            emailjs.send('service_nkctrli', 'template_651hno6', templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    showNotification('Thank you for your message! We\'ll get back to you soon.', 'success');
+                    contactForm.reset();
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    showNotification('Sorry, there was an error sending your message. Please try again or email us directly.', 'error');
+                })
+                .finally(function() {
+                    // Reset button state
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                });
         });
     }
 }
