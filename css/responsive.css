@@ -226,6 +226,7 @@
         height: 100px;
     }
     
+    
     .resource-card {
         padding: 1.5rem;
     }
@@ -411,8 +412,8 @@
     
     /* Media */
     .media-placeholder {
-        width: 150px;
-        height: 100px;
+        width: 250px;
+        height: 188px;
         font-size: 1.5rem;
     }
     
