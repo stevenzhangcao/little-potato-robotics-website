@@ -99,6 +99,7 @@
         transition: all 0.3s ease;
         -webkit-box-orient: horizontal;
         -webkit-line-clamp: 1;
+        line-clamp: 1;
         overflow: hidden;
         white-space: nowrap;
     }
@@ -200,9 +201,9 @@
     }
     
     .hero-logo-img {
-        width: 30px;
-        height: 30px;
-        border-radius: 6px;
+        width: 160px;
+        height: 160px;
+        border-radius: 12px;
     }
     
     .hero-title {
@@ -419,12 +420,12 @@
     }
     
     .logo-img {
-        width: 40px;
-        height: 40px;
+        width: 60px;
+        height: 60px;
     }
     
     .logo-text {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
     
     /* Mobile menu toggle improvements */
@@ -455,10 +456,10 @@
     }
     
     .hero-logo-img {
-        width: 25px;
-        height: 25px;
-        border-radius: 4px;
-        padding: 2px;
+        width: 140px;
+        height: 140px;
+        border-radius: 12px;
+        padding: 6px;
     }
     
     .hero-title {
@@ -639,8 +640,13 @@
         padding: 0.4rem 0;
     }
     
+    .logo-img {
+        width: 50px;
+        height: 50px;
+    }
+    
     .logo-text {
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
     
     .mobile-menu-toggle {
@@ -663,10 +669,10 @@
     }
     
     .hero-logo-img {
-        width: 20px;
-        height: 20px;
-        border-radius: 3px;
-        padding: 1px;
+        width: 120px;
+        height: 120px;
+        border-radius: 10px;
+        padding: 5px;
     }
     
     .hero-title {
