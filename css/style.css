@@ -445,6 +445,12 @@ p {
     flex-direction: column;
     cursor: pointer;
     gap: 4px;
+    background: none;
+    border: none;
+    padding: 8px;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 1001;
 }
 
 .mobile-menu-toggle span {
@@ -452,6 +458,21 @@ p {
     height: 3px;
     background-color: #333;
     transition: all 0.3s ease;
+    border-radius: 2px;
+    display: block;
+}
+
+.mobile-menu-toggle:hover span {
+    background-color: var(--primary-color);
+}
+
+.mobile-menu-toggle:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.mobile-menu-toggle.active span {
+    background-color: var(--primary-color);
 }
 
 /* Hero Section */
@@ -570,6 +591,19 @@ p {
     margin: 0 auto 1.5rem;
     font-size: 3rem;
     color: #ccc;
+    overflow: hidden;
+}
+
+.robot-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.robot-card:hover .robot-image {
+    transform: scale(1.05);
 }
 
 .robot-card h3 {

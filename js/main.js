@@ -3,12 +3,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all functionality
     initMobileMenu();
-    initTabSystem();
     initSmoothScrolling();
     initFormHandling();
     initScrollEffects();
     initAccessibility();
-    initThemeToggle();
 });
 
 // Mobile Menu Functionality
@@ -17,7 +15,10 @@ function initMobileMenu() {
     const nav = document.querySelector('.nav');
     
     if (mobileToggle && nav) {
-        mobileToggle.addEventListener('click', function() {
+        mobileToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
             nav.classList.toggle('active');
             mobileToggle.classList.toggle('active');
             
@@ -34,6 +35,26 @@ function initMobileMenu() {
             }
         });
         
+        // Handle dropdown clicks in mobile menu
+        const dropdownLinks = nav.querySelectorAll('.dropdown .nav-link');
+        dropdownLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const dropdown = this.parentElement;
+                dropdown.classList.toggle('active');
+                
+                // Rotate chevron icon
+                const icon = this.querySelector('i');
+                if (icon) {
+                    if (dropdown.classList.contains('active')) {
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            });
+        });
+        
         // Close mobile menu when clicking outside
         document.addEventListener('click', function(e) {
             if (!nav.contains(e.target) && !mobileToggle.contains(e.target)) {
@@ -43,32 +64,34 @@ function initMobileMenu() {
                 spans[0].style.transform = 'none';
                 spans[1].style.opacity = '1';
                 spans[2].style.transform = 'none';
+                
+                // Close all dropdowns
+                const dropdowns = nav.querySelectorAll('.dropdown');
+                dropdowns.forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                    const icon = dropdown.querySelector('.nav-link i');
+                    if (icon) {
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                });
             }
         });
+        
+        // Prevent body scroll when mobile menu is open
+        const originalOverflow = document.body.style.overflow;
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (nav.classList.contains('active')) {
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        document.body.style.overflow = originalOverflow;
+                    }
+                }
+            });
+        });
+        observer.observe(nav, { attributes: true });
     }
-}
-
-// Tab System for Media Section
-function initTabSystem() {
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabPanes = document.querySelectorAll('.tab-pane');
-    
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const targetTab = this.getAttribute('data-tab');
-            
-            // Remove active class from all buttons and panes
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabPanes.forEach(pane => pane.classList.remove('active'));
-            
-            // Add active class to clicked button and corresponding pane
-            this.classList.add('active');
-            const targetPane = document.getElementById(targetTab);
-            if (targetPane) {
-                targetPane.classList.add('active');
-            }
-        });
-    });
 }
 
 // Smooth Scrolling for Anchor Links
@@ -421,71 +444,6 @@ function initLazyLoading() {
         document.querySelectorAll('img[data-src]').forEach(img => {
             imageObserver.observe(img);
         });
-    }
-}
-
-// Theme Toggle Functionality
-function initThemeToggle() {
-    // Check if user has a saved preference
-    const savedTheme = localStorage.getItem('theme-preference');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    if (savedTheme === 'light') {
-        document.body.classList.add('force-light-mode');
-    } else if (savedTheme === 'dark') {
-        document.body.classList.remove('force-light-mode');
-    } else if (prefersDark) {
-        // User prefers dark mode but we can override for better contrast
-        // Check if we should force light mode for better header contrast
-        const header = document.querySelector('.header');
-        if (header) {
-            const headerStyle = window.getComputedStyle(header);
-            const bgColor = headerStyle.backgroundColor;
-            // If header is too dark, suggest light mode
-            if (bgColor.includes('rgb(26, 26, 26)') || bgColor.includes('rgb(45, 45, 45)')) {
-                console.log('Dark mode detected with low contrast header. Consider adding theme toggle button.');
-            }
-        }
-    }
-    
-    // Add theme toggle button to header
-    const header = document.querySelector('.header-content');
-    if (header) {
-        const themeToggle = document.createElement('button');
-        themeToggle.className = 'theme-toggle';
-        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-        themeToggle.title = 'Toggle theme for better contrast';
-        themeToggle.style.cssText = `
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            margin-left: 1rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        `;
-        
-        themeToggle.addEventListener('click', function() {
-            const isLightMode = document.body.classList.contains('force-light-mode');
-            if (isLightMode) {
-                document.body.classList.remove('force-light-mode');
-                localStorage.setItem('theme-preference', 'dark');
-                this.innerHTML = '<i class="fas fa-moon"></i>';
-                this.title = 'Switch to light mode for better contrast';
-            } else {
-                document.body.classList.add('force-light-mode');
-                localStorage.setItem('theme-preference', 'light');
-                this.innerHTML = '<i class="fas fa-sun"></i>';
-                this.title = 'Switch to dark mode';
-            }
-        });
-        
-        header.appendChild(themeToggle);
     }
 }
 
