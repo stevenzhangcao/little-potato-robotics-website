@@ -93,14 +93,14 @@
     
     .nav-link {
         display: block;
-        padding: 1rem 1.5rem;
+        padding: 0.6rem 1rem;
         color: #333 !important;
         font-weight: 500;
-        font-size: 0.95rem;
+        font-size: 0.85rem;
         text-decoration: none;
         transition: all 0.3s ease;
         white-space: nowrap;
-        border-bottom: 3px solid transparent;
+        border-bottom: 2px solid transparent;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
         -webkit-user-select: none;
         user-select: none;
@@ -591,12 +591,12 @@
 /* Small Mobile */
 @media (max-width: 360px) {
     .container {
-        padding: 0 10px;
+        padding: 0 5px;
     }
     
     /* Header adjustments for very small screens */
     .header-content {
-        padding: 0.4rem 0;
+        padding: 0.2rem 0;
     }
     
     .logo-img {
@@ -605,7 +605,7 @@
     }
     
     .logo-text {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
     
     /* Remove mobile menu toggle */
@@ -613,8 +613,14 @@
         display: none !important;
     }
     
+    /* More compact navigation for very small screens */
+    .nav-link {
+        padding: 0.1rem 0.3rem;
+        font-size: 0.8rem;
+    }
+    
     .nav {
-        top: 55px;
+        top: 30px;
     }
     
     @supports (-webkit-touch-callout: none) {
