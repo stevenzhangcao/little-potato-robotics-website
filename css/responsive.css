@@ -63,9 +63,20 @@
     /* Navigation - Full width, horizontal scroll */
     .nav {
         display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
         width: 100%;
         background-color: #fff;
         border-bottom: 1px solid #e9ecef;
+        z-index: 999;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Add padding to body to account for fixed navigation */
+    body {
+        padding-top: 60px;
     }
     
     .nav-list {
@@ -397,16 +408,14 @@
         display: none !important;
     }
     
-    /* Ensure mobile navigation is properly positioned */
-    .nav {
-        top: 60px;
+    /* Navigation positioning handled in main mobile breakpoint */
+    
+    /* Adjust body padding for small screens */
+    body {
+        padding-top: 55px;
     }
     
-    @supports (-webkit-touch-callout: none) {
-        .nav {
-            top: 60px;
-        }
-    }
+    /* Safari-specific navigation positioning handled in main mobile breakpoint */
     
     
     /* Hero Section */
@@ -619,14 +628,11 @@
         font-size: 0.8rem;
     }
     
-    .nav {
-        top: 30px;
-    }
+    /* Navigation positioning handled in main mobile breakpoint */
     
-    @supports (-webkit-touch-callout: none) {
-        .nav {
-            top: 55px;
-        }
+    /* Adjust body padding for very small screens */
+    body {
+        padding-top: 50px;
     }
     
     .hero-logo-img {
