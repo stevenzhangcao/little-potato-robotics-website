@@ -40,129 +40,92 @@
 /* Tablet */
 @media (max-width: 768px) {
     .container {
-        padding: 0 20px;
+        padding: 0;
     }
     
-    /* Header */
+    /* Header - Remove logo, keep only navigation */
+    .header {
+        padding: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
     .header-content {
-        padding: 0.75rem 0;
+        padding: 0;
+        justify-content: center;
+        flex-wrap: nowrap;
     }
     
-    .logo-text {
-        font-size: 1.25rem;
-    }
-    
-    /* Navigation */
-    .nav {
+    /* Hide logo on mobile */
+    .logo {
         display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background-color: #fff;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        z-index: 1000;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-10px);
-        transition: all 0.3s ease;
     }
     
-    .nav.active {
+    /* Navigation - Full width, horizontal scroll */
+    .nav {
         display: block;
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
+        width: 100%;
+        background-color: #fff;
+        border-bottom: 1px solid #e9ecef;
     }
     
     .nav-list {
-        flex-direction: column;
-        padding: 1rem 0;
+        display: flex;
+        flex-direction: row;
         gap: 0;
+        padding: 0;
+        margin: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        white-space: nowrap;
+    }
+    
+    .nav-list::-webkit-scrollbar {
+        display: none;
     }
     
     .nav-item {
-        width: 100%;
-        border-bottom: 1px solid #f0f0f0;
-    }
-    
-    .nav-item:last-child {
+        flex-shrink: 0;
         border-bottom: none;
     }
     
     .nav-link {
         display: block;
-        padding: 1rem 2rem;
+        padding: 1rem 1.5rem;
         color: #333 !important;
         font-weight: 500;
+        font-size: 0.95rem;
         text-decoration: none;
         transition: all 0.3s ease;
-        -webkit-box-orient: horizontal;
-        -webkit-line-clamp: 1;
-        line-clamp: 1;
-        overflow: hidden;
         white-space: nowrap;
+        border-bottom: 3px solid transparent;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        -webkit-user-select: none;
+        user-select: none;
     }
     
-    .nav-link:hover {
+    .nav-link:hover,
+    .nav-link:focus {
         background-color: #f8f9fa;
         color: var(--primary-color) !important;
+        border-bottom-color: var(--primary-color);
     }
     
+    /* Remove dropdown icons */
     .nav-link i {
-        float: right;
-        margin-top: 2px;
-        transition: transform 0.3s ease;
-    }
-    
-    /* Dropdown menus in mobile */
-    .dropdown-menu {
-        position: static;
-        opacity: 1;
-        visibility: visible;
-        transform: none;
-        box-shadow: none;
-        background-color: #f8f9fa;
-        border: none;
-        border-radius: 0;
-        padding: 0;
-        margin: 0;
         display: none;
     }
     
-    .dropdown.active .dropdown-menu {
-        display: block;
+    /* Remove dropdown functionality */
+    .dropdown-menu {
+        display: none !important;
     }
     
-    .dropdown-menu a {
-        padding: 0.75rem 3rem;
-        color: #666 !important;
-        border-bottom: 1px solid #e9ecef;
-    }
-    
-    .dropdown-menu a:hover {
-        background-color: #e9ecef;
-        color: var(--primary-color) !important;
-    }
-    
-    .dropdown-menu li:last-child a {
-        border-bottom: none;
-    }
-    
+    /* Remove mobile menu toggle */
     .mobile-menu-toggle {
-        display: flex;
-        z-index: 1001;
-        position: relative;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 8px;
-        -webkit-tap-highlight-color: transparent;
-    }
-    
-    .mobile-menu-toggle:focus {
-        outline: 2px solid var(--primary-color);
-        outline-offset: 2px;
+        display: none !important;
     }
     
     /* iPhone Safari specific fixes */
@@ -190,6 +153,7 @@
         .nav-link {
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
             -webkit-user-select: none;
+        user-select: none;
             user-select: none;
         }
     }
@@ -428,14 +392,9 @@
         font-size: 1.2rem;
     }
     
-    /* Mobile menu toggle improvements */
+    /* Remove mobile menu toggle */
     .mobile-menu-toggle {
-        padding: 6px;
-    }
-    
-    .mobile-menu-toggle span {
-        width: 22px;
-        height: 2px;
+        display: none !important;
     }
     
     /* Ensure mobile navigation is properly positioned */
@@ -549,8 +508,8 @@
     
     /* Media */
     .media-placeholder {
-        width: 250px;
-        height: 188px;
+        width: 325px;
+        height: 244px;
         font-size: 1.5rem;
     }
     
@@ -649,13 +608,9 @@
         font-size: 1.1rem;
     }
     
+    /* Remove mobile menu toggle */
     .mobile-menu-toggle {
-        padding: 4px;
-    }
-    
-    .mobile-menu-toggle span {
-        width: 20px;
-        height: 2px;
+        display: none !important;
     }
     
     .nav {

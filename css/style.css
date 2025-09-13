@@ -236,28 +236,9 @@ p {
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     }
     
-    /* Improve dropdown contrast in dark mode */
-    .dropdown-menu {
-        background-color: var(--dark-bg-secondary);
-        border: 1px solid #30363d;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-    }
+    /* Dropdown styles removed - navigation simplified */
     
-    .dropdown-menu a {
-        color: var(--dark-text-primary);
-        font-weight: 500;
-    }
-    
-    .dropdown-menu a:hover {
-        background-color: var(--dark-bg-tertiary);
-        color: var(--primary-color);
-    }
-    
-    /* Mobile menu toggle in dark mode */
-    .mobile-menu-toggle span {
-        background-color: var(--dark-text-primary);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    }
+    /* Mobile menu toggle removed - navigation always visible */
 }
 
 /* Ensure proper text contrast in all header states */
@@ -314,14 +295,7 @@ p {
     color: var(--primary-color) !important;
 }
 
-/* Ensure dropdown text remains visible */
-.dropdown-menu a {
-    color: #333 !important;
-}
-
-.dropdown-menu a:hover {
-    color: var(--primary-color) !important;
-}
+/* Dropdown styles removed - navigation simplified */
 
 .header-content {
     display: flex;
@@ -386,101 +360,17 @@ p {
     flex-shrink: 0;
 }
 
-.dropdown {
-    position: relative;
-    /* Safari-specific fixes */
-    display: flex;
-    align-items: center;
-}
+/* Dropdown functionality removed - navigation simplified */
 
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: var(--bg-primary);
-    border: 1px solid var(--bg-tertiary);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-    border-radius: 8px;
-    padding: 1rem 0;
-    min-width: 200px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
-    list-style: none;
-}
-
-.dropdown:hover .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.dropdown:hover .nav-link i {
-    transform: rotate(180deg);
-}
-
-.dropdown-menu li {
-    padding: 0;
-}
-
-.dropdown-menu a {
-    display: block;
-    padding: 0.75rem 1.5rem;
-    color: var(--text-primary);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
-
-.dropdown-menu a:hover {
-    background-color: var(--bg-secondary);
-    color: var(--primary-color);
-    font-weight: 600;
-}
-
-/* Mobile Menu Toggle */
-.mobile-menu-toggle {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
-    gap: 4px;
-    background: none;
-    border: none;
-    padding: 8px;
-    -webkit-tap-highlight-color: transparent;
-    position: relative;
-    z-index: 1001;
-}
-
-.mobile-menu-toggle span {
-    width: 25px;
-    height: 3px;
-    background-color: #333;
-    transition: all 0.3s ease;
-    border-radius: 2px;
-    display: block;
-}
-
-.mobile-menu-toggle:hover span {
-    background-color: var(--primary-color);
-}
-
-.mobile-menu-toggle:focus {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
-}
-
-.mobile-menu-toggle.active span {
-    background-color: var(--primary-color);
-}
+/* Mobile menu toggle removed - navigation always visible */
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(rgba(74, 144, 226, 0.8), rgba(53, 122, 189, 0.8)), url('images/teamphoto1.jpg');
+    background: #4A90E2;
+    background-image: linear-gradient(rgba(74, 144, 226, 0.8), rgba(53, 122, 189, 0.8)), url('../images/teamphoto1.jpg');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: white;
     padding: 120px 0 80px;
     text-align: center;

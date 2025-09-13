@@ -2,7 +2,6 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all functionality
-    initMobileMenu();
     initSmoothScrolling();
     initFormHandling();
     initScrollEffects();
@@ -10,89 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Mobile Menu Functionality
-function initMobileMenu() {
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-    const nav = document.querySelector('.nav');
-    
-    if (mobileToggle && nav) {
-        mobileToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            nav.classList.toggle('active');
-            mobileToggle.classList.toggle('active');
-            
-            // Animate hamburger to X
-            const spans = mobileToggle.querySelectorAll('span');
-            if (mobileToggle.classList.contains('active')) {
-                spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
-                spans[1].style.opacity = '0';
-                spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
-            } else {
-                spans[0].style.transform = 'none';
-                spans[1].style.opacity = '1';
-                spans[2].style.transform = 'none';
-            }
-        });
-        
-        // Handle dropdown clicks in mobile menu
-        const dropdownLinks = nav.querySelectorAll('.dropdown .nav-link');
-        dropdownLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const dropdown = this.parentElement;
-                dropdown.classList.toggle('active');
-                
-                // Rotate chevron icon
-                const icon = this.querySelector('i');
-                if (icon) {
-                    if (dropdown.classList.contains('active')) {
-                        icon.style.transform = 'rotate(180deg)';
-                    } else {
-                        icon.style.transform = 'rotate(0deg)';
-                    }
-                }
-            });
-        });
-        
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!nav.contains(e.target) && !mobileToggle.contains(e.target)) {
-                nav.classList.remove('active');
-                mobileToggle.classList.remove('active');
-                const spans = mobileToggle.querySelectorAll('span');
-                spans[0].style.transform = 'none';
-                spans[1].style.opacity = '1';
-                spans[2].style.transform = 'none';
-                
-                // Close all dropdowns
-                const dropdowns = nav.querySelectorAll('.dropdown');
-                dropdowns.forEach(dropdown => {
-                    dropdown.classList.remove('active');
-                    const icon = dropdown.querySelector('.nav-link i');
-                    if (icon) {
-                        icon.style.transform = 'rotate(0deg)';
-                    }
-                });
-            }
-        });
-        
-        // Prevent body scroll when mobile menu is open
-        const originalOverflow = document.body.style.overflow;
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    if (nav.classList.contains('active')) {
-                        document.body.style.overflow = 'hidden';
-                    } else {
-                        document.body.style.overflow = originalOverflow;
-                    }
-                }
-            });
-        });
-        observer.observe(nav, { attributes: true });
-    }
-}
+// Mobile menu functionality removed - navigation is now always visible
 
 // Smooth Scrolling for Anchor Links
 function initSmoothScrolling() {
@@ -310,24 +227,14 @@ function initScrollEffects() {
 
 // Accessibility Features
 function initAccessibility() {
-    // Keyboard navigation for dropdowns
-    const dropdowns = document.querySelectorAll('.dropdown');
+    // Keyboard navigation for navigation links
+    const navLinks = document.querySelectorAll('.nav-link');
     
-    dropdowns.forEach(dropdown => {
-        const link = dropdown.querySelector('.nav-link');
-        const menu = dropdown.querySelector('.dropdown-menu');
-        
+    navLinks.forEach(link => {
         link.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-            }
-        });
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!dropdown.contains(e.target)) {
-                menu.style.display = 'none';
+                this.click();
             }
         });
     });
@@ -359,37 +266,14 @@ function initAccessibility() {
     
     document.body.insertBefore(skipLink, document.body.firstChild);
     
-    // Focus management for mobile menu
-    const mobileToggle = document.querySelector('.mobile-menu-toggle');
+    // Focus management for navigation
     const nav = document.querySelector('.nav');
     
-    if (mobileToggle && nav) {
-        mobileToggle.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.click();
-            }
-        });
-        
-        // Trap focus in mobile menu when open
-        nav.addEventListener('keydown', function(e) {
-            if (e.key === 'Tab' && nav.classList.contains('active')) {
-                const focusableElements = nav.querySelectorAll('a, button, input, textarea, select');
-                const firstElement = focusableElements[0];
-                const lastElement = focusableElements[focusableElements.length - 1];
-                
-                if (e.shiftKey) {
-                    if (document.activeElement === firstElement) {
-                        e.preventDefault();
-                        lastElement.focus();
-                    }
-                } else {
-                    if (document.activeElement === lastElement) {
-                        e.preventDefault();
-                        firstElement.focus();
-                    }
-                }
-            }
+    if (nav) {
+        // Ensure navigation links are keyboard accessible
+        const navLinks = nav.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.setAttribute('tabindex', '0');
         });
     }
 }
