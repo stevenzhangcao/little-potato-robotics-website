@@ -657,10 +657,10 @@ p {
     transform: translateY(-2px);
 }
 
-/* Dark mode for robot section */
+    /* Dark mode for robot section */
 @media (prefers-color-scheme: dark) {
     .robot-showcase {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
     }
     
     .robot-hero-card {
@@ -669,7 +669,13 @@ p {
     
     .robot-card {
         background: var(--dark-bg-secondary);
-        border: 1px solid #30363d;
+        border: 1px solid var(--dark-bg-tertiary);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .robot-card:hover {
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        border-color: var(--primary-color);
     }
     
     .robot-info h3 {
@@ -686,6 +692,7 @@ p {
     
     .robot-spec-icon {
         background: linear-gradient(135deg, #2E5B8A, #1E3A5F);
+        box-shadow: 0 4px 12px rgba(46, 91, 138, 0.3);
     }
     
     .feature-tag {
@@ -698,7 +705,7 @@ p {
     
     /* Dark mode for NPO section */
     .npo {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
     }
     
     .npo-hero-card {
@@ -708,7 +715,14 @@ p {
     .npo-info-card,
     .npo-cta-card {
         background: var(--dark-bg-secondary);
-        border: 1px solid #30363d;
+        border: 1px solid var(--dark-bg-tertiary);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .npo-info-card:hover,
+    .npo-cta-card:hover {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        border-color: #ff6b35;
     }
     
     .npo-card-content h4 {
@@ -725,7 +739,7 @@ p {
     
     /* Dark mode for FTC section */
     .ftc-section {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
     }
     
     .ftc-hero-card {
@@ -742,7 +756,13 @@ p {
     
     .impact-card {
         background: var(--dark-bg-secondary);
-        border: 1px solid #30363d;
+        border: 1px solid var(--dark-bg-tertiary);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .impact-card:hover {
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        border-color: var(--primary-color);
     }
     
     .impact-content h4 {
@@ -759,7 +779,7 @@ p {
     
     /* Dark mode for Contact section */
     .contact {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
     }
     
     .contact-hero-card {
@@ -777,16 +797,23 @@ p {
     
     /* Dark mode for Photos section */
     .media {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
     }
     
     .photos-hero-card {
         background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+        box-shadow: 0 10px 30px rgba(74, 144, 226, 0.4);
     }
     
     .media-item {
         background: var(--dark-bg-secondary);
-        border: 1px solid #30363d;
+        border: 1px solid var(--dark-bg-tertiary);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .media-item:hover {
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        border-color: var(--primary-color);
     }
     
     .media-info h4 {
@@ -803,6 +830,16 @@ p {
     
     .media-badge {
         background: linear-gradient(135deg, #4A90E2, #357ABD);
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+    }
+    
+    .media-source {
+        background: rgba(74, 144, 226, 0.2);
+        color: #4A90E2;
+    }
+    
+    .media-item:hover .media-source {
+        background: rgba(74, 144, 226, 0.3);
     }
 }
 
@@ -1018,7 +1055,7 @@ p {
 /* Dark mode for About section */
 @media (prefers-color-scheme: dark) {
     .about {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
     }
     
     .about-hero-card {
@@ -1027,8 +1064,14 @@ p {
     
     .about-card {
         background: var(--dark-bg-secondary);
-        border: 1px solid #30363d;
+        border: 1px solid var(--dark-bg-tertiary);
         color: var(--dark-text-primary);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .about-card:hover {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        border-color: var(--primary-color);
     }
     
     .card-content h3 {
@@ -1230,12 +1273,13 @@ p {
     
     .team-member {
         background: var(--dark-bg-secondary);
-        border: 1px solid #30363d;
+        border: 1px solid var(--dark-bg-tertiary);
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
     }
     
     .team-member:hover {
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        border-color: #ff6b35;
     }
     
     .member-info h4 {
