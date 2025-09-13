@@ -850,6 +850,13 @@ p {
     position: relative;
 }
 
+/* Team Section */
+.team-section {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    position: relative;
+}
+
 .about::before {
     content: '';
     position: absolute;
@@ -1072,6 +1079,11 @@ p {
     .about-card:hover {
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         border-color: var(--primary-color);
+    }
+    
+    /* Dark mode for team section */
+    .team-section {
+        background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
     }
     
     .card-content h3 {
