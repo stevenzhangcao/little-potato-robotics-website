@@ -1658,6 +1658,43 @@ a:hover {
   color: var(--primary-color);
 }
 
+/* Visitor Counter */
+.visitor-counter {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(74, 144, 226, 0.1);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(74, 144, 226, 0.2);
+  transition: all var(--transition-fast);
+}
+
+.visitor-counter:hover {
+  background: rgba(74, 144, 226, 0.15);
+  border-color: rgba(74, 144, 226, 0.3);
+  transform: translateY(-1px);
+}
+
+.visitor-counter i {
+  color: var(--primary-color);
+  font-size: var(--font-size-lg);
+}
+
+.visitor-counter span {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+}
+
+.visitor-counter small {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .social-links {
   display: flex;
   gap: var(--spacing-md);
@@ -2032,6 +2069,25 @@ a:hover {
   
   .footer-bottom {
     border-top: 1px solid var(--dark-bg-tertiary);
+    color: var(--dark-text-secondary);
+  }
+  
+  /* Visitor Counter Dark Mode */
+  .visitor-counter {
+    background: rgba(74, 144, 226, 0.15);
+    border-color: rgba(74, 144, 226, 0.3);
+  }
+  
+  .visitor-counter:hover {
+    background: rgba(74, 144, 226, 0.2);
+    border-color: rgba(74, 144, 226, 0.4);
+  }
+  
+  .visitor-counter span {
+    color: var(--dark-text-primary);
+  }
+  
+  .visitor-counter small {
     color: var(--dark-text-secondary);
   }
 }

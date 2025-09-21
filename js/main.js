@@ -331,5 +331,51 @@ function initLazyLoading() {
     }
 }
 
+// Visitor Counter
+function initializeVisitorCounter() {
+    const counterElement = document.getElementById('visitor-count');
+    if (!counterElement) return;
+
+    // Get current count from localStorage or start with 0
+    let currentCount = parseInt(localStorage.getItem('visitorCount')) || 0;
+    
+    // Increment count for this visit
+    currentCount++;
+    
+    // Save updated count
+    localStorage.setItem('visitorCount', currentCount.toString());
+    
+    // Animate the counter
+    animateCounter(counterElement, currentCount);
+}
+
+function animateCounter(element, targetCount) {
+    const duration = 2000; // 2 seconds
+    const startTime = performance.now();
+    const startCount = 0;
+    
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const currentCount = Math.floor(startCount + (targetCount - startCount) * easeOutQuart);
+        
+        element.textContent = currentCount.toLocaleString();
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        } else {
+            element.textContent = targetCount.toLocaleString();
+        }
+    }
+    
+    requestAnimationFrame(updateCounter);
+}
+
 // Initialize lazy loading when DOM is ready
-document.addEventListener('DOMContentLoaded', initLazyLoading);
+document.addEventListener('DOMContentLoaded', function() {
+    initLazyLoading();
+    initializeVisitorCounter();
+});
