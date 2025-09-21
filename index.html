@@ -6,6 +6,28 @@
     <title data-en="Little Potato Robotics - Team 30592" data-zh="小土豆机器人团队 - 队伍 30592">Little Potato Robotics - Team 30592</title>
     <meta name="description" content="Little Potato Robotics is a high-school robotics team competing in FIRST Robotics competitions. Join us in our journey of innovation and engineering excellence.">
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-96x96.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    
+    <!-- Force favicon to load immediately -->
+    <script>
+        function forceFavicon() {
+            const favicon = document.querySelector('link[rel="icon"]');
+            if (favicon) {
+                const newFavicon = favicon.cloneNode();
+                newFavicon.href = favicon.href + '?v=' + Date.now();
+                document.head.removeChild(favicon);
+                document.head.appendChild(newFavicon);
+            }
+        }
+        window.addEventListener('load', forceFavicon);
+        setTimeout(forceFavicon, 100);
+    </script>
+    
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QY35D09RZB"></script>
     <script>
@@ -603,7 +625,7 @@
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fab fa-youtube"></i>
-                                </div>
+                        </div>
                                 <div class="resource-content">
                                     <h4 data-en="AndyMark" data-zh="AndyMark">AndyMark</h4>
                                     <p data-en="Product demonstrations, build tutorials, and technical support videos for FTC components." data-zh="FTC组件的产品演示、建造教程和技术支持视频。">Product demonstrations, build tutorials, and technical support videos for FTC components.</p>
@@ -611,12 +633,12 @@
                                         <i class="fas fa-external-link-alt"></i>
                                         <span data-en="Visit Channel" data-zh="访问频道">Visit Channel</span>
                                     </a>
-                                </div>
+                    </div>
                             </div>
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fab fa-youtube"></i>
-                                </div>
+                        </div>
                                 <div class="resource-content">
                                     <h4 data-en="REV Robotics" data-zh="REV机器人">REV Robotics</h4>
                                     <p data-en="Control system tutorials, sensor guides, and programming resources for FTC teams." data-zh="FTC团队的控制系统教程、传感器指南和编程资源。">Control system tutorials, sensor guides, and programming resources for FTC teams.</p>
@@ -770,7 +792,7 @@
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fas fa-sync-alt"></i>
-                                </div>
+                        </div>
                                 <div class="resource-content">
                                     <h4 data-en="Team Updates" data-zh="团队更新">Team Updates</h4>
                                     <p data-en="Official weekly updates published to provide clarifications and changes to the competition manual." data-zh="官方每周更新，提供比赛手册的澄清和更改。">Official weekly updates published to provide clarifications and changes to the competition manual.</p>
@@ -778,7 +800,7 @@
                                         <i class="fas fa-external-link-alt"></i>
                                         <span data-en="View Team Updates" data-zh="查看团队更新">View Team Updates</span>
                                     </a>
-                                </div>
+                    </div>
                             </div>
                             <div class="resource-item">
                                 <div class="resource-icon">
@@ -817,10 +839,10 @@
                                         <i class="fas fa-external-link-alt"></i>
                                         <span data-en="Visit FIRST Website" data-zh="访问FIRST官网">Visit FIRST Website</span>
                                     </a>
-                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
                     <!-- Podcast Resources -->
                     <div class="resource-category">
@@ -841,10 +863,10 @@
                                     <a href="https://open.spotify.com/episode/2tKRtUqYIMJINyW1XtjgDG?si=HwqkdFI7Tx2USznfKAL7Ug" target="_blank" rel="noopener noreferrer" class="resource-link">
                                         <i class="fas fa-external-link-alt"></i>
                                         <span data-en="Listen on Spotify" data-zh="在Spotify上收听">Listen on Spotify</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
                     </div>
 
                     <!-- Hardware and Parts Vendors -->
@@ -852,9 +874,9 @@
                         <div class="category-header">
                             <div class="category-icon">
                                 <i class="fas fa-tools"></i>
-                            </div>
+                                            </div>
                             <h3 data-en="Hardware and Parts Vendors" data-zh="硬件和零件供应商">Hardware and Parts Vendors</h3>
-                        </div>
+                                        </div>
                         <div class="resource-items">
                             <div class="resource-item">
                                 <div class="resource-icon">
@@ -867,12 +889,12 @@
                                         <i class="fas fa-external-link-alt"></i>
                                         <span data-en="Visit AndyMark" data-zh="访问AndyMark">Visit AndyMark</span>
                                     </a>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fas fa-puzzle-piece"></i>
-                                </div>
+                </div>
                                 <div class="resource-content">
                                     <h4 data-en="goBILDA" data-zh="goBILDA">goBILDA</h4>
                                     <p data-en="Provides a variety of FTC kits, including starter kits and popular bundles for linear slides and U-channels." data-zh="提供各种FTC套件，包括入门套件和线性滑轨和U型槽的流行套装。">Provides a variety of FTC kits, including starter kits and popular bundles for linear slides and U-channels.</p>
@@ -880,12 +902,12 @@
                                         <i class="fas fa-external-link-alt"></i>
                                         <span data-en="Visit goBILDA" data-zh="访问goBILDA">Visit goBILDA</span>
                                     </a>
-                                </div>
-                            </div>
+            </div>
+                        </div>
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fas fa-microchip"></i>
-                                </div>
+                    </div>
                                 <div class="resource-content">
                                     <h4 data-en="REV Robotics" data-zh="REV机器人">REV Robotics</h4>
                                     <p data-en="The official control system provider, offering the Control Hub, Expansion Hub, and key sensors like the REV Color Sensor V3." data-zh="官方控制系统提供商，提供控制中心、扩展中心和关键传感器，如REV颜色传感器V3。">The official control system provider, offering the Control Hub, Expansion Hub, and key sensors like the REV Color Sensor V3.</p>
@@ -893,12 +915,12 @@
                                         <i class="fas fa-external-link-alt"></i>
                                         <span data-en="Visit REV Robotics" data-zh="访问REV机器人">Visit REV Robotics</span>
                                     </a>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fas fa-graduation-cap"></i>
-                        </div>
+                                </div>
                                 <div class="resource-content">
                                     <h4 data-en="Studica Robotics" data-zh="Studica机器人">Studica Robotics</h4>
                                     <p data-en="Offers a range of components including drivetrains, linear actuators, and slide rails." data-zh="提供一系列组件，包括传动系统、线性执行器和滑轨。">Offers a range of components including drivetrains, linear actuators, and slide rails.</p>
@@ -906,12 +928,12 @@
                                         <i class="fas fa-external-link-alt"></i>
                                         <span data-en="Visit Studica Robotics" data-zh="访问Studica机器人">Visit Studica Robotics</span>
                         </a>
-                    </div>
-                </div>
+                                </div>
+                            </div>
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fas fa-cube"></i>
-            </div>
+                                </div>
                                 <div class="resource-content">
                                     <h4 data-en="TETRIX by Pitsco" data-zh="TETRIX by Pitsco">TETRIX by Pitsco</h4>
                                     <p data-en="A vendor that provides a wide range of parts for robot construction." data-zh="一个为机器人建造提供各种零件的供应商。">A vendor that provides a wide range of parts for robot construction.</p>
@@ -919,19 +941,19 @@
                                         <i class="fas fa-external-link-alt"></i>
                                         <span data-en="Visit TETRIX by Pitsco" data-zh="访问TETRIX by Pitsco">Visit TETRIX by Pitsco</span>
                                     </a>
-                                            </div>
-                                        </div>
                                 </div>
-                        </div>
+                            </div>
+                                </div>
+                                </div>
 
                     <!-- Software and Programming Tools -->
                     <div class="resource-category">
                         <div class="category-header">
                             <div class="category-icon">
                                 <i class="fas fa-code"></i>
-                        </div>
+                            </div>
                             <h3 data-en="Software and Programming Tools" data-zh="软件和编程工具">Software and Programming Tools</h3>
-                    </div>
+                        </div>
                         <div class="resource-items">
                             <div class="resource-item">
                                 <div class="resource-icon">
@@ -954,15 +976,15 @@
                                     <h4 data-en="FTC Docs" data-zh="FTC文档">FTC Docs</h4>
                                     <p data-en="Official online documentation providing tutorials and information on how to use the FTC software and control system." data-zh="官方在线文档，提供关于如何使用FTC软件和控制系统的教程和信息。">Official online documentation providing tutorials and information on how to use the FTC software and control system.</p>
                                     <a href="https://ftc-docs.firstinspires.org/" target="_blank" rel="noopener noreferrer" class="resource-link">
-                                        <i class="fas fa-external-link-alt"></i>
+                                <i class="fas fa-external-link-alt"></i>
                                         <span data-en="Access FTC Docs" data-zh="访问FTC文档">Access FTC Docs</span>
-                                    </a>
-                            </div>
-                                </div>
+                            </a>
+                        </div>
+                    </div>
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fas fa-desktop"></i>
-                                </div>
+                </div>
                                 <div class="resource-content">
                                     <h4 data-en="FTC SIM" data-zh="FTC模拟器">FTC SIM</h4>
                                     <p data-en="A virtual simulator that allows teams to test code and explore the field before building a physical robot." data-zh="一个虚拟模拟器，允许团队在建造物理机器人之前测试代码和探索场地。">A virtual simulator that allows teams to test code and explore the field before building a physical robot.</p>
@@ -970,12 +992,12 @@
                                         <i class="fas fa-external-link-alt"></i>
                                         <span data-en="Access FTC SIM" data-zh="访问FTC模拟器">Access FTC SIM</span>
                                     </a>
+            </div>
                             </div>
-                                </div>
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fas fa-eye"></i>
-                                </div>
+                        </div>
                                 <div class="resource-content">
                                     <h4 data-en="Computer Vision Tools" data-zh="计算机视觉工具">Computer Vision Tools</h4>
                                     <p data-en="Advanced computer vision options including TensorFlow Lite for object detection, AprilTags for navigation, and VisionPortal/OpenCV for custom image processing pipelines." data-zh="高级计算机视觉选项，包括用于目标检测的TensorFlow Lite、用于导航的AprilTags，以及用于自定义图像处理管道的VisionPortal/OpenCV。">Advanced computer vision options including TensorFlow Lite for object detection, AprilTags for navigation, and VisionPortal/OpenCV for custom image processing pipelines.</p>
@@ -983,12 +1005,12 @@
                                 <i class="fas fa-external-link-alt"></i>
                                         <span data-en="Learn Computer Vision" data-zh="学习计算机视觉">Learn Computer Vision</span>
                             </a>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                            </div>
+                        </div>
 
-                </div>
+                    </div>
 
                 <!-- Additional Resources CTA -->
                 <div class="resources-cta">
@@ -999,7 +1021,7 @@
                             <i class="fas fa-envelope"></i>
                             <span data-en="Share a Resource" data-zh="分享资源">Share a Resource</span>
                         </a>
-                            </div>
+                    </div>
                 </div>
             </div>
         </section>
