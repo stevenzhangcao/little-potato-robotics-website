@@ -164,17 +164,7 @@ a:hover {
   position: relative;
 }
 
-.section-title::after {
-  content: '';
-  position: absolute;
-  bottom: -var(--spacing-md);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 4px;
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-  border-radius: var(--radius-sm);
-}
+/* Removed section title underline - was causing unwanted blue lines */
 
 /* ========================================
    BUTTONS
