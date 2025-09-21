@@ -366,6 +366,25 @@ function setLanguage(lang) {
         }
     });
     
+    // Update page title
+    const titleElement = document.querySelector('title[data-en][data-zh]');
+    if (titleElement) {
+        if (lang === 'zh') {
+            document.title = titleElement.dataset.zh;
+        } else {
+            document.title = titleElement.dataset.en;
+        }
+    }
+    
+    // Update form placeholders
+    document.querySelectorAll('input[data-en-placeholder][data-zh-placeholder], textarea[data-en-placeholder][data-zh-placeholder]').forEach(element => {
+        if (lang === 'zh') {
+            element.placeholder = element.dataset.zhPlaceholder;
+        } else {
+            element.placeholder = element.dataset.enPlaceholder;
+        }
+    });
+    
     // Update document language
     document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
 }
