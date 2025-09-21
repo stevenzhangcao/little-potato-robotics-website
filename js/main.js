@@ -332,5 +332,46 @@ function initLazyLoading() {
 }
 
 
+// Language Switcher
+function initializeLanguageSwitcher() {
+    const langButtons = document.querySelectorAll('.lang-btn');
+    const currentLang = localStorage.getItem('preferredLanguage') || 'en';
+    
+    // Set initial language
+    setLanguage(currentLang);
+    
+    // Add click event listeners
+    langButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const lang = button.dataset.lang;
+            setLanguage(lang);
+            localStorage.setItem('preferredLanguage', lang);
+        });
+    });
+}
+
+function setLanguage(lang) {
+    // Update active button
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+    
+    // Update all elements with data attributes
+    document.querySelectorAll('[data-en][data-zh]').forEach(element => {
+        if (lang === 'zh') {
+            element.textContent = element.dataset.zh;
+        } else {
+            element.textContent = element.dataset.en;
+        }
+    });
+    
+    // Update document language
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+}
+
 // Initialize lazy loading when DOM is ready
-document.addEventListener('DOMContentLoaded', initLazyLoading);
+document.addEventListener('DOMContentLoaded', function() {
+    initLazyLoading();
+    initializeLanguageSwitcher();
+});

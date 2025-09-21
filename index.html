@@ -34,28 +34,34 @@
                 <nav class="nav">
                     <ul class="nav-list">
                         <li class="nav-item">
-                            <a href="#home" class="nav-link">Home</a>
+                            <a href="#home" class="nav-link" data-en="Home" data-zh="首页">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#team-members" class="nav-link">Members</a>
+                            <a href="#team-members" class="nav-link" data-en="Members" data-zh="成员">Members</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#robot" class="nav-link">Robot</a>
+                            <a href="#robot" class="nav-link" data-en="Robot" data-zh="机器人">Robot</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#media" class="nav-link">Photos</a>
+                            <a href="#media" class="nav-link" data-en="Photos" data-zh="照片">Photos</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#resources" class="nav-link">Resources</a>
+                            <a href="#resources" class="nav-link" data-en="Resources" data-zh="资源">Resources</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#npo" class="nav-link">NPO</a>
+                            <a href="#npo" class="nav-link" data-en="NPO" data-zh="非营利组织">NPO</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#contact" class="nav-link">Contact</a>
+                            <a href="#contact" class="nav-link" data-en="Contact" data-zh="联系我们">Contact</a>
                         </li>
                     </ul>
                 </nav>
+                
+                <!-- Language Switcher -->
+                <div class="language-switcher">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="zh">中文</button>
+                </div>
             </div>
         </div>
     </header>
@@ -69,14 +75,18 @@
                     <div class="hero-logo">
                         <img src="images/logo_clean copy.png" alt="Little Potato Robotics Logo" class="hero-logo-img">
                     </div>
-                    <h2 class="hero-title">Little Potato Robotics</h2>
-                    <p class="hero-subtitle">Team 30592</p>
-                    <p class="hero-description">
+                    <h2 class="hero-title" data-en="Little Potato Robotics" data-zh="小土豆机器人">Little Potato Robotics</h2>
+                    <p class="hero-subtitle" data-en="Team 30592" data-zh="队伍 30592">Team 30592</p>
+                    <p class="hero-description" data-en="A passionate Robotic team located in Fremont, Bay area." data-zh="一支充满激情的机器人团队，位于加州湾区弗里蒙特。">
                         A passionate Robotic team located in Fremont, Bay area.
                     </p>
                     <div class="hero-buttons">
-                        <a href="#team-members" class="btn btn-primary">Meet Our Team</a>
-                        <a href="#contact" class="btn btn-secondary">Join Us</a>
+                        <a href="#team-members" class="btn btn-primary">
+                            <span data-en="Meet Our Team" data-zh="认识我们的团队">Meet Our Team</span>
+                        </a>
+                        <a href="#contact" class="btn btn-secondary">
+                            <span data-en="Join Us" data-zh="加入我们">Join Us</span>
+                        </a>
                     </div>
                 </div>
                 
@@ -88,8 +98,8 @@
                             <img src="images/logo_clean copy.png" alt="Little Potato Robotics Logo" class="hero-logo-img">
                         </div>
                         <div class="hero-content">
-                        <h3>Who We Are</h3>
-                        <p>We are <strong>FIRST Tech Challenge ("FTC") Team Little Potato (#30592)</strong> - a rookie FTC team composed of 7 robotics fanatics who are passionate about engineering, coding, design, and teamwork. This is our very first year in FTC, and each member contributes unique experiences, skills, and creativity to our team.</p>
+                        <h3 data-en="Who We Are" data-zh="我们是谁">Who We Are</h3>
+                        <p data-en="We are FIRST Tech Challenge (FTC) Team Little Potato (#30592) - a rookie FTC team composed of 7 robotics fanatics who are passionate about engineering, coding, design, and teamwork. This is our very first year in FTC, and each member contributes unique experiences, skills, and creativity to our team." data-zh="我们是FIRST科技挑战赛（FTC）小土豆队（#30592） - 一支由7名机器人狂热爱好者组成的新手FTC队伍，对工程、编程、设计和团队合作充满热情。这是我们参加FTC的第一年，每个成员都为我们的团队贡献了独特的经验、技能和创造力。">We are <strong>FIRST Tech Challenge ("FTC") Team Little Potato (#30592)</strong> - a rookie FTC team composed of 7 robotics fanatics who are passionate about engineering, coding, design, and teamwork. This is our very first year in FTC, and each member contributes unique experiences, skills, and creativity to our team.</p>
                         </div>
                     </div>
                     
@@ -101,31 +111,44 @@
                                 <i class="fas fa-trophy"></i>
                             </div>
                             <div class="card-content">
-                        <h3>Our Background</h3>
-                        <p>While we're new to FTC, we are <strong>not new to robotics</strong>. Our team members come from a variety of robotics backgrounds:</p>
+                        <h3 data-en="Our Background" data-zh="我们的背景">Our Background</h3>
+                        <p data-en="While we're new to FTC, we are not new to robotics. Our team members come from a variety of robotics backgrounds." data-zh="虽然我们是FTC的新手，但我们对机器人并不陌生。我们的团队成员来自各种机器人背景.">While we're new to FTC, we are <strong>not new to robotics</strong>. Our team members come from a variety of robotics backgrounds:</p>
                         <ul>
-                            <li>Some members have <strong>extensive VEX IQ experience</strong> with significant achievements, including:
-                                <ul>
-                                    <li>U.S. Open Teamwork Champion</li>
-                                    <li>World Championship Divisional 2nd Place</li>
-                                    <li>NorthCal Teamwork 2nd Place</li>
-                                    <li>Multiple regional awards such as Excellence, Skills Champion, and Design Award</li>
-                                </ul>
-                            </li>
-                            <li>Other members bring <strong>five years of FIRST LEGO League ("FLL") and VEX experience combined</strong>, which has built a strong foundation in teamwork, problem-solving, and innovation</li>
-                            <li>We also include math enthusiasts, passionate coders, design thinkers, and builders who love a good challenge</li>
+                            <p data-en="Some members have extensive VEX IQ experience with significant achievements, including:" data-zh="一些成员拥有丰富的VEX IQ经验，取得了显著成就，包括：">Some members have <strong>extensive VEX IQ experience</strong> with significant achievements, including:</p>
+                            <li data-en="U.S. Open Teamwork Champion" data-zh="• 美国公开赛团队合作冠军">U.S. Open Teamwork Champion</li>
+                            <li data-en="World Championship Divisional 2nd Place" data-zh="• 世界锦标赛分区第二名">World Championship Divisional 2nd Place</li>
+                            <li data-en="NorthCal Teamwork 2nd Place" data-zh="• 北加州团队合作第二名">NorthCal Teamwork 2nd Place</li>
+                            <li data-en="Multiple regional awards such as Excellence, Skills Champion, and Design Award" data-zh="• 多项地区奖项，如卓越奖、技能冠军和设计奖">Multiple regional awards such as Excellence, Skills Champion, and Design Award</li>
+                            <p data-en="Other members bring five years of FIRST LEGO League (FLL) and VEX experience combined, which has built a strong foundation in teamwork, problem-solving, and innovation" data-zh="其他成员带来了五年的FLL和VEX经验，这为团队合作、问题解决和创新奠定了坚实的基础">Other members bring <strong>five years of FIRST LEGO League ("FLL") and VEX experience combined</strong>, which has built a strong foundation in teamwork, problem-solving, and innovation</p>
+                            <p data-en="We also include math enthusiasts, passionate coders, design thinkers, and builders who love a good challenge" data-zh="我们还包括数学爱好者、热情的编程者、设计思想家和喜欢挑战的建造者">We also include math enthusiasts, passionate coders, design thinkers, and builders who love a good challenge</p>
                         </ul>
                             </div>
                         </div>
-                        
+                        <!-- Community Outreach Card -->
+                        <div class="about-card">
+                            <div class="card-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="card-content">
+                        <h3 data-en="Community Outreach" data-zh="社区外展">Community Outreach</h3>
+                        <p data-en="We believe robotics is for everyone. That's why we dedicate ourselves to sharing STEM beyond our own team:" data-zh="我们相信机器人技术适合每个人。这就是为什么我们致力于在我们团队之外分享STEM：">We believe robotics is for everyone. That's why we dedicate ourselves to sharing STEM beyond our own team:</p>
+                        <ul>
+                            <li data-en="Hosting hands-on sessions and summer camp for younger students to explore CAD design, coding, building, and teamwork" data-zh="为年轻学生举办实践课程和夏令营，探索CAD设计、编程、建造和团队合作">Hosting hands-on sessions and summer camp for younger students to explore CAD design, coding, building, and teamwork</li>
+                            <li data-en="Supporting children with special needs through engaging STEM education at Friends of Children with Special Needs (a non-profit organization)" data-zh="通过在有特殊需求儿童之友（非营利组织）提供引人入胜的STEM教育来支持有特殊需求的儿童">Supporting children with special needs through engaging STEM education at Friends of Children with Special Needs (a non-profit organization)</li>
+                            <li data-en="Partnering with libraries to run robotics demos" data-zh="与图书馆合作举办机器人演示">Partnering with libraries to run robotics demos</li>
+                            <li data-en="Engaging with professors and industry experts to learn about the latest advancements in robotics and technology" data-zh="与教授和行业专家互动，了解机器人技术和科技的最新进展">Engaging with professors and industry experts to learn about the latest advancements in robotics and technology</li>
+                            <li data-en="Using social media and community events to show how fun and meaningful robotics can be" data-zh="使用社交媒体和社区活动来展示机器人技术如何有趣和有意义">Using social media and community events to show how fun and meaningful robotics can be</li>
+                        </ul>
+                            </div>
+                        </div>
                         <!-- Talents Card -->
                         <div class="about-card">
                             <div class="card-icon">
                                 <i class="fas fa-palette"></i>
                             </div>
                             <div class="card-content">
-                        <h3>Our Diverse Talents</h3>
-                        <p>Beyond robotics, our members are well-rounded individuals with interests in the arts, music, and sports. This blend of technical and creative talents allows us to approach problems from different angles, balancing logic with imagination.</p>
+                        <h3 data-en="Our Diverse Talents" data-zh="我们多样化的才能">Our Diverse Talents</h3>
+                        <p data-en="Beyond robotics, our members are well-rounded individuals with interests in the arts, music, and sports. This blend of technical and creative talents allows us to approach problems from different angles, balancing logic with imagination." data-zh="除了机器人技术，我们的成员都是全面发展的人，对艺术、音乐和体育都有兴趣。这种技术和创造才能的结合使我们能够从不同角度解决问题，平衡逻辑与想象力。">Beyond robotics, our members are well-rounded individuals with interests in the arts, music, and sports. This blend of technical and creative talents allows us to approach problems from different angles, balancing logic with imagination.</p>
                             </div>
                         </div>
                         
@@ -135,28 +158,12 @@
                                 <i class="fas fa-heart"></i>
                             </div>
                             <div class="card-content">
-                        <h3>Our Spirit</h3>
-                        <p>Team Little Potato is built on <strong>creativity, fun, love, sharing, and support</strong>. We believe that robotics is not only about building great robots—it's about building great friendships, growing as individuals, and sharing our passion with the community. Even though we're rookies, our teamwork, dedication, and energy make us feel like the <strong>best team in the world!</strong></p>
+                        <h3 data-en="Our Spirit" data-zh="我们的精神">Our Spirit</h3>
+                        <p data-en="Team Little Potato is built on creativity, fun, love, sharing, and support. We believe that robotics is not only about building great robots—it's about building great friendships, growing as individuals, and sharing our passion with the community. Even though we're rookies, our teamwork, dedication, and energy make us feel like the best team in the world!" data-zh="小土豆队建立在创造力、乐趣、爱心、分享和支持的基础上。我们相信机器人技术不仅仅是建造伟大的机器人——它关乎建立伟大的友谊、个人成长以及与社区分享我们的热情。尽管我们是新手，但我们的团队合作、奉献精神和活力让我们感觉自己是世界上最好的团队！">Team Little Potato is built on <strong>creativity, fun, love, sharing, and support</strong>. We believe that robotics is not only about building great robots—it's about building great friendships, growing as individuals, and sharing our passion with the community. Even though we're rookies, our teamwork, dedication, and energy make us feel like the <strong>best team in the world!</strong></p>
                             </div>
                         </div>
                         
-                        <!-- Community Outreach Card -->
-                        <div class="about-card">
-                            <div class="card-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="card-content">
-                        <h3>Community Outreach</h3>
-                        <p>We believe robotics is for everyone. That's why we dedicate ourselves to sharing STEM beyond our own team:</p>
-                        <ul>
-                            <li>Hosting hands-on sessions and summer camp for younger students to explore CAD design, coding, building, and teamwork</li>
-                            <li>Supporting children with special needs through engaging STEM education at Friends of Children with Special Needs (a non-profit organization)</li>
-                            <li>Partnering with libraries to run robotics demos</li>
-                            <li>Engaging with professors and industry experts to learn about the latest advancements in robotics and technology</li>
-                            <li>Using social media and community events to show how fun and meaningful robotics can be</li>
-                        </ul>
-                            </div>
-                        </div>
+                        
                         
                         <!-- Vision Card -->
                         <div class="about-card vision-card">
@@ -164,10 +171,10 @@
                                 <i class="fas fa-rocket"></i>
                             </div>
                             <div class="card-content">
-                        <h3>Our Vision</h3>
-                        <p>As we grow in FTC, we are excited to learn, innovate, and share our journey. Our goal is to inspire others to dive into STEM, to show that with teamwork and passion, anything is possible, and to make our mark in the world of robotics one potato at a time. 🥔✨</p>
+                        <h3 data-en="Our Vision" data-zh="我们的愿景">Our Vision</h3>
+                        <p data-en="As we grow in FTC, we are excited to learn, innovate, and share our journey. Our goal is to inspire others to dive into STEM, to show that with teamwork and passion, anything is possible, and to make our mark in the world of robotics one potato at a time. 🥔✨" data-zh="随着我们在FTC中的成长，我们很兴奋地学习、创新和分享我们的旅程。我们的目标是激励其他人投身STEM，展示通过团队合作和热情，一切皆有可能，并在机器人世界中一次一个土豆地留下我们的印记。🥔✨">As we grow in FTC, we are excited to learn, innovate, and share our journey. Our goal is to inspire others to dive into STEM, to show that with teamwork and passion, anything is possible, and to make our mark in the world of robotics one potato at a time. 🥔✨</p>
                             </div>
-                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -175,7 +182,7 @@
         <!-- Robot Showcase -->
         <section id="robot" class="robot-showcase">
             <div class="container">
-                <h2 class="section-title">Our Robots</h2>
+                <h2 class="section-title" data-en="Our Robots" data-zh="我们的机器人">Our Robots</h2>
                 
                 <!-- Robot Hero Section -->
                 <div class="robot-hero-card">
@@ -183,8 +190,8 @@
                         <i class="fas fa-robot"></i>
                     </div>
                     <div class="robot-hero-content">
-                        <h3>Meet Our Robot Family</h3>
-                        <p>Our robotics journey from rookie success to future innovation. Starting with our hero machine (Red Potatoes) that achieved #8 position in the 2025 Lobster competition, to our current development (Yukon Gold Potatoes) and future roadmap (Golden Potatoes) for the 2025 FTC Decode competition.</p>
+                        <h3 data-en="Meet Our Robot Family" data-zh="认识我们的机器人家族">Meet Our Robot Family</h3>
+                        <p data-en="Our robotics journey from rookie success to future innovation. Starting with our hero machine (Red Potatoes) that achieved #8 position in the 2025 Lobster competition, to our current development (Yukon Gold Potatoes) and future roadmap (Golden Potatoes) for the 2025 FTC Decode competition." data-zh="我们从新手成功到未来创新的机器人之旅。从我们的英雄机器（红土豆）在2025年龙虾比赛中获得第8名开始，到我们当前的开发（育空金土豆）和2025年FTC解码比赛的未来路线图（金土豆）。">Our robotics journey from rookie success to future innovation. Starting with our hero machine (Red Potatoes) that achieved #8 position in the 2025 Lobster competition, to our current development (Yukon Gold Potatoes) and future roadmap (Golden Potatoes) for the 2025 FTC Decode competition.</p>
                     </div>
                 </div>
                 
@@ -216,7 +223,7 @@
                         <div class="robot-info">
                             <h3>Yukon Gold Potatoes</h3>
                             <p class="robot-year">[2025] Under Development</p>
-                            <p class="robot-description">Currently under development to meet the 2025 FTC Decode competition requirements. This robot will showcase our team's growing expertise and innovative design capabilities.</p>
+                            <p class="robot-description" data-en="Currently under development to meet the 2025 FTC Decode competition requirements. This robot will showcase our team's growing expertise and innovative design capabilities." data-zh="目前正在开发中，以满足2025年FTC解码比赛的要求。这个机器人将展示我们团队不断增长的专业知识和创新设计能力。">Currently under development to meet the 2025 FTC Decode competition requirements. This robot will showcase our team's growing expertise and innovative design capabilities.</p>
                             <div class="robot-features">
                                 <span class="feature-tag">In Development</span>
                                 <span class="feature-tag">FTC Decode</span>
@@ -238,8 +245,8 @@
                                 <span class="feature-tag">Roadmap</span>
                                 <span class="feature-tag">Advanced</span>
                             </div>
+                            </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -247,7 +254,7 @@
         <!-- Team Section -->
         <section id="team-members" class="team-section">
             <div class="container">
-                <h2 class="section-title">Meet Our Team</h2>
+                <h2 class="section-title" data-en="Meet Our Team" data-zh="认识我们的团队">Meet Our Team</h2>
                 
                 <!-- Team Hero Section -->
                 <div class="team-hero-card">
@@ -255,8 +262,8 @@
                         <i class="fas fa-users"></i>
                     </div>
                     <div class="team-hero-content">
-                        <h3>Meet Our Team</h3>
-                        <p>Here are the amazing individuals who make up our team. Each member brings unique skills, experiences, and passion to create something extraordinary together.</p>
+                        <h3 data-en="Meet Our Team" data-zh="认识我们的团队">Meet Our Team</h3>
+                        <p data-en="Here are the amazing individuals who make up our team. Each member brings unique skills, experiences, and passion to create something extraordinary together." data-zh="这些是组成我们团队的杰出个人。每个成员都带来独特的技能、经验和热情，共同创造非凡的事物。">Here are the amazing individuals who make up our team. Each member brings unique skills, experiences, and passion to create something extraordinary together.</p>
                     </div>
                 </div>
                 
@@ -270,8 +277,8 @@
                         </div>
                         <div class="member-info">
                             <h4>Steven Cao</h4>
-                            <p class="member-role">CAD Designer & Builder</p>
-                            <p class="member-bio">Hello, my name is Steven Cao, a 13 year old 8th grader, and I attend William Hopkins Middle School. This is my first year doing FTC robotics though I have done a few years of Vex robotics before this. My role in the team is CAD designing and building. Outside of robotics, my interests are piano and boardgames.</p>
+                            <p class="member-role" data-en="CAD Designer & Builder" data-zh="CAD设计师和建造者">CAD Designer & Builder</p>
+                            <p class="member-bio" data-en="Hello, my name is Steven Cao, a 13 year old 8th grader, and I attend William Hopkins Middle School. This is my first year doing FTC robotics though I have done a few years of Vex robotics before this. My role in the team is CAD designing and building. Outside of robotics, my interests are piano and boardgames." data-zh="你好，我叫Steven Cao，13岁，8年级学生，就读于William Hopkins中学。这是我第一年参加FTC机器人比赛，虽然我之前已经做了几年的Vex机器人。我在团队中的角色是CAD设计和建造。除了机器人技术，我的兴趣是钢琴和桌游。">Hello, my name is Steven Cao, a 13 year old 8th grader, and I attend William Hopkins Middle School. This is my first year doing FTC robotics though I have done a few years of Vex robotics before this. My role in the team is CAD designing and building. Outside of robotics, my interests are piano and boardgames.</p>
                         </div>
                     </div>
                     
@@ -284,8 +291,8 @@
                         </div>
                         <div class="member-info">
                             <h4>Mia Ding</h4>
-                            <p class="member-role">Teleop Coding & Driver</p>
-                            <p class="member-bio">Hello, my name is Mia Ding. I am 12 years old and currently a 7th grader at William Hopkins Middle School, Fremont. This is my first year in FTC, but I bring with me two years of VEX IQ experience along with participation in the 2023 Google Girl Powered Robotics Workshop. I've always loved things that are fast and dynamic, which makes driving one of my strengths and a role I really enjoy on my team. I also contribute as the TeleOp coder, combining technical skills with strategic decision-making. Beyond robotics, I enjoy playing the violin, tennis, and drawing, and I've had the opportunity to travel to eight countries, which has given me a broader outlook on the world. I'm excited to grow as a robotics engineer and collaborate with my team to build innovative robots this season!</p>
+                            <p class="member-role" data-en="Teleop Coding & Driver" data-zh="遥控编程和驾驶员">Teleop Coding & Driver</p>
+                            <p class="member-bio" data-en="Hello, my name is Mia Ding. I am 12 years old and currently a 7th grader at William Hopkins Middle School, Fremont. This is my first year in FTC, but I bring with me two years of VEX IQ experience along with participation in the 2023 Google Girl Powered Robotics Workshop. I've always loved things that are fast and dynamic, which makes driving one of my strengths and a role I really enjoy on my team. I also contribute as the TeleOp coder, combining technical skills with strategic decision-making. Beyond robotics, I enjoy playing the violin, tennis, and drawing, and I've had the opportunity to travel to eight countries, which has given me a broader outlook on the world. I'm excited to grow as a robotics engineer and collaborate with my team to build innovative robots this season!" data-zh="你好，我叫Mia Ding。我12岁，目前在弗里蒙特William Hopkins中学读7年级。这是我第一年参加FTC，但我带来了两年的VEX IQ经验以及参加2023年Google Girl Powered机器人工作坊的经历。我一直喜欢快速和动态的事物，这使得驾驶成为我的强项之一，也是我在团队中真正喜欢的角色。我还作为TeleOp编程员做出贡献，将技术技能与战略决策相结合。除了机器人技术，我喜欢拉小提琴、打网球和绘画，我有机会去过八个国家，这给了我更广阔的世界观。我很兴奋能成长为一名机器人工程师，并与我的团队合作在这个赛季建造创新的机器人！">Hello, my name is Mia Ding. I am 12 years old and currently a 7th grader at William Hopkins Middle School, Fremont. This is my first year in FTC, but I bring with me two years of VEX IQ experience along with participation in the 2023 Google Girl Powered Robotics Workshop. I've always loved things that are fast and dynamic, which makes driving one of my strengths and a role I really enjoy on my team. I also contribute as the TeleOp coder, combining technical skills with strategic decision-making. Beyond robotics, I enjoy playing the violin, tennis, and drawing, and I've had the opportunity to travel to eight countries, which has given me a broader outlook on the world. I'm excited to grow as a robotics engineer and collaborate with my team to build innovative robots this season!</p>
                         </div>
                     </div>
                     
@@ -298,8 +305,8 @@
                         </div>
                         <div class="member-info">
                             <h4>Michelle Zhang</h4>
-                            <p class="member-role">Builder & Husky Lens Coder</p>
-                            <p class="member-bio">Hi, I'm Michelle Zhang. I'm a 7th grader at William Hopkins Middle School. This is my first year participating in FTC, and I previously spent a year in VEX IQ. On my current team, I work as a builder and coder, focusing on developing the Huskylens Camera to enhance our robot's performance. I also attended the 2024 Girl Powered Robotics Workshop to further strengthen my STEM skills and teamwork experience. Outside of robotics, I love exploring the arts and languages - I dance competitively in multiple styles, play two instruments, and speak two languages fluently while learning a third. I also enjoy competitive math, sketching and painting (which I used to compete in), and writing creative narratives.</p>
+                            <p class="member-role" data-en="Builder & Husky Lens Coder" data-zh="建造者和Husky Lens编程员">Builder & Husky Lens Coder</p>
+                            <p class="member-bio" data-en="Hi, I'm Michelle Zhang. I'm a 7th grader at William Hopkins Middle School. This is my first year participating in FTC, and I previously spent a year in VEX IQ. On my current team, I work as a builder and coder, focusing on developing the Huskylens Camera to enhance our robot's performance. I also attended the 2024 Girl Powered Robotics Workshop to further strengthen my STEM skills and teamwork experience. Outside of robotics, I love exploring the arts and languages - I dance competitively in multiple styles, play two instruments, and speak two languages fluently while learning a third. I also enjoy competitive math, sketching and painting (which I used to compete in), and writing creative narratives." data-zh="你好，我是Michelle Zhang。我是William Hopkins中学的7年级学生。这是我第一年参加FTC，之前我在VEX IQ待了一年。在我现在的团队中，我作为建造者和编程员工作，专注于开发Huskylens相机来提升我们机器人的性能。我还参加了2024年Girl Powered机器人工作坊，以进一步加强我的STEM技能和团队合作经验。除了机器人技术，我喜欢探索艺术和语言 - 我以多种风格进行竞技舞蹈，演奏两种乐器，流利地说两种语言，同时学习第三种。我还喜欢竞技数学、素描和绘画（我曾经参加过比赛），以及写创意叙事。">Hi, I'm Michelle Zhang. I'm a 7th grader at William Hopkins Middle School. This is my first year participating in FTC, and I previously spent a year in VEX IQ. On my current team, I work as a builder and coder, focusing on developing the Huskylens Camera to enhance our robot's performance. I also attended the 2024 Girl Powered Robotics Workshop to further strengthen my STEM skills and teamwork experience. Outside of robotics, I love exploring the arts and languages - I dance competitively in multiple styles, play two instruments, and speak two languages fluently while learning a third. I also enjoy competitive math, sketching and painting (which I used to compete in), and writing creative narratives.</p>
                         </div>
                     </div>
                     
@@ -313,7 +320,7 @@
                         <div class="member-info">
                             <h4>Harry Li</h4>
                             <p class="member-role">Builder</p>
-                            <p class="member-bio">My name is Harry Li. I live in China before I'm twelve. I like to play soccer. When I learn about FTC, I instantly knew that I will love it. I want to enjoy the process of assembling machines. I hope to have more friends with the same interests to exchange ideas and learn together.</p>
+                            <p class="member-bio" data-en="My name is Harry Li. I live in China before I'm twelve. I like to play soccer. When I learn about FTC, I instantly knew that I will love it. I want to enjoy the process of assembling machines. I hope to have more friends with the same interests to exchange ideas and learn together." data-zh="我叫Harry Li。我在12岁之前住在中国。我喜欢踢足球。当我了解FTC时，我立刻知道我会喜欢它。我想享受组装机器的过程。我希望有更多有相同兴趣的朋友来交流想法和一起学习。">My name is Harry Li. I live in China before I'm twelve. I like to play soccer. When I learn about FTC, I instantly knew that I will love it. I want to enjoy the process of assembling machines. I hope to have more friends with the same interests to exchange ideas and learn together.</p>
                         </div>
                     </div>
                     
@@ -326,8 +333,8 @@
                         </div>
                         <div class="member-info">
                             <h4>Alex Wang</h4>
-                            <p class="member-role">Autonomous Coder</p>
-                            <p class="member-bio">Hi, my name is Alexander Wang, a 13-year old 8th grader from William Hopkins Middle School. I started programming games in 6th grade when I got bored playing other people's games. I shifted my interest to robotics this year, especially programming robots, because working with a team of friends and solving real-world challenges are more fulfilling. Other than games, robotics, and programming, I enjoy swimming and skiing.</p>
+                            <p class="member-role" data-en="Autonomous Coder" data-zh="自主编程员">Autonomous Coder</p>
+                            <p class="member-bio" data-en="Hi, my name is Alexander Wang, a 13-year old 8th grader from William Hopkins Middle School. I started programming games in 6th grade when I got bored playing other people's games. I shifted my interest to robotics this year, especially programming robots, because working with a team of friends and solving real-world challenges are more fulfilling. Other than games, robotics, and programming, I enjoy swimming and skiing." data-zh="你好，我叫Alexander Wang，是William Hopkins中学13岁的8年级学生。我在6年级时开始编程游戏，当时我对玩别人的游戏感到厌倦。今年我将兴趣转向机器人技术，特别是编程机器人，因为与朋友团队合作和解决现实世界的挑战更有成就感。除了游戏、机器人技术和编程，我喜欢游泳和滑雪。">Hi, my name is Alexander Wang, a 13-year old 8th grader from William Hopkins Middle School. I started programming games in 6th grade when I got bored playing other people's games. I shifted my interest to robotics this year, especially programming robots, because working with a team of friends and solving real-world challenges are more fulfilling. Other than games, robotics, and programming, I enjoy swimming and skiing.</p>
                         </div>
                     </div>
                     
@@ -340,8 +347,8 @@
                         </div>
                         <div class="member-info">
                             <h4>Lydia Ji</h4>
-                            <p class="member-role">Builder & Limelight Coder</p>
-                            <p class="member-bio">Hello, my name is Lydia Ji, a 7th grade student at Pinewood, Los Altos. I am currently in my first year of FTC, where I specialize in CAD design and developing software for the Limelight smart camera to enhance my team's performance. I previously gained experience through one year in FLL and participation in various after-school robotics programs. Beyond robotics, I enjoy reading and exploring video games, which inspire my curiosity and problem-solving skills.</p>
+                            <p class="member-role" data-en="Builder & Limelight Coder" data-zh="建造者和Limelight编程员">Builder & Limelight Coder</p>
+                            <p class="member-bio" data-en="Hello, my name is Lydia Ji, a 7th grade student at Pinewood, Los Altos. I am currently in my first year of FTC, where I specialize in CAD design and developing software for the Limelight smart camera to enhance my team's performance. I previously gained experience through one year in FLL and participation in various after-school robotics programs. Beyond robotics, I enjoy reading and exploring video games, which inspire my curiosity and problem-solving skills." data-zh="你好，我叫Lydia Ji，是洛斯阿尔托斯Pinewood的7年级学生。我目前是FTC的第一年，我专门从事CAD设计和为Limelight智能相机开发软件，以提升我们团队的表现。我之前通过一年的FLL经历和参加各种课后机器人项目获得了经验。除了机器人技术，我喜欢阅读和探索视频游戏，这激发了我的好奇心和解决问题的能力。">Hello, my name is Lydia Ji, a 7th grade student at Pinewood, Los Altos. I am currently in my first year of FTC, where I specialize in CAD design and developing software for the Limelight smart camera to enhance my team's performance. I previously gained experience through one year in FLL and participation in various after-school robotics programs. Beyond robotics, I enjoy reading and exploring video games, which inspire my curiosity and problem-solving skills.</p>
                         </div>
                     </div>
                     
@@ -354,8 +361,8 @@
                         </div>
                         <div class="member-info">
                             <h4>Yijian Xiao</h4>
-                            <p class="member-role">Autonomous Coder</p>
-                            <p class="member-bio">Hi, my name is Alexander Wang, a 13-year old 8th grader from William Hopkins Middle School. I started programming games in 6th grade when I got bored playing other people's games. I shifted my interest to robotics this year, especially programming robots, because working with a team of friends and solving real-world challenges are more fulfilling. Other than games, robotics, and programming, I enjoy swimming and skiing.</p>
+                            <p class="member-role" data-en="Autonomous Coder" data-zh="自主编程员">Autonomous Coder</p>
+                            <p class="member-bio" data-en="Hi, my name is Yijian Xiao, a 13-year old 8th grader from William Hopkins Middle School. I started programming games in 6th grade when I got bored playing other people's games. I shifted my interest to robotics this year, especially programming robots, because working with a team of friends and solving real-world challenges are more fulfilling. Other than games, robotics, and programming, I enjoy swimming and skiing." data-zh="你好，我叫Yijian Xiao，是William Hopkins中学13岁的8年级学生。我在6年级时开始编程游戏，当时我对玩别人的游戏感到厌倦。今年我将兴趣转向机器人技术，特别是编程机器人，因为与朋友团队合作和解决现实世界的挑战更有成就感。除了游戏、机器人技术和编程，我喜欢游泳和滑雪。">Hi, my name is Yijian Xiao, a 13-year old 8th grader from William Hopkins Middle School. I started programming games in 6th grade when I got bored playing other people's games. I shifted my interest to robotics this year, especially programming robots, because working with a team of friends and solving real-world challenges are more fulfilling. Other than games, robotics, and programming, I enjoy swimming and skiing.</p>
                         </div>
                     </div>
                 </div>
@@ -365,7 +372,7 @@
         <!-- Media Section -->
         <section id="media" class="media">
             <div class="container">
-                <h2 class="section-title">Photos</h2>
+                <h2 class="section-title" data-en="Photos" data-zh="照片">Photos</h2>
                 
                 <!-- Photos Hero Section -->
                 <div class="photos-hero-card">
@@ -373,8 +380,8 @@
                         <i class="fas fa-camera"></i>
                     </div>
                     <div class="photos-hero-content">
-                        <h3>Our Journey in Pictures</h3>
-                        <p>Explore our robotics journey through our photo collections. From team building sessions to competition moments, these images capture the spirit, dedication, and achievements of Little Potato Robotics. Each album tells a story of growth, innovation, and teamwork.</p>
+                        <h3 data-en="Our Journey in Pictures" data-zh="我们的图片之旅">Our Journey in Pictures</h3>
+                        <p data-en="Explore our robotics journey through our photo collections. From team building sessions to competition moments, these images capture the spirit, dedication, and achievements of Little Potato Robotics. Each album tells a story of growth, innovation, and teamwork." data-zh="通过我们的照片集探索我们的机器人之旅。从团队建设会议到比赛时刻，这些图像捕捉了小土豆机器人团队的精神、奉献和成就。每个相册都讲述着成长、创新和团队合作的故事。">Explore our robotics journey through our photo collections. From team building sessions to competition moments, these images capture the spirit, dedication, and achievements of Little Potato Robotics. Each album tells a story of growth, innovation, and teamwork.</p>
                     </div>
                 </div>
                 
@@ -392,145 +399,145 @@
                             </div>
                             <div class="media-info">
                                 <h4>2025 Decode</h4>
-                                <p class="media-description">Our latest competition photos and highlights</p>
+                                <p class="media-description" data-en="Our latest competition photos and highlights" data-zh="我们最新的比赛照片和亮点">Our latest competition photos and highlights</p>
                                 <span class="media-source">Google Drive</span>
                             </div>
                         </a>
                     </div>
-                    <div class="media-item">
-                        <a href="https://drive.google.com/drive/folders/12P1NNnsp-TcijS2J8NiBLmlficlfgYPZ?usp=drive_link" target="_blank" rel="noopener noreferrer" class="media-link">
-                            <div class="media-placeholder">
-                                <img src="images/2025RookieBot.jpg" alt="2025 Rookie Bot" class="media-image">
-                                <div class="media-overlay">
-                                    <i class="fas fa-external-link-alt"></i>
+                                <div class="media-item">
+                                    <a href="https://drive.google.com/drive/folders/12P1NNnsp-TcijS2J8NiBLmlficlfgYPZ?usp=drive_link" target="_blank" rel="noopener noreferrer" class="media-link">
+                                        <div class="media-placeholder">
+                                            <img src="images/2025RookieBot.jpg" alt="2025 Rookie Bot" class="media-image">
+                                            <div class="media-overlay">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </div>
+                                            <div class="media-badge">
+                                                <i class="fas fa-robot"></i>
+                                            </div>
+                                        </div>
+                                        <div class="media-info">
+                                            <h4>2025 Rookie Bot</h4>
+                                <p class="media-description" data-en="Our first FTC robot development journey" data-zh="我们第一个FTC机器人开发之旅">Our first FTC robot development journey</p>
+                                            <span class="media-source">Google Drive</span>
+                                        </div>
+                                    </a>
                                 </div>
-                                <div class="media-badge">
-                                    <i class="fas fa-robot"></i>
+                                <div class="media-item">
+                                    <a href="https://drive.google.com/drive/folders/1KEKBa14gkyhWty6D15mRaIQRpVEhu6W8?usp=drive_link" target="_blank" rel="noopener noreferrer" class="media-link">
+                                        <div class="media-placeholder">
+                                            <img src="images/2025Lobster.jpg" alt="2025 Lobster" class="media-image">
+                                            <div class="media-overlay">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </div>
+                                            <div class="media-badge">
+                                                <i class="fas fa-tools"></i>
+                                            </div>
+                                        </div>
+                                        <div class="media-info">
+                                            <h4>2025 Lobster</h4>
+                                            <p class="media-description">Robot building and testing sessions</p>
+                                            <span class="media-source">Google Drive</span>
+                                        </div>
+                                    </a>
                                 </div>
-                            </div>
+                                <div class="media-item">
+                                    <a href="https://drive.google.com/drive/folders/1q4IWv6CanTEVU0uDe6b9h1c62IFni3_k?usp=sharing" target="_blank" rel="noopener noreferrer" class="media-link">
+                                        <div class="media-placeholder">
+                                            <img src="images/2025AugTeambuild.jpg" alt="2025 August Team Build" class="media-image">
+                                            <div class="media-overlay">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </div>
+                                        </div>
                             <div class="media-info">
-                                <h4>2025 Rookie Bot</h4>
-                                <p class="media-description">Our first FTC robot development journey</p>
-                                <span class="media-source">Google Drive</span>
+                                        <h4>2025 August Team Build</h4>
+                                        <p class="media-description">Team building and fun, pool party!</p>                                        
+                                        <span class="media-source">Google Drive</span>
                             </div>
-                        </a>
-                    </div>
-                    <div class="media-item">
-                        <a href="https://drive.google.com/drive/folders/1KEKBa14gkyhWty6D15mRaIQRpVEhu6W8?usp=drive_link" target="_blank" rel="noopener noreferrer" class="media-link">
-                            <div class="media-placeholder">
-                                <img src="images/2025Lobster.jpg" alt="2025 Lobster" class="media-image">
-                                <div class="media-overlay">
-                                    <i class="fas fa-external-link-alt"></i>
+                                    </a>
                                 </div>
-                                <div class="media-badge">
-                                    <i class="fas fa-tools"></i>
-                                </div>
-                            </div>
+                                <div class="media-item">
+                                    <a href="https://drive.google.com/drive/folders/1T8rUku70bne2jxnN-i5vzUUiFGWn_ZIt?usp=drive_link" target="_blank" rel="noopener noreferrer" class="media-link">
+                                        <div class="media-placeholder">
+                                            <img src="images/2025FLLTeach.jpg" alt="2025 FLL Teaching" class="media-image">
+                                            <div class="media-overlay">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </div>
+                                        </div>
                             <div class="media-info">
-                                <h4>2025 Lobster</h4>
-                                <p class="media-description">Robot building and testing sessions</p>
-                                <span class="media-source">Google Drive</span>
+                                        <h4>2025 FLL Teaching</h4>
+                                        <p class="media-description">Teach and have fun with FLL!</p>
+                                        <span class="media-source">Google Drive</span>
                             </div>
-                        </a>
-                    </div>
-                    <div class="media-item">
-                        <a href="https://drive.google.com/drive/folders/1q4IWv6CanTEVU0uDe6b9h1c62IFni3_k?usp=sharing" target="_blank" rel="noopener noreferrer" class="media-link">
-                            <div class="media-placeholder">
-                                <img src="images/2025AugTeambuild.jpg" alt="2025 August Team Build" class="media-image">
-                                <div class="media-overlay">
-                                    <i class="fas fa-external-link-alt"></i>
+                                    </a>
                                 </div>
-                            </div>
+                                <div class="media-item">
+                                    <a href="https://drive.google.com/drive/folders/1skGTIYvxLTUXeuU0LgesAAjhatn8vQCb?usp=sharing" target="_blank" rel="noopener noreferrer" class="media-link">
+                                        <div class="media-placeholder">
+                                            <img src="images/2025SJSU.jpg" alt="2025 SJSU" class="media-image">
+                                            <div class="media-overlay">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </div>
+                                        </div>
                             <div class="media-info">
-                                <h4>2025 August Team Build</h4>
-                                <p class="media-description">Team building and fun, pool party!</p>                                        
-                                <span class="media-source">Google Drive</span>
+                                        <h4>2025 SJSU</h4>
+                                        <p class="media-description">Visit SJSU Robotic Labs and learn from the experts!</p>
+                                        <span class="media-source">Google Drive</span>
                             </div>
-                        </a>
-                    </div>
-                    <div class="media-item">
-                        <a href="https://drive.google.com/drive/folders/1T8rUku70bne2jxnN-i5vzUUiFGWn_ZIt?usp=drive_link" target="_blank" rel="noopener noreferrer" class="media-link">
-                            <div class="media-placeholder">
-                                <img src="images/2025FLLTeach.jpg" alt="2025 FLL Teaching" class="media-image">
-                                <div class="media-overlay">
-                                    <i class="fas fa-external-link-alt"></i>
+                                    </a>
                                 </div>
-                            </div>
+                                <div class="media-item">
+                                    <a href="https://drive.google.com/drive/folders/1bZlVOgJjesbISaMpksPidV-p8VVGHWIz?usp=sharing" target="_blank" rel="noopener noreferrer" class="media-link">
+                                        <div class="media-placeholder">
+                                            <img src="images/2025Unitree.jpg" alt="2025 Unitree" class="media-image">
+                                            <div class="media-overlay">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </div>
+                                        </div>
                             <div class="media-info">
-                                <h4>2025 FLL Teaching</h4>
-                                <p class="media-description">Teach and have fun with FLL!</p>
-                                <span class="media-source">Google Drive</span>
+                                        <h4>2025 Unitree</h4>
+                                        <p class="media-description">Visit Unitree and learn from the experts!</p>
+                                        <span class="media-source">Google Drive</span>
                             </div>
-                        </a>
-                    </div>
-                    <div class="media-item">
-                        <a href="https://drive.google.com/drive/folders/1skGTIYvxLTUXeuU0LgesAAjhatn8vQCb?usp=sharing" target="_blank" rel="noopener noreferrer" class="media-link">
-                            <div class="media-placeholder">
-                                <img src="images/2025SJSU.jpg" alt="2025 SJSU" class="media-image">
-                                <div class="media-overlay">
-                                    <i class="fas fa-external-link-alt"></i>
+                                    </a>
                                 </div>
-                            </div>
+                                <div class="media-item">
+                                    <a href="https://drive.google.com/drive/folders/1N5YBvykKlmbcCv2aSQMz43TyAMrQYjtZ?usp=sharing" target="_blank" rel="noopener noreferrer" class="media-link">
+                                        <div class="media-placeholder">
+                                            <img src="images/2025SummerCamp.jpg" alt="2025 Summer Camp" class="media-image">
+                                            <div class="media-overlay">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </div>
+                                        </div>
                             <div class="media-info">
-                                <h4>2025 SJSU</h4>
-                                <p class="media-description">Visit SJSU Robotic Labs and learn from the experts!</p>
-                                <span class="media-source">Google Drive</span>
+                                        <h4>2025 Summer Camp</h4>
+                                        <p class="media-description">Teach kids about STEM and robotics!</p>
+                                        <span class="media-source">Google Drive</span>
                             </div>
-                        </a>
-                    </div>
-                    <div class="media-item">
-                        <a href="https://drive.google.com/drive/folders/1bZlVOgJjesbISaMpksPidV-p8VVGHWIz?usp=sharing" target="_blank" rel="noopener noreferrer" class="media-link">
-                            <div class="media-placeholder">
-                                <img src="images/2025Unitree.jpg" alt="2025 Unitree" class="media-image">
-                                <div class="media-overlay">
-                                    <i class="fas fa-external-link-alt"></i>
+                                    </a>
                                 </div>
-                            </div>
-                            <div class="media-info">
-                                <h4>2025 Unitree</h4>
-                                <p class="media-description">Visit Unitree and learn from the experts!</p>
-                                <span class="media-source">Google Drive</span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="media-item">
-                        <a href="https://drive.google.com/drive/folders/1N5YBvykKlmbcCv2aSQMz43TyAMrQYjtZ?usp=sharing" target="_blank" rel="noopener noreferrer" class="media-link">
-                            <div class="media-placeholder">
-                                <img src="images/2025SummerCamp.jpg" alt="2025 Summer Camp" class="media-image">
-                                <div class="media-overlay">
-                                    <i class="fas fa-external-link-alt"></i>
-                                </div>
-                            </div>
-                            <div class="media-info">
-                                <h4>2025 Summer Camp</h4>
-                                <p class="media-description">Teach kids about STEM and robotics!</p>
-                                <span class="media-source">Google Drive</span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="media-item">
-                        <a href="https://drive.google.com/drive/folders/1SiOoHvv-A-T4vH8mNP9fzJ1JSM-gmwSR?usp=sharing" target="_blank" rel="noopener noreferrer" class="media-link">
-                            <div class="media-placeholder">
+                                <div class="media-item">
+                                    <a href="https://drive.google.com/drive/folders/1SiOoHvv-A-T4vH8mNP9fzJ1JSM-gmwSR?usp=sharing" target="_blank" rel="noopener noreferrer" class="media-link">
+                                        <div class="media-placeholder">
                                 <img src="images/VEXIQ.jpg" alt="2025 VEX IQ Championship" class="media-image">
-                                <div class="media-overlay">
-                                    <i class="fas fa-external-link-alt"></i>
+                                            <div class="media-overlay">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </div>
+                                        </div>
+                            <div class="media-info">
+                                        <h4>VEX IQ</h4>
+                                <p class="media-description">Enjoy the World championship experience in VEX IQ!</p>
+                                        <span class="media-source">Google Drive</span>
+                            </div>
+                                    </a>
                                 </div>
                             </div>
-                            <div class="media-info">
-                                <h4>VEX IQ</h4>
-                                <p class="media-description">Enjoy the World championship experience in VEX IQ!</p>
-                                <span class="media-source">Google Drive</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
+                        </div>
         </section>
 
         <!-- Resources Section -->
         <section id="resources" class="resources">
             <div class="container">
-                <h2 class="section-title">FTC DECODE Resource Collection</h2>
+                <h2 class="section-title" data-en="FTC DECODE Resource Collection" data-zh="FTC解码资源集合">FTC DECODE Resource Collection</h2>
                 
                 <!-- Resources Hero Section -->
                 <div class="resources-hero-card">
@@ -538,8 +545,8 @@
                         <i class="fas fa-book"></i>
                     </div>
                     <div class="resources-hero-content">
-                        <h3>FTC DECODE Resource Collection</h3>
-                        <p>This is a curated collection of resources for the FIRST Tech Challenge DECODE season, categorized to help teams quickly find the information they need.</p>
+                        <h3 data-en="FTC DECODE Resource Collection" data-zh="FTC解码资源集合">FTC DECODE Resource Collection</h3>
+                        <p data-en="This is a curated collection of resources for the FIRST Tech Challenge DECODE season, categorized to help teams quickly find the information they need." data-zh="这是FIRST科技挑战赛解码赛季的精选资源集合，经过分类以帮助团队快速找到他们需要的信息。">This is a curated collection of resources for the FIRST Tech Challenge DECODE season, categorized to help teams quickly find the information they need.</p>
                     </div>
                 </div>
                 
@@ -550,7 +557,7 @@
                             <div class="category-icon">
                                 <i class="fab fa-youtube"></i>
                             </div>
-                            <h3>YouTube Channels</h3>
+                            <h3 data-en="YouTube Channels" data-zh="YouTube频道">YouTube Channels</h3>
                         </div>
                         <div class="resource-items">
                             <div class="resource-item">
@@ -562,7 +569,7 @@
                                     <p>Our official team channel featuring robot builds, competition highlights, tutorials, and behind-the-scenes content from our FTC journey.</p>
                                     <a href="https://www.youtube.com/@LittlePotatoRobotics" target="_blank" rel="noopener noreferrer" class="resource-link">
                                         <i class="fas fa-external-link-alt"></i>
-                                        Visit Our Channel
+                                        <span data-en="Visit Our Channel" data-zh="访问我们的频道">Visit Our Channel</span>
                                     </a>
                                 </div>
                             </div>
@@ -575,7 +582,7 @@
                                     <p>Educational and inspirational content covering FTC robotics, technical tutorials, and team showcases.</p>
                                     <a href="https://www.youtube.com/@FUNRoboticsNetwork" target="_blank" rel="noopener noreferrer" class="resource-link">
                                         <i class="fas fa-external-link-alt"></i>
-                                        Visit Channel
+                                        <span data-en="Visit Channel" data-zh="访问频道">Visit Channel</span>
                                     </a>
                                 </div>
                             </div>
@@ -588,7 +595,7 @@
                                     <p>Technical tutorials, component reviews, and build guides for FTC robotics teams.</p>
                                     <a href="https://www.youtube.com/@StudicaRobotics" target="_blank" rel="noopener noreferrer" class="resource-link">
                                         <i class="fas fa-external-link-alt"></i>
-                                        Visit Channel
+                                        <span data-en="Visit Channel" data-zh="访问频道">Visit Channel</span>
                                     </a>
                                 </div>
                             </div>
@@ -601,7 +608,7 @@
                                     <p>Product demonstrations, build tutorials, and technical support videos for FTC components.</p>
                                     <a href="https://www.youtube.com/@AndyMark" target="_blank" rel="noopener noreferrer" class="resource-link">
                                         <i class="fas fa-external-link-alt"></i>
-                                        Visit Channel
+                                        <span data-en="Visit Channel" data-zh="访问频道">Visit Channel</span>
                                     </a>
                                 </div>
                             </div>
@@ -614,7 +621,7 @@
                                     <p>Control system tutorials, sensor guides, and programming resources for FTC teams.</p>
                                     <a href="https://www.youtube.com/@REVrobotics" target="_blank" rel="noopener noreferrer" class="resource-link">
                                         <i class="fas fa-external-link-alt"></i>
-                                        Visit Channel
+                                        <span data-en="Visit Channel" data-zh="访问频道">Visit Channel</span>
                                     </a>
                                 </div>
                             </div>
@@ -627,7 +634,7 @@
                                     <p>Build tutorials, kit demonstrations, and design inspiration for FTC robotics.</p>
                                     <a href="https://www.youtube.com/@goBILDA" target="_blank" rel="noopener noreferrer" class="resource-link">
                                         <i class="fas fa-external-link-alt"></i>
-                                        Visit Channel
+                                        <span data-en="Visit Channel" data-zh="访问频道">Visit Channel</span>
                                     </a>
                                 </div>
                             </div>
@@ -640,7 +647,7 @@
                                     <p>Official FIRST content including game reveals, competition highlights, and educational resources.</p>
                                     <a href="https://www.youtube.com/@FIRSTTechChallenge" target="_blank" rel="noopener noreferrer" class="resource-link">
                                         <i class="fas fa-external-link-alt"></i>
-                                        Visit Channel
+                                        <span data-en="Visit Channel" data-zh="访问频道">Visit Channel</span>
                                     </a>
                                 </div>
                             </div>
@@ -653,7 +660,7 @@
                                     <p>Advanced robotics tutorials, competition analysis, and technical deep-dives for FTC teams.</p>
                                     <a href="https://www.youtube.com/@BroganMPratt" target="_blank" rel="noopener noreferrer" class="resource-link">
                                         <i class="fas fa-external-link-alt"></i>
-                                        Visit Channel
+                                        <span data-en="Visit Channel" data-zh="访问频道">Visit Channel</span>
                                     </a>
                                 </div>
                             </div>
@@ -666,7 +673,7 @@
                                     <p>Educational content, build guides, and component tutorials for FTC robotics education.</p>
                                     <a href="https://www.youtube.com/@TETRIXbyPitsco" target="_blank" rel="noopener noreferrer" class="resource-link">
                                         <i class="fas fa-external-link-alt"></i>
-                                        Visit Channel
+                                        <span data-en="Visit Channel" data-zh="访问频道">Visit Channel</span>
                                     </a>
                                 </div>
                             </div>
@@ -679,7 +686,7 @@
                             <div class="category-icon">
                                 <i class="fas fa-users"></i>
                             </div>
-                            <h3>Community & Collaboration</h3>
+                            <h3 data-en="Community & Collaboration" data-zh="社区与合作">Community & Collaboration</h3>
                         </div>
                         <div class="resource-items">
                             <div class="resource-item">
@@ -743,7 +750,7 @@
                             <div class="category-icon">
                                 <i class="fas fa-flag"></i>
                             </div>
-                            <h3>Official Game and Season Resources</h3>
+                            <h3 data-en="Official Game and Season Resources" data-zh="官方游戏和赛季资源">Official Game and Season Resources</h3>
                         </div>
                         <div class="resource-items">
                             <div class="resource-item">
@@ -820,7 +827,7 @@
                             <div class="category-icon">
                                 <i class="fas fa-podcast"></i>
                             </div>
-                            <h3>Podcasts & Audio</h3>
+                            <h3 data-en="Podcasts & Audio" data-zh="播客和音频">Podcasts & Audio</h3>
                         </div>
                         <div class="resource-items">
                             <div class="resource-item">
@@ -845,7 +852,7 @@
                             <div class="category-icon">
                                 <i class="fas fa-tools"></i>
                             </div>
-                            <h3>Hardware and Parts Vendors</h3>
+                            <h3 data-en="Hardware and Parts Vendors" data-zh="硬件和零件供应商">Hardware and Parts Vendors</h3>
                         </div>
                         <div class="resource-items">
                             <div class="resource-item">
@@ -890,20 +897,20 @@
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fas fa-graduation-cap"></i>
-                                </div>
+                        </div>
                                 <div class="resource-content">
                                     <h4>Studica Robotics</h4>
                                     <p>Offers a range of components including drivetrains, linear actuators, and slide rails.</p>
                                     <a href="https://www.studica.ca/en/ftc-robotics-season-prep" target="_blank" rel="noopener noreferrer" class="resource-link">
                                         <i class="fas fa-external-link-alt"></i>
                                         Visit Studica Robotics
-                                    </a>
-                                </div>
-                            </div>
+                        </a>
+                    </div>
+                </div>
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fas fa-cube"></i>
-                                </div>
+            </div>
                                 <div class="resource-content">
                                     <h4>TETRIX by Pitsco</h4>
                                     <p>A vendor that provides a wide range of parts for robot construction.</p>
@@ -911,24 +918,24 @@
                                         <i class="fas fa-external-link-alt"></i>
                                         Visit TETRIX by Pitsco
                                     </a>
+                                            </div>
+                                        </div>
                                 </div>
-                            </div>
                         </div>
-                    </div>
 
                     <!-- Software and Programming Tools -->
                     <div class="resource-category">
                         <div class="category-header">
                             <div class="category-icon">
                                 <i class="fas fa-code"></i>
-                            </div>
-                            <h3>Software and Programming Tools</h3>
                         </div>
+                            <h3 data-en="Software and Programming Tools" data-zh="软件和编程工具">Software and Programming Tools</h3>
+                    </div>
                         <div class="resource-items">
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fab fa-github"></i>
-                                </div>
+                        </div>
                                 <div class="resource-content">
                                     <h4>FTC SDK</h4>
                                     <p>The official Software Development Kit, available on GitHub, containing the source code for the robot control app.</p>
@@ -936,8 +943,8 @@
                                         <i class="fas fa-external-link-alt"></i>
                                         View FTC SDK
                                     </a>
+                    </div>
                                 </div>
-                            </div>
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fas fa-book"></i>
@@ -949,8 +956,8 @@
                                         <i class="fas fa-external-link-alt"></i>
                                         Access FTC Docs
                                     </a>
-                                </div>
                             </div>
+                                </div>
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fas fa-desktop"></i>
@@ -962,8 +969,8 @@
                                         <i class="fas fa-external-link-alt"></i>
                                         Access FTC SIM
                                     </a>
-                                </div>
                             </div>
+                                </div>
                             <div class="resource-item">
                                 <div class="resource-icon">
                                     <i class="fas fa-eye"></i>
@@ -972,13 +979,13 @@
                                     <h4>Computer Vision Tools</h4>
                                     <p>Advanced computer vision options including TensorFlow Lite for object detection, AprilTags for navigation, and VisionPortal/OpenCV for custom image processing pipelines.</p>
                                     <a href="https://ftc-docs.firstinspires.org/" target="_blank" rel="noopener noreferrer" class="resource-link">
-                                        <i class="fas fa-external-link-alt"></i>
+                                <i class="fas fa-external-link-alt"></i>
                                         Learn Computer Vision
-                                    </a>
-                                </div>
-                            </div>
+                            </a>
                         </div>
                     </div>
+                </div>
+            </div>
 
                 </div>
 
@@ -991,41 +998,14 @@
                             <i class="fas fa-envelope"></i>
                             Share a Resource
                         </a>
-                    </div>
+                            </div>
                 </div>
             </div>
         </section>
-
-        <!-- Programs Section -->
-        <section class="programs">
-            <div class="container">
-                <h2 class="section-title">Our Programs</h2>
-                <div class="programs-grid">
-                    <div class="program-card">
-                        <div class="program-icon">
-                            <i class="fas fa-microchip"></i>
-                        </div>
-                        <h3>FIRST Tech Challenge (FTC)</h3>
-                        <p>Students work with mentors to design and build robots for dynamic challenges. Teams program classroom-scale robots for autonomous operation before student drivers compete in exciting two-on-two matches.</p>
-                        <a href="#ftc" class="btn btn-outline">Learn More</a>
-                    </div>
-                    <div class="program-card">
-                        <div class="program-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <h3>Community Programs</h3>
-                        <p>We host hands-on sessions and summer camps for younger students to explore CAD design, coding, building, and teamwork. We also support children with special needs through engaging STEM education.</p>
-                        <a href="#outreach" class="btn btn-outline">Learn More</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
         <!-- NPO Section -->
         <section id="npo" class="npo">
             <div class="container">
-                <h2 class="section-title">Non-Profit Organization</h2>
+                <h2 class="section-title" data-en="Non-Profit Organization" data-zh="非营利组织">Non-Profit Organization</h2>
                 
                 <!-- NPO Hero Section -->
                 <div class="npo-hero-card">
@@ -1034,14 +1014,14 @@
                     </div>
                     <div class="npo-hero-content">
                         <h3>FusionSTEM Foundation</h3>
-                        <p>Little Potato Robotics is proud to be supported by the FusionSTEM Foundation, a non-profit organization dedicated to advancing STEM education and robotics programs in the Fremont, California area. The Foundation provides essential resources, mentorship, and organizational support that enables our team to participate in FIRST Tech Challenge competitions and develop valuable STEM skills.</p>
+                        <p data-en="Little Potato Robotics is proud to be supported by the FusionSTEM Foundation, a non-profit organization dedicated to advancing STEM education and robotics programs in the Fremont, California area. The Foundation provides essential resources, mentorship, and organizational support that enables our team to participate in FIRST Tech Challenge competitions and develop valuable STEM skills." data-zh="小土豆机器人团队很自豪得到FusionSTEM基金会的支持，这是一个致力于推进加州弗里蒙特地区STEM教育和机器人项目的非营利组织。基金会提供必要的资源、指导和组织支持，使我们团队能够参加FIRST科技挑战赛并发展宝贵的STEM技能。">Little Potato Robotics is proud to be supported by the FusionSTEM Foundation, a non-profit organization dedicated to advancing STEM education and robotics programs in the Fremont, California area. The Foundation provides essential resources, mentorship, and organizational support that enables our team to participate in FIRST Tech Challenge competitions and develop valuable STEM skills.</p>
                     </div>
                 </div>
                 
                 <div class="npo-content">
                     <div class="npo-intro">
-                        <h3>Our Partnership</h3>
-                        <p>Through our partnership with FusionSTEM Foundation, we gain access to professional mentorship, competition resources, and a supportive community that shares our passion for STEM education and robotics innovation.</p>
+                        <h3 data-en="Our Partnership" data-zh="我们的合作伙伴关系">Our Partnership</h3>
+                        <p data-en="Through our partnership with FusionSTEM Foundation, we gain access to professional mentorship, competition resources, and a supportive community that shares our passion for STEM education and robotics innovation." data-zh="通过与FusionSTEM基金会的合作伙伴关系，我们获得了专业指导、比赛资源和一个与我们分享STEM教育和机器人创新热情的支持性社区。">Through our partnership with FusionSTEM Foundation, we gain access to professional mentorship, competition resources, and a supportive community that shares our passion for STEM education and robotics innovation.</p>
                     </div>
                     
                     <div class="npo-details">
@@ -1050,7 +1030,7 @@
                                 <i class="fas fa-info-circle"></i>
                             </div>
                             <div class="npo-card-content">
-                            <h4>Foundation Details</h4>
+                            <h4 data-en="Foundation Details" data-zh="基金会详情">Foundation Details</h4>
                             <div class="npo-item">
                                 <i class="fas fa-map-marker-alt"></i>
                                 <span>Fremont, California, USA</span>
@@ -1061,7 +1041,7 @@
                                 </div>
                                 <div class="npo-item">
                                     <i class="fas fa-users"></i>
-                                    <span>Supporting STEM Education</span>
+                                    <span data-en="Supporting STEM Education" data-zh="支持STEM教育">Supporting STEM Education</span>
                                 </div>
                             </div>
                         </div>
@@ -1071,11 +1051,11 @@
                                 <i class="fas fa-external-link-alt"></i>
                             </div>
                             <div class="npo-card-content">
-                            <h4>Learn More About FusionSTEM</h4>
-                            <p>Visit the FusionSTEM Foundation website to learn more about their mission, programs, and how you can support STEM education in our community.</p>
+                            <h4 data-en="Learn More About FusionSTEM" data-zh="了解更多关于FusionSTEM">Learn More About FusionSTEM</h4>
+                            <p data-en="Visit the FusionSTEM Foundation website to learn more about their mission, programs, and how you can support STEM education in our community." data-zh="访问FusionSTEM基金会网站，了解更多关于他们的使命、项目以及如何支持我们社区的STEM教育。">Visit the FusionSTEM Foundation website to learn more about their mission, programs, and how you can support STEM education in our community.</p>
                             <a href="https://www.fusionstem-foundation.org/contact.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
                                 <i class="fas fa-external-link-alt"></i>
-                                Visit FusionSTEM Foundation
+                                <span data-en="Visit FusionSTEM Foundation" data-zh="访问FusionSTEM基金会">Visit FusionSTEM Foundation</span>
                             </a>
                             </div>
                         </div>
@@ -1111,9 +1091,11 @@
                         </div>
                     </div>
                     <div class="sponsor-cta">
-                        <h3>Become a Sponsor</h3>
-                        <p>Want to be our very first sponsor? Please contact us!</p>
-                        <a href="#contact" class="btn btn-primary">Contact Us</a>
+                        <h3 data-en="Become a Sponsor" data-zh="成为赞助商">Become a Sponsor</h3>
+                        <p data-en="Want to be our very first sponsor? Please contact us!" data-zh="想成为我们的第一个赞助商吗？请联系我们！">Want to be our very first sponsor? Please contact us!</p>
+                        <a href="#contact" class="btn btn-primary">
+                            <span data-en="Contact Us" data-zh="联系我们">Contact Us</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -1122,7 +1104,7 @@
         <!-- Contact Section -->
         <section id="contact" class="contact">
             <div class="container">
-                <h2 class="section-title">Contact Us</h2>
+                <h2 class="section-title" data-en="Contact Us" data-zh="联系我们">Contact Us</h2>
                 
                 <!-- Contact Hero Section -->
                 <div class="contact-hero-card">
@@ -1130,14 +1112,14 @@
                         <i class="fas fa-envelope-open-text"></i>
                     </div>
                     <div class="contact-hero-content">
-                        <h3>Get in Touch</h3>
-                        <p>We'd love to hear from you! Whether you're interested in joining our team, sponsoring us, or just want to learn more about Little Potato Robotics, don't hesitate to reach out. We're always excited to connect with fellow robotics enthusiasts and supporters.</p>
+                        <h3 data-en="Get in Touch" data-zh="联系我们">Get in Touch</h3>
+                        <p data-en="We'd love to hear from you! Whether you're interested in joining our team, sponsoring us, or just want to learn more about Little Potato Robotics, don't hesitate to reach out. We're always excited to connect with fellow robotics enthusiasts and supporters." data-zh="我们很乐意听到您的消息！无论您有兴趣加入我们的团队、赞助我们，还是只是想了解更多关于小土豆机器人团队的信息，请不要犹豫与我们联系。我们总是很兴奋能与机器人爱好者和支持者建立联系。">We'd love to hear from you! Whether you're interested in joining our team, sponsoring us, or just want to learn more about Little Potato Robotics, don't hesitate to reach out. We're always excited to connect with fellow robotics enthusiasts and supporters.</p>
                     </div>
                 </div>
                 
                 <div class="contact-content">
                     <div class="contact-info">
-                        <h3>Contact Information</h3>
+                        <h3 data-en="Contact Information" data-zh="联系信息">Contact Information</h3>
                         
                         <div class="contact-details">
                             <div class="contact-item">
@@ -1184,19 +1166,19 @@
                 <div class="footer-section">
                     <h3>Little Potato Robotics</h3>
                     <p>Team 30592</p>
-                    <p>A team of high-school students passionate about robotics and engineering located in Fremont, Bay area.</p>
+                    <p data-en="A team of high-school students passionate about robotics and engineering located in Fremont, Bay area." data-zh="一支由高中生组成的团队，对机器人和工程充满热情，位于加州湾区弗里蒙特。">A team of high-school students passionate about robotics and engineering located in Fremont, Bay area.</p>
                 </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul>
+                                    <div class="footer-section">
+                    <h3 data-en="Quick Links" data-zh="快速链接">Quick Links</h3>
+                        <ul>
                         <li><a href="#home">Home</a></li>
-                        <li><a href="#resources">Resources</a></li>
-                        <li><a href="#sponsors">Sponsors</a></li>
-                        <li><a href="#npo">NPO</a></li>
-                    </ul>
-                </div>
+                            <li><a href="#resources">Resources</a></li>
+                            <li><a href="#sponsors">Sponsors</a></li>
+                            <li><a href="#npo">NPO</a></li>
+                        </ul>
+                    </div>
                 <div class="footer-section">
-                    <h3>Connect</h3>
+                    <h3 data-en="Connect" data-zh="联系我们">Connect</h3>
                     <div class="social-links">
                         <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
                         <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
@@ -1206,7 +1188,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Little Potato Robotics. All rights reserved.</p>
+                <p data-en="&copy; 2025 Little Potato Robotics. All rights reserved." data-zh="&copy; 2025 小土豆机器人团队。保留所有权利。">&copy; 2025 Little Potato Robotics. All rights reserved.</p>
             </div>
         </div>
     </footer>

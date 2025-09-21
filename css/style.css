@@ -34,9 +34,9 @@
   --dark-bg-tertiary: #21262d;
   --dark-bg-quaternary: #30363d;
   
-  --dark-text-primary: #f0f6fc;
-  --dark-text-secondary: #8b949e;
-  --dark-text-muted: #6e7681;
+  --dark-text-primary: #ffffff;
+  --dark-text-secondary: #ffffff;
+  --dark-text-muted: #ffffff;
   
   --dark-border-color: #30363d;
   --dark-border-light: #21262d;
@@ -310,6 +310,45 @@ a:hover {
   width: 100%;
 }
 
+/* Language Switcher */
+.language-switcher {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-left: var(--spacing-lg);
+}
+
+.lang-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(10px);
+}
+
+.lang-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.lang-btn.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+.lang-btn.active:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
 /* Special rainbow highlight for Resources navigation */
 .nav-link[href="#resources"] {
   background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
@@ -455,8 +494,30 @@ a:hover {
 
 .about-text {
     display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  max-width: 100%;
   gap: var(--spacing-xl);
+}
+
+/* Ensure maximum 2 cards per row */
+@media (min-width: 1200px) {
+  .about-text {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .about-text {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .about-text {
+    grid-template-columns: 1fr;
+  }
 }
 
 .about-card {
@@ -483,18 +544,18 @@ a:hover {
     align-items: center;
     justify-content: center;
   margin-bottom: var(--spacing-lg);
-  color: white;
+    color: white;
   font-size: var(--font-size-xl);
 }
 
 .card-content h3 {
-  color: var(--primary-color);
+    color: var(--primary-color);
   margin-bottom: var(--spacing-md);
 }
 
 .card-content p,
 .card-content li {
-  color: var(--text-secondary);
+    color: var(--text-secondary);
   margin-bottom: var(--spacing-sm);
 }
 
@@ -552,6 +613,24 @@ a:hover {
     color: var(--primary-color) !important;
   }
   
+  /* Language Switcher Dark Mode */
+  .lang-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+        color: var(--dark-text-primary);
+    }
+    
+  .lang-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .lang-btn.active {
+    background: var(--primary-color);
+        border-color: var(--primary-color);
+    color: white;
+  }
+  
   /* Rainbow highlight for Resources in dark mode */
   .nav-link[href="#resources"] {
     background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
@@ -575,7 +654,7 @@ a:hover {
   }
   
   .hero {
-    background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
+        background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
     background-image: linear-gradient(rgba(13, 17, 23, 0.8), rgba(22, 27, 34, 0.8)), url('../images/teamphoto1.jpg');
   }
   
@@ -597,14 +676,14 @@ a:hover {
   .about-hero-card {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-  }
-  
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+    
   .about-hero-card:hover {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    border-color: var(--primary-color);
-  }
-  
+        border-color: var(--primary-color);
+    }
+    
   .about-hero-card .hero-content h3 {
     color: var(--text-primary);
   }
@@ -621,9 +700,9 @@ a:hover {
     
   .about-card:hover {
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    border-color: var(--primary-color);
-  }
-  
+        border-color: var(--primary-color);
+    }
+    
   .card-content h3 {
     color: var(--primary-color);
   }
@@ -646,7 +725,7 @@ a:hover {
 .robot-showcase {
   padding: var(--spacing-4xl) 0;
   background: var(--bg-secondary);
-  position: relative;
+    position: relative;
 }
 
 .robot-hero-card {
@@ -666,8 +745,8 @@ a:hover {
   height: 80px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-lg);
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
   justify-content: center;
   font-size: var(--font-size-3xl);
   color: white;
@@ -705,14 +784,14 @@ a:hover {
 }
 
 .robot-image-placeholder {
-  position: relative;
+    position: relative;
   height: 200px;
-  overflow: hidden;
+    overflow: hidden;
 }
 
 .robot-image {
   width: 100%;
-  height: 100%;
+    height: 100%;
   object-fit: cover;
   transition: transform var(--transition-normal);
 }
@@ -746,13 +825,13 @@ a:hover {
 }
 
 .robot-year {
-  color: var(--primary-color);
-  font-weight: 600;
+    color: var(--primary-color);
+    font-weight: 600;
   margin-bottom: var(--spacing-md);
 }
 
 .robot-description {
-  color: var(--text-secondary);
+    color: var(--text-secondary);
   margin-bottom: var(--spacing-lg);
 }
 
@@ -775,7 +854,7 @@ a:hover {
    TEAM SECTION
    ======================================== */
 
-.team-section {
+    .team-section {
   padding: var(--spacing-4xl) 0;
   background: var(--bg-primary);
   position: relative;
@@ -786,8 +865,8 @@ a:hover {
   border-radius: var(--radius-xl);
   padding: var(--spacing-2xl);
   margin-bottom: var(--spacing-3xl);
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
   gap: var(--spacing-xl);
   color: white;
   box-shadow: var(--shadow-lg);
@@ -806,18 +885,18 @@ a:hover {
 }
 
 .team-hero-content h3 {
-  color: white;
+    color: white;
   margin-bottom: var(--spacing-md);
 }
 
 .team-hero-content p {
   color: rgba(255, 255, 255, 0.9);
-  margin: 0;
+    margin: 0;
 }
 
 .team-members {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--spacing-xl);
 }
 
@@ -828,7 +907,7 @@ a:hover {
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border-color);
   transition: all var(--transition-normal);
-  text-align: center;
+    text-align: center;
 }
 
 .team-member:hover {
@@ -845,7 +924,7 @@ a:hover {
 .member-img {
   width: 120px;
   height: 120px;
-  border-radius: 50%;
+    border-radius: 50%;
   object-fit: cover;
   margin: 0 auto;
   display: block;
@@ -858,17 +937,17 @@ a:hover {
 }
 
 .member-role-icon {
-  position: absolute;
+    position: absolute;
   bottom: 0;
   right: calc(50% - 60px);
-  width: 40px;
-  height: 40px;
+    width: 40px;
+    height: 40px;
   background: var(--primary-color);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
   font-size: var(--font-size-lg);
   border: 3px solid var(--bg-primary);
 }
@@ -880,12 +959,12 @@ a:hover {
 
 .member-role {
   color: var(--primary-color);
-  font-weight: 600;
+    font-weight: 600;
   margin-bottom: var(--spacing-md);
 }
 
 .member-bio {
-  color: var(--text-secondary);
+    color: var(--text-secondary);
   font-size: var(--font-size-sm);
   line-height: 1.6;
 }
@@ -935,8 +1014,8 @@ a:hover {
 }
 
 .media-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--spacing-xl);
 }
 
@@ -979,11 +1058,11 @@ a:hover {
 }
 
 .media-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   background: linear-gradient(135deg, rgba(74, 144, 226, 0.9), rgba(53, 122, 189, 0.9));
   display: flex;
   align-items: center;
@@ -997,12 +1076,12 @@ a:hover {
 }
 
 .media-overlay i {
-  color: white;
+    color: white;
   font-size: var(--font-size-3xl);
 }
 
 .media-badge {
-  position: absolute;
+    position: absolute;
   top: var(--spacing-md);
   right: var(--spacing-md);
   width: 40px;
@@ -1044,7 +1123,7 @@ a:hover {
   padding: var(--spacing-xs) var(--spacing-md);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
-  font-weight: 600;
+    font-weight: 600;
   border: 1px solid rgba(74, 144, 226, 0.2);
   transition: all var(--transition-fast);
 }
@@ -1191,7 +1270,7 @@ a:hover {
 }
 
 .resource-content h4 {
-  color: var(--text-primary);
+    color: var(--text-primary);
   margin-bottom: var(--spacing-sm);
 }
 
@@ -1226,7 +1305,7 @@ a:hover {
   background: var(--bg-primary);
   border-radius: var(--radius-lg);
   padding: var(--spacing-2xl);
-  text-align: center;
+    text-align: center;
   border: 2px solid var(--border-color);
   box-shadow: var(--shadow-md);
 }
@@ -1482,8 +1561,8 @@ a:hover {
 }
 
 .npo-item {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-md);
 }
@@ -1498,7 +1577,7 @@ a:hover {
 }
 
 .npo-card-content p {
-  color: var(--text-secondary);
+    color: var(--text-secondary);
   margin-bottom: var(--spacing-lg);
 }
 
@@ -1516,21 +1595,21 @@ a:hover {
   border-radius: var(--radius-xl);
   padding: var(--spacing-2xl);
   margin-bottom: var(--spacing-3xl);
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
   gap: var(--spacing-xl);
   color: white;
   box-shadow: var(--shadow-lg);
 }
 
 .contact-hero-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   font-size: var(--font-size-3xl);
     color: white;
 }
@@ -1542,11 +1621,11 @@ a:hover {
 
 .contact-hero-content p {
     color: rgba(255, 255, 255, 0.9);
-  margin: 0;
+    margin: 0;
 }
 
 .contact-content {
-  display: grid;
+    display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--spacing-3xl);
 }
@@ -1580,8 +1659,8 @@ a:hover {
 }
 
 .form {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
   gap: var(--spacing-lg);
 }
 
@@ -1605,7 +1684,7 @@ a:hover {
 .form input:focus,
 .form textarea:focus {
   outline: none;
-  border-color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 .form textarea {
@@ -1655,7 +1734,7 @@ a:hover {
 }
 
 .footer-section a:hover {
-  color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 
@@ -1683,7 +1762,7 @@ a:hover {
 }
 
 .footer-bottom {
-  text-align: center;
+    text-align: center;
   padding-top: var(--spacing-xl);
   border-top: 1px solid var(--border-color);
   color: var(--text-muted);
@@ -1929,8 +2008,8 @@ a:hover {
 }
 
 .sponsor-cta h3 {
-    color: var(--dark-text-primary);
-  }
+        color: var(--dark-text-primary);
+    }
   
   .sponsor-cta p {
     color: var(--dark-text-secondary);
@@ -1963,7 +2042,7 @@ a:hover {
   }
   
   .npo-item span {
-    color: var(--dark-text-secondary);
+        color: var(--dark-text-secondary);
   }
   
   .npo-card-content p {
@@ -1988,8 +2067,8 @@ a:hover {
         color: var(--dark-text-secondary);
 }
 
-.form input,
-.form textarea {
+    .form input,
+    .form textarea {
     background: var(--dark-bg-secondary);
     border: 2px solid var(--dark-bg-tertiary);
         color: var(--dark-text-primary);
@@ -2097,6 +2176,22 @@ a:hover {
     background: var(--primary-color);
     color: white !important;
     transform: translateY(-1px);
+  }
+  
+  /* Disable underline animation on mobile */
+  .nav-link::after {
+    display: none;
+  }
+  
+  /* Language Switcher Mobile */
+  .language-switcher {
+    margin-left: var(--spacing-sm);
+    gap: var(--spacing-xs);
+  }
+  
+  .lang-btn {
+    padding: var(--spacing-xs);
+    font-size: var(--font-size-xs);
   }
   
   /* Rainbow highlight for Resources on mobile */
