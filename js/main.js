@@ -54,6 +54,7 @@ function initFormHandling() {
     if (contactForm) {
         // Initialize EmailJS with your public key
         emailjs.init('VzlpHD2wwgOBDvjrm');
+        console.log('EmailJS initialized with key: VzlpHD2wwgOBDvjrm');
         
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -91,6 +92,7 @@ function initFormHandling() {
             };
             
             // Send email using EmailJS
+            console.log('Sending email with params:', templateParams);
             emailjs.send('service_u5yub0k', 'template_wb9r0jk', templateParams)
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
@@ -98,6 +100,7 @@ function initFormHandling() {
                     contactForm.reset();
                 }, function(error) {
                     console.log('FAILED...', error);
+                    console.error('EmailJS Error Details:', error);
                     showNotification('Sorry, there was an error sending your message. Please try again or email us directly.', 'error');
                 })
                 .finally(function() {
