@@ -53,7 +53,7 @@ function initFormHandling() {
     
     if (contactForm) {
         // Initialize EmailJS with your public key
-        emailjs.init('kC8ZSRXZbiWrr_FRy');
+        emailjs.init('VzlpHD2wwgOBDvjrm');
         
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -87,11 +87,11 @@ function initFormHandling() {
                 from_email: email,
                 subject: subject || 'Contact Form Message',
                 message: message,
-                to_email: 'littlepotatorobotics@gmail.com'
+                to_email: 'info@fusionstem-foundation.org'
             };
             
             // Send email using EmailJS
-            emailjs.send('service_nkctrli', 'template_651hno6', templateParams)
+            emailjs.send('service_u5yub0k', 'template_wb9r0jk', templateParams)
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
                     showNotification('Thank you for your message! We\'ll get back to you soon.', 'success');

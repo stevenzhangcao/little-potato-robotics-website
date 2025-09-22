@@ -2369,3 +2369,285 @@ nav {
     text-align: center;
   }
 }
+
+/* FusionSTEM Foundation Section */
+.foundation {
+  padding: var(--spacing-4xl) 0;
+  background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+  position: relative;
+  overflow: hidden;
+}
+
+.foundation::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(76, 175, 80, 0.05), rgba(33, 150, 243, 0.05), rgba(255, 152, 0, 0.05));
+  pointer-events: none;
+}
+
+.foundation-hero-card {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-3xl);
+  margin-bottom: var(--spacing-3xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.foundation-hero-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(33, 150, 243, 0.1));
+  pointer-events: none;
+}
+
+.foundation-hero-icon {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+  box-shadow: var(--shadow-md);
+}
+
+.foundation-hero-content {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.foundation-hero-content h3 {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+  line-height: 1.3;
+}
+
+.foundation-hero-content p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+}
+
+.foundation-hero-content p:last-child {
+  margin-bottom: 0;
+}
+
+.foundation-what-we-do {
+  margin-bottom: var(--spacing-3xl);
+}
+
+.foundation-what-we-do h3 {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.foundation-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.foundation-card {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.foundation-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.05), rgba(33, 150, 243, 0.05));
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  pointer-events: none;
+}
+
+.foundation-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.foundation-card:hover::before {
+  opacity: 1;
+}
+
+.foundation-card-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.foundation-card-content {
+  position: relative;
+  z-index: 1;
+}
+
+.foundation-card-content h4 {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.foundation-card-content p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.foundation-contact {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.foundation-contact-info h4 {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.foundation-contact-info p {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.foundation-contact-info a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.foundation-contact-info a:hover {
+  color: var(--primary-dark);
+}
+
+.foundation-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all var(--transition-normal);
+  margin-top: var(--spacing-lg);
+}
+
+.foundation-link:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  color: white;
+}
+
+.foundation-link i {
+  font-size: 0.9rem;
+}
+
+/* Dark mode for Foundation section */
+@media (prefers-color-scheme: dark) {
+  .foundation {
+    background: linear-gradient(135deg, var(--dark-bg-primary), var(--dark-bg-secondary));
+  }
+  
+  .foundation-hero-card,
+  .foundation-card,
+  .foundation-contact {
+    background: var(--dark-bg-tertiary);
+    border-color: var(--dark-border-color);
+  }
+  
+  .foundation-hero-content h3,
+  .foundation-what-we-do h3,
+  .foundation-card-content h4,
+  .foundation-contact-info h4 {
+    color: var(--dark-text-primary);
+  }
+  
+  .foundation-hero-content p,
+  .foundation-card-content p,
+  .foundation-contact-info p {
+    color: var(--dark-text-secondary);
+  }
+}
+
+/* Mobile responsive for Foundation section */
+@media (max-width: 768px) {
+  .foundation {
+    padding: var(--spacing-2xl) 0;
+  }
+  
+  .foundation-hero-card {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--spacing-xl);
+  }
+  
+  .foundation-hero-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .foundation-hero-content h3 {
+    font-size: var(--font-size-xl);
+  }
+  
+  .foundation-cards {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+  
+  .foundation-card {
+    padding: var(--spacing-lg);
+  }
+  
+  .foundation-contact {
+    padding: var(--spacing-xl);
+  }
+}
