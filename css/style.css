@@ -1501,8 +1501,8 @@ nav {
 }
 
 .npo-content {
-  max-width: 1000px;
-  margin: 0 auto;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .npo-intro {
@@ -1511,12 +1511,12 @@ nav {
 }
 
 .npo-intro h3 {
-  color: var(--text-primary);
+    color: var(--text-primary);
   margin-bottom: var(--spacing-md);
 }
 
 .npo-intro p {
-  color: var(--text-secondary);
+    color: var(--text-secondary);
   max-width: 600px;
   margin: 0 auto;
 }
@@ -1600,7 +1600,7 @@ nav {
     display: flex;
     align-items: center;
   gap: var(--spacing-xl);
-  color: white;
+    color: white;
   box-shadow: var(--shadow-lg);
 }
 
@@ -1651,7 +1651,7 @@ nav {
 }
 
 .contact-item i {
-  color: var(--primary-color);
+    color: var(--primary-color);
   width: 20px;
   font-size: var(--font-size-lg);
 }
@@ -1854,41 +1854,41 @@ nav {
   .media-item:hover {
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
     border-color: var(--primary-color);
-  }
-  
-  .media-info {
+}
+
+.media-info {
     background: var(--dark-bg-secondary);
-  }
-  
-  .media-info h4 {
+}
+
+.media-info h4 {
     color: var(--dark-text-primary);
-  }
-  
-  .media-item:hover .media-info h4 {
+}
+
+.media-item:hover .media-info h4 {
     color: var(--primary-color);
-  }
-  
-  .media-description {
+}
+
+.media-description {
     color: var(--dark-text-secondary);
-  }
-  
-  .media-source {
+}
+
+.media-source {
     background: rgba(74, 144, 226, 0.2);
     color: var(--primary-color);
     border: 1px solid rgba(74, 144, 226, 0.3);
-  }
-  
-  .media-item:hover .media-source {
+}
+
+.media-item:hover .media-source {
     background: rgba(74, 144, 226, 0.3);
     color: white;
     border-color: var(--primary-color);
   }
   
-  .resources {
+.resources {
     background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
-  }
-  
-  .resources-hero-card {
+}
+
+.resources-hero-card {
     background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4);
   }
@@ -2508,9 +2508,9 @@ nav {
   height: 60px;
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   color: white;
   font-size: 1.5rem;
   margin-bottom: var(--spacing-lg);
@@ -2567,7 +2567,7 @@ nav {
 
 .foundation-link {
   display: inline-flex;
-  align-items: center;
+        align-items: center;
   gap: var(--spacing-sm);
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
