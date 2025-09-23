@@ -1313,18 +1313,18 @@
                     </div>
                     <div class="contact-form">
                         <h3 data-en="Send us a Message" data-zh="给我们发消息">Send us a Message</h3>
-                        <form class="form">
+                        <form class="form" id="contactForm">
                             <div class="form-group">
-                                <input type="text" placeholder="Your Name" data-en-placeholder="Your Name" data-zh-placeholder="您的姓名" required>
+                                <input type="text" name="name" placeholder="Your Name" data-en-placeholder="Your Name" data-zh-placeholder="您的姓名" required>
                             </div>
                             <div class="form-group">
-                                <input type="email" placeholder="Your Email" data-en-placeholder="Your Email" data-zh-placeholder="您的邮箱" required>
+                                <input type="email" name="email" placeholder="Your Email" data-en-placeholder="Your Email" data-zh-placeholder="您的邮箱" required>
                             </div>
                             <div class="form-group">
-                                <input type="text" placeholder="Subject" data-en-placeholder="Subject" data-zh-placeholder="主题">
+                                <input type="text" name="subject" placeholder="Subject" data-en-placeholder="Subject" data-zh-placeholder="主题">
                             </div>
                             <div class="form-group">
-                                <textarea placeholder="Your Message" data-en-placeholder="Your Message" data-zh-placeholder="您的消息" rows="5" required></textarea>
+                                <textarea name="message" placeholder="Your Message" data-en-placeholder="Your Message" data-zh-placeholder="您的消息" rows="5" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary">
                                 <span data-en="Send Message" data-zh="发送消息">Send Message</span>
