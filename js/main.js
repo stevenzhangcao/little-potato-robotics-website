@@ -49,121 +49,45 @@ function initSmoothScrolling() {
 
 // Form Handling with EmailJS
 function initFormHandling() {
-    const contactForm = document.querySelector('#contactForm') || document.querySelector('.contact-form .form');
+    console.log('=== INITIALIZING FORM HANDLING ===');
+    
+    // Try multiple selectors to find the form
+    const contactForm = document.querySelector('#contactForm') || 
+                       document.querySelector('.contact-form .form') ||
+                       document.querySelector('form.form') ||
+                       document.querySelector('.contact-form form');
     
     console.log('Looking for contact form...');
     console.log('Contact form found:', contactForm);
+    console.log('Form element:', contactForm ? contactForm.tagName : 'null');
     
     if (contactForm) {
+        console.log('Form found, setting up EmailJS...');
+        
         // Initialize EmailJS with your public key
-        emailjs.init('VzlpHD2wwgOBDvjrm');
-        console.log('EmailJS initialized with key: VzlpHD2wwgOBDvjrm');
+        try {
+            emailjs.init('VzlpHD2wwgOBDvjrm');
+            console.log('EmailJS initialized successfully with key: VzlpHD2wwgOBDvjrm');
+        } catch (error) {
+            console.error('EmailJS initialization failed:', error);
+        }
         
         contactForm.addEventListener('submit', function(e) {
             console.log('Form submit event triggered!');
             e.preventDefault();
             
             // Get form data using name attributes
-            const name = this.querySelector('input[name="name"]').value;
-            const email = this.querySelector('input[name="email"]').value;
-            const subject = this.querySelector('input[name="subject"]').value;
-            const message = this.querySelector('textarea[name="message"]').value;
-            
-            console.log('Form data collected:', { name, email, subject, message });
-            
-            // Basic validation
-            if (!name || !email || !message) {
-                showNotification('Please fill in all required fields.', 'error');
-                return;
-            }
-            
-            if (!isValidEmail(email)) {
-                showNotification('Please enter a valid email address.', 'error');
-                return;
-            }
-            
-            // Clean and validate form data
-            const cleanName = name.trim();
-            const cleanEmail = email.trim().toLowerCase();
-            const cleanSubject = subject ? subject.trim() : '';
-            const cleanMessage = message.trim();
-            
-            console.log('Cleaned form data:', { cleanName, cleanEmail, cleanSubject, cleanMessage });
-            
-            // Show loading state
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Sending...';
-            submitBtn.disabled = true;
-            
-            // Prepare template parameters for EmailJS
-            const templateParams = {
-                // Sender information
-                from_name: cleanName,
-                from_email: cleanEmail,
-                user_name: cleanName,
-                user_email: cleanEmail,
-                
-                // Message content
-                subject: cleanSubject || 'Contact Form Message from Little Potato Robotics Website',
-                message: cleanMessage,
-                user_message: cleanMessage,
-                message_text: cleanMessage,
-                
-                // Recipient information
-                to_email: 'info@fusionstem-foundation.org',
-                to_name: 'Little Potato Robotics Team',
-                
-                // Additional context
-                website: 'Little Potato Robotics',
-                team_name: 'Little Potato Robotics',
-                team_number: '30592',
-                location: 'Fremont, California',
-                
-                // Timestamp
-                date: new Date().toLocaleDateString(),
-                time: new Date().toLocaleTimeString(),
-                
-                // Form type
-                form_type: 'Contact Form',
-                source: 'Website Contact Form'
+            const formData = {
+                name: this.querySelector('input[name="name"]')?.value || '',
+                email: this.querySelector('input[name="email"]')?.value || '',
+                subject: this.querySelector('input[name="subject"]')?.value || '',
+                message: this.querySelector('textarea[name="message"]')?.value || ''
             };
             
-            // Send email using EmailJS
-            console.log('Sending email with params:', templateParams);
-            console.log('Using Service ID: service_u5yub0k');
-            console.log('Using Template ID: template_wb9r0jk');
-            console.log('Sending to: info@fusionstem-foundation.org');
+            console.log('Form submit - Form data:', formData);
             
-            // Log the complete email content that will be sent
-            console.log('=== EMAIL CONTENT PREVIEW ===');
-            console.log('From:', cleanName, '<' + cleanEmail + '>');
-            console.log('Subject:', cleanSubject || 'Contact Form Message from Little Potato Robotics Website');
-            console.log('Message:', cleanMessage);
-            console.log('Team: Little Potato Robotics (Team 30592)');
-            console.log('Location: Fremont, California');
-            console.log('Date:', new Date().toLocaleDateString());
-            console.log('Time:', new Date().toLocaleTimeString());
-            console.log('================================');
-            
-            emailjs.send('service_u5yub0k', 'template_wb9r0jk', templateParams)
-                .then(function(response) {
-                    console.log('SUCCESS!', response.status, response.text);
-                    console.log('Email sent successfully to info@fusionstem-foundation.org');
-                    showNotification('Thank you for your message! We\'ll get back to you soon.', 'success');
-                    contactForm.reset();
-                }, function(error) {
-                    console.log('FAILED...', error);
-                    console.error('EmailJS Error Details:', error);
-                    console.error('Error Status:', error.status);
-                    console.error('Error Text:', error.text);
-                    showNotification('Sorry, there was an error sending your message. Please try again or email us directly at info@fusionstem-foundation.org', 'error');
-                })
-                .finally(function() {
-                    // Reset button state
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                });
+            // Call the form submission function
+            handleFormSubmission(formData, contactForm);
         });
         
         // Fallback: Add click listener to submit button
@@ -172,12 +96,141 @@ function initFormHandling() {
             console.log('Submit button found, adding click listener');
             submitButton.addEventListener('click', function(e) {
                 console.log('Submit button clicked!');
-                // Let the form submit event handle it
+                e.preventDefault();
+                
+                // Get form data directly
+                const formData = {
+                    name: contactForm.querySelector('input[name="name"]')?.value || '',
+                    email: contactForm.querySelector('input[name="email"]')?.value || '',
+                    subject: contactForm.querySelector('input[name="subject"]')?.value || '',
+                    message: contactForm.querySelector('textarea[name="message"]')?.value || ''
+                };
+                
+                console.log('Button click - Form data:', formData);
+                
+                // Call the form submission function
+                handleFormSubmission(formData, contactForm);
             });
         }
     } else {
         console.error('Contact form not found!');
+        console.log('Available forms on page:', document.querySelectorAll('form'));
     }
+}
+
+// Handle form submission (used by both form submit and button click)
+function handleFormSubmission(formData, contactForm) {
+    console.log('=== HANDLING FORM SUBMISSION ===');
+    console.log('Form data received:', formData);
+    
+    const { name, email, subject, message } = formData;
+    
+    // Basic validation
+    if (!name || !email || !message) {
+        showNotification('Please fill in all required fields.', 'error');
+        return;
+    }
+    
+    if (!isValidEmail(email)) {
+        showNotification('Please enter a valid email address.', 'error');
+        return;
+    }
+    
+    // Clean and validate form data
+    const cleanName = name.trim();
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanSubject = subject ? subject.trim() : '';
+    const cleanMessage = message.trim();
+    
+    console.log('Cleaned form data:', { cleanName, cleanEmail, cleanSubject, cleanMessage });
+    
+    // Check if message contains contact information
+    const hasContactInfo = cleanMessage.toLowerCase().includes('email') || 
+                         cleanMessage.toLowerCase().includes('phone') || 
+                         cleanMessage.toLowerCase().includes('contact') ||
+                         cleanMessage.toLowerCase().includes('@');
+    
+    if (!hasContactInfo) {
+        const confirmSend = confirm('We recommend including your email address or phone number in your message so we can reach you back. Do you want to continue without adding contact information?');
+        if (!confirmSend) {
+            return;
+        }
+    }
+    
+    // Show loading state
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+    
+    // Prepare template parameters for EmailJS
+    const templateParams = {
+        // Sender information
+        from_name: cleanName,
+        from_email: cleanEmail,
+        user_name: cleanName,
+        user_email: cleanEmail,
+        
+        // Message content
+        subject: cleanSubject || 'Contact Form Message from Little Potato Robotics Website',
+        message: cleanMessage,
+        user_message: cleanMessage,
+        message_text: cleanMessage,
+        
+        // Recipient information
+        to_email: 'info@fusionstem-foundation.org',
+        to_name: 'Little Potato Robotics Team',
+        
+        // Additional context
+        website: 'Little Potato Robotics',
+        team_name: 'Little Potato Robotics',
+        team_number: '30592',
+        location: 'Fremont, California',
+        
+        // Timestamp
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        
+        // Form type
+        form_type: 'Contact Form',
+        source: 'Website Contact Form'
+    };
+    
+    // Send email using EmailJS
+    console.log('Sending email with params:', templateParams);
+    console.log('Using Service ID: service_u5yub0k');
+    console.log('Using Template ID: template_wb9r0jk');
+    console.log('Sending to: info@fusionstem-foundation.org');
+    
+    // Log the complete email content that will be sent
+    console.log('=== EMAIL CONTENT PREVIEW ===');
+    console.log('From:', cleanName, '<' + cleanEmail + '>');
+    console.log('Subject:', cleanSubject || 'Contact Form Message from Little Potato Robotics Website');
+    console.log('Message:', cleanMessage);
+    console.log('Team: Little Potato Robotics (Team 30592)');
+    console.log('Location: Fremont, California');
+    console.log('Date:', new Date().toLocaleDateString());
+    console.log('Time:', new Date().toLocaleTimeString());
+    console.log('================================');
+    
+    emailjs.send('service_u5yub0k', 'template_wb9r0jk', templateParams)
+        .then(function(response) {
+            console.log('SUCCESS!', response.status, response.text);
+            console.log('Email sent successfully to info@fusionstem-foundation.org');
+            showNotification('Thank you for your message! We\'ll get back to you soon.', 'success');
+            contactForm.reset();
+        }, function(error) {
+            console.log('FAILED...', error);
+            console.error('EmailJS Error Details:', error);
+            console.error('Error Status:', error.status);
+            console.error('Error Text:', error.text);
+            showNotification('Sorry, there was an error sending your message. Please try again or email us directly at info@fusionstem-foundation.org', 'error');
+        })
+        .finally(function() {
+            // Reset button state
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        });
 }
 
 // Email validation helper

@@ -2827,3 +2827,26 @@ nav {
 [data-theme="dark"] .location-info p {
   color: var(--dark-text-secondary);
 }
+
+/* Contact form note styling */
+.contact-note {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  color: #1565c0;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #1976d2;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(25, 118, 210, 0.2);
+}
+
+[data-theme="dark"] .contact-note {
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  color: #ffffff;
+  border-left-color: #60a5fa;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
