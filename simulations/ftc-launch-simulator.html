@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FTC Track Curve Simulator - Matter.js Physics</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <script src="../js/shared-comments.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -189,6 +190,40 @@
             transform: translateY(0);
             box-shadow: 0 2px 4px rgba(244, 67, 54, 0.3);
         }
+        
+        /* Comment system animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .comment-item {
+            transition: all 0.3s ease;
+        }
+        
+        .comment-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Form styling improvements */
+        .control-group input:focus,
+        .control-group select:focus,
+        .control-group textarea:focus {
+            outline: none;
+            border-color: #1976D2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+        
+        .control-group textarea {
+            font-family: inherit;
+        }
     </style>
 </head>
 <body>
@@ -336,6 +371,50 @@
                     <input type="number" id="contactTime" value="0.01" min="0.001" max="0.1" step="0.001">
                     <span class="unit">s</span>
                 </div>
+                
+                <h3>Global Community Forum</h3>
+                <div class="control-group">
+                    <label for="userName">Your Name/Team</label>
+                    <input type="text" id="userName" placeholder="Enter your name or team (e.g., Team 30592, John Smith)" style="width: 100%; padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                </div>
+                
+                <div class="control-group">
+                    <label for="userLocation">Location (Optional)</label>
+                    <input type="text" id="userLocation" placeholder="City, State/Country (e.g., Fremont, CA)" style="width: 100%; padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                </div>
+                
+                <div class="control-group">
+                    <label for="commentType">Comment Type</label>
+                    <select id="commentType" style="width: 100%; padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                        <option value="improvement">Improvement Suggestion</option>
+                        <option value="parameters">Best Parameters</option>
+                        <option value="bug">Bug Report</option>
+                        <option value="feature">Feature Request</option>
+                        <option value="general">General Comment</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="userComment">Your Comment</label>
+                    <textarea id="userComment" placeholder="Share your thoughts, best parameters, or improvement suggestions..." rows="4" style="width: 100%; padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; resize: vertical;"></textarea>
+                </div>
+                
+                <div class="control-group">
+                    <button id="submitComment" class="sim-button" style="background: linear-gradient(135deg, #4CAF50, #45a049); color: white; border: none; border-radius: 8px; padding: 12px 24px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; width: 100%;">
+                        Submit Comment
+                    </button>
+                </div>
+                
+                <div class="control-group">
+                    <button id="clearComments" class="sim-button" style="background: linear-gradient(135deg, #f44336, #d32f2f); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; width: 48%; margin-right: 4%;">
+                        Clear All
+                    </button>
+                    <button id="exportComments" class="sim-button" style="background: linear-gradient(135deg, #2196F3, #1976D2); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; width: 48%;">
+                        Export
+                    </button>
+                </div>
+                
+                <div id="commentStatus" style="margin-top: 10px; padding: 10px; border-radius: 6px; display: none;"></div>
             </div>
             
             <div class="simulation">
@@ -344,6 +423,27 @@
                     <button id="resetBtn" class="sim-button reset-btn">Reset</button>
                 </div>
 <canvas id="simulatorCanvas" width="1000" height="600"></canvas>
+                
+                <div class="info-panel">
+                    <h4>Community Comments</h4>
+                    <div id="commentsList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;">
+                        <div class="comment-item" style="background: #f8f9fa; padding: 10px; margin-bottom: 10px; border-radius: 6px; border-left: 4px solid #4CAF50;">
+                            <div style="font-weight: bold; color: #333; margin-bottom: 5px;">Team 30592 - Best Parameters</div>
+                            <div style="font-size: 0.9em; color: #666; margin-bottom: 5px;">Parameters • 2 hours ago</div>
+                            <div style="color: #555;">Try these optimized settings: d0=40.64mm, d1=27mm, wheel friction=2.0, RPM=200. The higher friction and RPM give much better launch performance!</div>
+                        </div>
+                        <div class="comment-item" style="background: #f8f9fa; padding: 10px; margin-bottom: 10px; border-radius: 6px; border-left: 4px solid #2196F3;">
+                            <div style="font-weight: bold; color: #333; margin-bottom: 5px;">FTC Mentor - Improvement Suggestion</div>
+                            <div style="font-size: 0.9em; color: #666; margin-bottom: 5px;">Improvement • 1 day ago</div>
+                            <div style="color: #555;">Great simulator! Would love to see a trajectory prediction line and collision force visualization. Also, adding multiple ball types would be helpful.</div>
+                        </div>
+                        <div class="comment-item" style="background: #f8f9fa; padding: 10px; margin-bottom: 10px; border-radius: 6px; border-left: 4px solid #FF9800;">
+                            <div style="font-weight: bold; color: #333; margin-bottom: 5px;">Robotics Student - Feature Request</div>
+                            <div style="font-size: 0.9em; color: #666; margin-bottom: 5px;">Feature • 3 days ago</div>
+                            <div style="color: #555;">This is amazing for learning FTC concepts! Could you add a slow-motion mode and the ability to save/load parameter presets?</div>
+                        </div>
+                    </div>
+                </div>
                 
                 <div class="info-panel">
                     <h4>Track Information</h4>
@@ -1274,6 +1374,382 @@ function render() {
   animationId = requestAnimationFrame(render);
 }
 
+// --- Global Shared Comment System ---
+const GLOBAL_COMMENT_STORAGE_KEY = 'ftcGlobalComments';
+const CURRENT_SIMULATOR = 'ftc-launch-simulator';
+
+// Initialize global comment system
+let globalComments;
+
+// Initialize global comment system
+function initializeGlobalComments() {
+  if (typeof FTCGlobalComments !== 'undefined') {
+    globalComments = new FTCGlobalComments(CURRENT_SIMULATOR, {
+      showLocation: true,
+      showSimulator: true,
+      enableExport: true,
+      enableImport: true
+    });
+    globalComments.init();
+  } else {
+    console.warn('FTCGlobalComments not loaded, falling back to local system');
+    loadComments();
+  }
+}
+
+// Save comments to global storage
+function saveComments(comments) {
+  try {
+    // Load existing global data
+    const existingData = JSON.parse(localStorage.getItem(GLOBAL_COMMENT_STORAGE_KEY) || '{"comments": [], "lastUpdated": null}');
+    
+    // Update global data
+    const globalData = {
+      ...existingData,
+      comments: comments,
+      lastUpdated: new Date().toISOString(),
+      version: '1.0'
+    };
+    
+    localStorage.setItem(GLOBAL_COMMENT_STORAGE_KEY, JSON.stringify(globalData));
+    console.log('Comments saved to global storage');
+  } catch (error) {
+    console.error('Error saving comments:', error);
+    showCommentStatus('Warning: Comments may not be saved permanently.', 'error');
+  }
+}
+
+// Load default comments for first-time users
+function loadDefaultComments() {
+  const defaultComments = [
+    {
+      id: 'default_1',
+      userName: 'Team 30592',
+      userLocation: 'Fremont, CA',
+      commentType: 'parameters',
+      userComment: 'Try these optimized settings: d0=40.64mm, d1=27mm, wheel friction=2.0, RPM=200. The higher friction and RPM give much better launch performance!',
+      timestamp: Date.now() - (2 * 60 * 60 * 1000), // 2 hours ago
+      simulator: CURRENT_SIMULATOR,
+      isDefault: true
+    },
+    {
+      id: 'default_2',
+      userName: 'FTC Mentor',
+      userLocation: 'San Jose, CA',
+      commentType: 'improvement',
+      userComment: 'Great simulator! Would love to see a trajectory prediction line and collision force visualization. Also, adding multiple ball types would be helpful.',
+      timestamp: Date.now() - (24 * 60 * 60 * 1000), // 1 day ago
+      simulator: CURRENT_SIMULATOR,
+      isDefault: true
+    },
+    {
+      id: 'default_3',
+      userName: 'Robotics Student',
+      userLocation: 'Oakland, CA',
+      commentType: 'feature',
+      userComment: 'This is amazing for learning FTC concepts! Could you add a slow-motion mode and the ability to save/load parameter presets?',
+      timestamp: Date.now() - (3 * 24 * 60 * 60 * 1000), // 3 days ago
+      simulator: CURRENT_SIMULATOR,
+      isDefault: true
+    },
+    {
+      id: 'global_1',
+      userName: 'FTC Community',
+      userLocation: 'Global',
+      commentType: 'general',
+      userComment: 'Welcome to the global FTC simulator community! Share your best parameters, report bugs, and suggest improvements. Your feedback helps make these simulators better for everyone!',
+      timestamp: Date.now() - (7 * 24 * 60 * 60 * 1000), // 1 week ago
+      simulator: 'global',
+      isDefault: true
+    }
+  ];
+  
+  // Initialize global storage with default comments
+  const globalData = {
+    comments: defaultComments,
+    lastUpdated: new Date().toISOString(),
+    version: '1.0'
+  };
+  
+  localStorage.setItem(GLOBAL_COMMENT_STORAGE_KEY, JSON.stringify(globalData));
+  displayComments(defaultComments.filter(c => c.simulator === CURRENT_SIMULATOR || c.simulator === 'global'));
+}
+
+// Display comments in the UI
+function displayComments(comments) {
+  const commentsList = document.getElementById('commentsList');
+  commentsList.innerHTML = '';
+  
+  // Sort comments by timestamp (newest first)
+  const sortedComments = comments.sort((a, b) => b.timestamp - a.timestamp);
+  
+  sortedComments.forEach(comment => {
+    const commentElement = createCommentElementFromData(comment);
+    commentsList.appendChild(commentElement);
+  });
+}
+
+// Create comment element from stored data
+function createCommentElementFromData(commentData) {
+  const commentDiv = document.createElement('div');
+  commentDiv.className = 'comment-item';
+  commentDiv.dataset.commentId = commentData.id;
+  
+  // Get color based on comment type
+  const colors = {
+    'improvement': '#4CAF50',
+    'parameters': '#4CAF50', 
+    'bug': '#f44336',
+    'feature': '#FF9800',
+    'general': '#2196F3'
+  };
+  
+  const typeLabels = {
+    'improvement': 'Improvement Suggestion',
+    'parameters': 'Best Parameters',
+    'bug': 'Bug Report', 
+    'feature': 'Feature Request',
+    'general': 'General Comment'
+  };
+  
+  const borderColor = colors[commentData.commentType] || '#2196F3';
+  const typeLabel = typeLabels[commentData.commentType] || 'Comment';
+  
+  commentDiv.style.cssText = `
+    background: #f8f9fa; 
+    padding: 10px; 
+    margin-bottom: 10px; 
+    border-radius: 6px; 
+    border-left: 4px solid ${borderColor};
+    transition: all 0.3s ease;
+  `;
+  
+  // Format timestamp
+  const timeAgo = formatTimeAgo(commentData.timestamp);
+  
+  commentDiv.innerHTML = `
+    <div style="font-weight: bold; color: #333; margin-bottom: 5px;">${commentData.userName} - ${typeLabel}</div>
+    <div style="font-size: 0.9em; color: #666; margin-bottom: 5px;">
+      ${typeLabel} • ${timeAgo}
+      ${commentData.userLocation ? ` • ${commentData.userLocation}` : ''}
+      ${commentData.simulator && commentData.simulator !== CURRENT_SIMULATOR ? ` • From ${commentData.simulator.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}` : ''}
+    </div>
+    <div style="color: #555;">${commentData.userComment}</div>
+    ${commentData.isDefault ? '<div style="font-size: 0.8em; color: #999; margin-top: 5px; font-style: italic;">Default comment</div>' : ''}
+  `;
+  
+  return commentDiv;
+}
+
+// Format timestamp to human-readable format
+function formatTimeAgo(timestamp) {
+  const now = Date.now();
+  const diff = now - timestamp;
+  
+  const minutes = Math.floor(diff / (1000 * 60));
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  
+  if (minutes < 60) {
+    return minutes <= 1 ? 'Just now' : `${minutes} minutes ago`;
+  } else if (hours < 24) {
+    return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+  } else {
+    return `${days} day${days > 1 ? 's' : ''} ago`;
+  }
+}
+
+function submitComment() {
+  const userName = document.getElementById('userName').value.trim();
+  const userLocation = document.getElementById('userLocation').value.trim();
+  const commentType = document.getElementById('commentType').value;
+  const userComment = document.getElementById('userComment').value.trim();
+  const statusDiv = document.getElementById('commentStatus');
+  
+  // Validation
+  if (!userName || !userComment) {
+    showCommentStatus('Please fill in both name and comment fields.', 'error');
+    return;
+  }
+  
+  if (userComment.length < 10) {
+    showCommentStatus('Please write a more detailed comment (at least 10 characters).', 'error');
+    return;
+  }
+  
+  // Create new comment object
+  const newComment = {
+    id: 'comment_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+    userName: userName,
+    userLocation: userLocation || null,
+    commentType: commentType,
+    userComment: userComment,
+    timestamp: Date.now(),
+    simulator: CURRENT_SIMULATOR,
+    isDefault: false
+  };
+  
+  // Load existing global comments
+  const globalData = JSON.parse(localStorage.getItem(GLOBAL_COMMENT_STORAGE_KEY) || '{"comments": []}');
+  const existingComments = globalData.comments || [];
+  
+  // Add new comment to the beginning
+  existingComments.unshift(newComment);
+  
+  // Save updated comments to global storage
+  saveComments(existingComments);
+  
+  // Refresh display (filter for current simulator)
+  const relevantComments = existingComments.filter(comment => 
+    !comment.simulator || comment.simulator === CURRENT_SIMULATOR || comment.simulator === 'global'
+  );
+  displayComments(relevantComments);
+  
+  // Clear form
+  document.getElementById('userName').value = '';
+  document.getElementById('userLocation').value = '';
+  document.getElementById('userComment').value = '';
+  document.getElementById('commentType').value = 'improvement';
+  
+  // Show success message
+  showCommentStatus('Thank you for your comment! It has been saved to the global community forum.', 'success');
+  
+  // Scroll to show the new comment
+  const newCommentElement = document.querySelector(`[data-comment-id="${newComment.id}"]`);
+  if (newCommentElement) {
+    newCommentElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  
+  console.log('New comment submitted to global storage:', newComment);
+}
+
+// Clear all comments (with confirmation)
+function clearAllComments() {
+  const confirmed = confirm('Are you sure you want to clear all comments? This action cannot be undone.');
+  if (confirmed) {
+    // Clear global storage
+    localStorage.removeItem(GLOBAL_COMMENT_STORAGE_KEY);
+    
+    // Reload default comments
+    loadDefaultComments();
+    
+    showCommentStatus('All comments have been cleared. Default comments have been restored.', 'success');
+    console.log('All global comments cleared');
+  }
+}
+
+// Export comments to JSON file
+function exportComments() {
+  try {
+    const globalData = JSON.parse(localStorage.getItem(GLOBAL_COMMENT_STORAGE_KEY) || '{"comments": []}');
+    const comments = globalData.comments || [];
+    
+    if (comments.length === 0) {
+      showCommentStatus('No comments to export.', 'error');
+      return;
+    }
+    
+    // Create export data with metadata
+    const exportData = {
+      exportDate: new Date().toISOString(),
+      simulatorVersion: '1.0',
+      totalComments: comments.length,
+      globalComments: true,
+      comments: comments
+    };
+    
+    // Create and download JSON file
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(dataBlob);
+    link.download = `ftc-global-comments-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    
+    showCommentStatus(`Successfully exported ${comments.length} global comments to JSON file.`, 'success');
+    console.log('Global comments exported:', exportData);
+  } catch (error) {
+    console.error('Error exporting comments:', error);
+    showCommentStatus('Error exporting comments. Please try again.', 'error');
+  }
+}
+
+// Import comments from JSON file
+function importComments(file) {
+  const reader = new FileReader();
+  
+  reader.onload = function(e) {
+    try {
+      const importData = JSON.parse(e.target.result);
+      
+      // Validate import data structure
+      if (!importData.comments || !Array.isArray(importData.comments)) {
+        throw new Error('Invalid file format');
+      }
+      
+      // Merge with existing global comments (avoid duplicates)
+      const globalData = JSON.parse(localStorage.getItem(GLOBAL_COMMENT_STORAGE_KEY) || '{"comments": []}');
+      const existingComments = globalData.comments || [];
+      const existingIds = new Set(existingComments.map(c => c.id));
+      
+      const newComments = importData.comments.filter(comment => !existingIds.has(comment.id));
+      const mergedComments = [...newComments, ...existingComments];
+      
+      // Save merged comments to global storage
+      saveComments(mergedComments);
+      
+      // Refresh display (filter for current simulator)
+      const relevantComments = mergedComments.filter(comment => 
+        !comment.simulator || comment.simulator === CURRENT_SIMULATOR || comment.simulator === 'global'
+      );
+      displayComments(relevantComments);
+      
+      showCommentStatus(`Successfully imported ${newComments.length} new comments to global storage.`, 'success');
+      console.log('Comments imported to global storage:', newComments);
+    } catch (error) {
+      console.error('Error importing comments:', error);
+      showCommentStatus('Error importing comments. Please check the file format.', 'error');
+    }
+  };
+  
+  reader.readAsText(file);
+}
+
+
+function showCommentStatus(message, type) {
+  const statusDiv = document.getElementById('commentStatus');
+  statusDiv.style.display = 'block';
+  statusDiv.textContent = message;
+  
+  if (type === 'success') {
+    statusDiv.style.cssText = `
+      margin-top: 10px; 
+      padding: 10px; 
+      border-radius: 6px; 
+      display: block;
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    `;
+  } else if (type === 'error') {
+    statusDiv.style.cssText = `
+      margin-top: 10px; 
+      padding: 10px; 
+      border-radius: 6px; 
+      display: block;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    `;
+  }
+  
+  // Hide status after 5 seconds
+  setTimeout(() => {
+    statusDiv.style.display = 'none';
+  }, 5000);
+}
+
 // --- Event Listeners ---
 function setupEventListeners() {
   const parameterIds = ['r1', 'A1', 'd0', 'd1', 'd2Length', 'd3Length', 'x0', 'y0', 'wheelRadius', 'wheelHeight', 'wheelFriction', 'wheelRPM', 'animationSpeed', 'scale', 'ballRadius', 'ballHeight', 'ballSpeed', 'ballFriction', 'trackFriction', 'ballWeight', 'ballSoftness', 'contactTime'];
@@ -1308,6 +1784,36 @@ function setupEventListeners() {
   document.getElementById('beginBtn').addEventListener('click', beginSimulation);
   document.getElementById('resetBtn').addEventListener('click', resetSimulation);
   
+  // Comment submission (use global system if available)
+  document.getElementById('submitComment').addEventListener('click', () => {
+    if (globalComments) {
+      globalComments.submitComment();
+    } else {
+      submitComment();
+    }
+  });
+  
+  // Comment management buttons
+  document.getElementById('clearComments').addEventListener('click', clearAllComments);
+  document.getElementById('exportComments').addEventListener('click', () => {
+    if (globalComments) {
+      globalComments.exportComments();
+    } else {
+      exportComments();
+    }
+  });
+  
+  // Allow Enter key to submit comment
+  document.getElementById('userComment').addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'Enter') {
+      if (globalComments) {
+        globalComments.submitComment();
+      } else {
+        submitComment();
+      }
+    }
+  });
+  
   // Initialize button states
   document.getElementById('resetBtn').disabled = true;
 }
@@ -1334,10 +1840,13 @@ function initializeSimulation() {
   setupCollisionEvents();
   
   // Set up event listeners
-setupEventListeners();
+  setupEventListeners();
+  
+  // Initialize global comment system
+  initializeGlobalComments();
   
   // Start rendering
-render();
+  render();
 }
 
 // Initialize when page loads
