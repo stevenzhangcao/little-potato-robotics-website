@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTC Track Curve Simulator - Matter.js Physics</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .content {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .controls {
+            flex: 0 0 300px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            height: fit-content;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .control-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .control-group input:focus {
+            outline: none;
+            border-color: #1976D2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+        
+        .control-group .unit {
+            color: #666;
+            font-size: 0.9em;
+            margin-left: 5px;
+        }
+        
+        .simulation {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        #simulatorCanvas {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .info-panel {
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .info-value {
+            color: #666;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .simulation-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .sim-button {
+            min-width: 150px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .begin-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+        }
+        
+        .begin-btn:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+        }
+        
+        .begin-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+        }
+        
+        .begin-btn:disabled {
+            background: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .reset-btn {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+            box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+        }
+        
+        .reset-btn:hover {
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(244, 67, 54, 0.4);
+        }
+        
+        .reset-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(244, 67, 54, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>FTC Track Curve Simulator</h1>
+            <p>Interactive Track Geometry with Real-time Updates</p>
+        </div>
+        
+        <div class="content">
+            <div class="controls">
+                <h3>Track Parameters</h3>
+                
+                <div class="control-group">
+                    <label for="r1">Curve Radius (r1)</label>
+                    <input type="number" id="r1" value="60" min="12.7" max="200" step="2.54">
+                    <span class="unit">mm</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="A1">Curve Angle (A1)</label>
+                    <input type="number" id="A1" value="45" min="10" max="120" step="5">
+                    <span class="unit">degrees</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="d0">Distance d0</label>
+                    <input type="number" id="d0" value="40.64" min="12.7" max="101.6" step="2.54">
+                    <span class="unit">mm</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="d1">Distance d1</label>
+                    <input type="number" id="d1" value="27" min="0" max="101.6" step="1">
+                    <span class="unit">mm</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="d2Length">Distance d2 Length</label>
+                    <input type="number" id="d2Length" value="20" min="20" max="76.2" step="2.54">
+                    <span class="unit">mm</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="d3Length">Distance d3 Length (Left of d0)</label>
+                    <input type="number" id="d3Length" value="66.04" min="12.7" max="101.6" step="2.54">
+                    <span class="unit">mm</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="x0">Starting X Position</label>
+                    <input type="number" id="x0" value="25.4" min="0" max="50.8" step="2.54">
+                    <span class="unit">mm</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="y0">Baseline Y Position</label>
+                    <input type="number" id="y0" value="127" min="76.2" max="152.4" step="2.54">
+                    <span class="unit">mm</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="wheelRadius">Wheel Radius (r3)</label>
+                    <input type="number" id="wheelRadius" value="10" min="5" max="25" step="1">
+                    <span class="unit">mm</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="wheelHeight">Wheel Height Above Ground (h3)</label>
+                    <input type="number" id="wheelHeight" value="72" min="10" max="200" step="2.54">
+                    <span class="unit">mm</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="wheelFriction">Wheel Friction Coefficient</label>
+                    <input type="number" id="wheelFriction" value="2" min="0.1" max="2.0" step="0.1">
+                    <span class="unit">μ</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="wheelRPM">Wheel RPM</label>
+                    <input type="number" id="wheelRPM" value="200" min="1" max="10000" step="1">
+                    <span class="unit">rpm</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="animationSpeed">Animation Speed</label>
+                    <input type="number" id="animationSpeed" value="1" min="0.1" max="5" step="0.1">
+                    <span class="unit">x</span>
+                </div>
+                
+                
+                <div class="control-group">
+                    <label for="scale">Display Scale</label>
+                    <input type="number" id="scale" value="2" min="1" max="5" step="0.5">
+                    <span class="unit">pixels/mm</span>
+                </div>
+                
+                <h3>Ball Parameters</h3>
+                
+                <div class="control-group">
+                    <label for="ballRadius">Ball Radius (r2)</label>
+                    <input type="number" id="ballRadius" value="25.4" min="12.7" max="50.8" step="2.54">
+                    <span class="unit">mm</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="ballHeight">Ball Height Above Track</label>
+                    <input type="number" id="ballHeight" value="25.4" min="0" max="76.2" step="2.54">
+                    <span class="unit">mm</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="ballSpeed">Ball Initial Speed</label>
+                    <input type="number" id="ballSpeed" value="2" min="1" max="100" step="1">
+                    <span class="unit">mm/s</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="ballFriction">Ball Friction Coefficient</label>
+                    <input type="number" id="ballFriction" value="0.5" min="0.1" max="1.0" step="0.05">
+                    <span class="unit">μ</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="trackFriction">Track Friction Coefficient</label>
+                    <input type="number" id="trackFriction" value="0.5" min="0.1" max="1.0" step="0.05">
+                    <span class="unit">μ</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="ballWeight">Ball Weight</label>
+                    <input type="number" id="ballWeight" value="70" min="50" max="100" step="5">
+                    <span class="unit">g</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="ballSoftness">Ball Softness</label>
+                    <input type="number" id="ballSoftness" value="0.7" min="0.1" max="1.0" step="0.1">
+                    <span class="unit">elasticity</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="contactTime">Contact Time</label>
+                    <input type="number" id="contactTime" value="0.01" min="0.001" max="0.1" step="0.001">
+                    <span class="unit">s</span>
+                </div>
+            </div>
+            
+            <div class="simulation">
+                <div class="simulation-controls">
+                    <button id="beginBtn" class="sim-button begin-btn">Begin Simulation</button>
+                    <button id="resetBtn" class="sim-button reset-btn">Reset</button>
+                </div>
+<canvas id="simulatorCanvas" width="1000" height="600"></canvas>
+                
+                <div class="info-panel">
+                    <h4>Track Information</h4>
+                    <div class="info-item">
+                        <span class="info-label">Total Track Length:</span>
+                        <span class="info-value" id="totalLength">0 mm (0")</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Curve Center:</span>
+                        <span class="info-value" id="curveCenter">(0, 0) mm</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Curve End Point:</span>
+                        <span class="info-value" id="curveEnd">(0, 0) mm</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">d2 End Point:</span>
+                        <span class="info-value" id="d2End">(0, 0) mm</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Wheel Position:</span>
+                        <span class="info-value" id="wheelPos">(0, 0) mm</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Display Scale:</span>
+                        <span class="info-value" id="displayScale">2 pixels/mm</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ball Position:</span>
+                        <span class="info-value" id="ballPos">(0, 0) mm</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ball Radius:</span>
+                        <span class="info-value" id="ballRadiusDisplay">25.4 mm (1.00")</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Wheel Friction:</span>
+                        <span class="info-value" id="wheelFrictionDisplay">0.8 μ</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Wheel RPM:</span>
+                        <span class="info-value" id="wheelRPMDisplay">6000 rpm</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Angular Velocity:</span>
+                        <span class="info-value" id="angularVelocityDisplay">628.3 rad/s</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ball Speed:</span>
+                        <span class="info-value" id="ballSpeedDisplay">1.0 mm/s</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ball Friction:</span>
+                        <span class="info-value" id="ballFrictionDisplay">0.3 μ</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Track Friction:</span>
+                        <span class="info-value" id="trackFrictionDisplay">0.2 μ</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ball Weight:</span>
+                        <span class="info-value" id="ballWeightDisplay">70 g</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ball Softness:</span>
+                        <span class="info-value" id="ballSoftnessDisplay">0.7</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Contact Time:</span>
+                        <span class="info-value" id="contactTimeDisplay">0.01 s</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+const canvas = document.getElementById('simulatorCanvas');
+const ctx = canvas.getContext('2d');
+
+// --- Matter.js Setup ---
+const Engine = Matter.Engine;
+const Render = Matter.Render;
+const World = Matter.World;
+const Bodies = Matter.Bodies;
+const Body = Matter.Body;
+const Events = Matter.Events;
+const Constraint = Matter.Constraint;
+const Mouse = Matter.Mouse;
+const MouseConstraint = Matter.MouseConstraint;
+
+// Create engine and world
+const engine = Engine.create();
+const world = engine.world;
+
+// --- Helper Functions ---
+const degToRad = (deg) => deg * Math.PI / 180;
+const mmToInches = (mm) => mm / 25.4;
+const inchesToMm = (inches) => inches * 25.4;
+
+// --- Parameters (will be updated from inputs) ---
+let r1 = 60;              // radius for curvature and wheel (mm)
+let A1 = degToRad(45);      // angle for curve
+let d0 = 40.64;              // horizontal segment d0 (mm)
+let d1 = 27;              // horizontal segment d1 (mm)
+let d2Length = 20;        // length of d2 (mm)
+let d3Length = 66.04;        // length of d3 (mm) - left of d0
+let x0 = 25.4;              // starting x of the track (mm)
+let y0 = 127;               // baseline y of the flat track (mm)
+let wheelRadius = 10;       // wheel radius r3 (mm)
+let wheelHeight = 72;       // wheel height above ground h3 (mm)
+let wheelFriction = 2;    // wheel friction coefficient
+let wheelRPM = 200;          // wheel RPM
+let animationSpeed = 1;     // animation speed multiplier
+let scale = 2;              // display scale (pixels per mm)
+let ballRadius = 25.4;      // ball radius (mm)
+let ballHeight = 25.4;      // ball height above track (mm)
+let ballSpeed = 2;          // ball initial speed (mm/s)
+let ballFriction = 0.5;     // ball friction coefficient
+let trackFriction = 0.5;    // track friction coefficient
+let ballWeight = 70;        // ball weight (g)
+let ballSoftness = 0.7;     // ball softness/elasticity coefficient
+let contactTime = 0.01;     // contact time for collisions (s)
+
+// --- Matter.js Bodies ---
+let ball = null;
+let wheel = null;
+let trackSegments = [];
+let ground = null;
+
+// --- Animation variables ---
+let animationId = null;
+let startTime = null;
+let wheelRotation = 0;      // current wheel rotation angle
+
+// --- Simulation state ---
+let isSimulationRunning = false;
+let simulationStartTime = null;
+
+// --- Parameter Update Function ---
+function updateParameters() {
+  r1 = parseFloat(document.getElementById('r1').value);
+  A1 = degToRad(parseFloat(document.getElementById('A1').value));
+  d0 = parseFloat(document.getElementById('d0').value);
+  d1 = parseFloat(document.getElementById('d1').value);
+  d2Length = parseFloat(document.getElementById('d2Length').value);
+  d3Length = parseFloat(document.getElementById('d3Length').value);
+  x0 = parseFloat(document.getElementById('x0').value);
+  y0 = parseFloat(document.getElementById('y0').value);
+  wheelRadius = parseFloat(document.getElementById('wheelRadius').value);
+  wheelHeight = parseFloat(document.getElementById('wheelHeight').value);
+  wheelFriction = parseFloat(document.getElementById('wheelFriction').value);
+  wheelRPM = parseFloat(document.getElementById('wheelRPM').value);
+  animationSpeed = parseFloat(document.getElementById('animationSpeed').value);
+  scale = parseFloat(document.getElementById('scale').value);
+  ballRadius = parseFloat(document.getElementById('ballRadius').value);
+  ballHeight = parseFloat(document.getElementById('ballHeight').value);
+  ballSpeed = parseFloat(document.getElementById('ballSpeed').value);
+  ballFriction = parseFloat(document.getElementById('ballFriction').value);
+  trackFriction = parseFloat(document.getElementById('trackFriction').value);
+  ballWeight = parseFloat(document.getElementById('ballWeight').value);
+  ballSoftness = parseFloat(document.getElementById('ballSoftness').value);
+  contactTime = parseFloat(document.getElementById('contactTime').value);
+}
+
+// --- Matter.js Physics Setup ---
+function createPhysicsBodies() {
+  // Clear existing bodies
+  World.clear(world);
+  trackSegments = [];
+  
+  // Create ground at y0 level
+  const groundY = mmToPixels(y0);
+  const groundWidth = mmToPixels(500); // Wide enough ground
+  const groundHeight = 20;
+  ground = Bodies.rectangle(groundWidth/2, groundY + groundHeight/2, groundWidth, groundHeight, { 
+    isStatic: true,
+    friction: 0.8,
+    restitution: 0.1,
+    collisionFilter: { group: 1 },
+    render: { fillStyle: '#8B4513' }
+  });
+  World.add(world, ground);
+  
+  // Create track segments
+  createTrackSegments();
+  
+  // Create wheel
+  const wheelX = mmToPixels(x0 + d0);
+  const wheelY = mmToPixels(y0 - wheelHeight);
+  wheel = Bodies.circle(wheelX, wheelY, mmToPixels(wheelRadius), {
+      isStatic: true,
+    friction: wheelFriction,
+    restitution: 0.1,
+    collisionFilter: { group: 1 }, // Prevent ball from passing through
+      render: { fillStyle: '#333333' }
+  });
+  World.add(world, wheel);
+  
+  // Create ball (start at d3 end, d0 beginning)
+  const ballX = mmToPixels(x0);
+  const ballY = mmToPixels(y0 - ballRadius - 10); // Ball sits on ground surface
+  ball = Bodies.circle(ballX, ballY, mmToPixels(ballRadius), {
+    isStatic: true, // Start as static (no physics until simulation begins)
+    friction: ballFriction,
+    frictionAir: 0.01,
+    restitution: ballSoftness * 0.5, // Reduce bounciness to prevent excessive bouncing
+    density: ballWeight / 1000 / (Math.PI * ballRadius * ballRadius / 1000000), // kg/m³
+    collisionFilter: { group: 2 }, // Prevent ball from passing through
+    render: { fillStyle: '#ff4444' }
+  });
+  World.add(world, ball);
+}
+
+function createTrackSegments() {
+  // Track segment d3 (horizontal, left of d0)
+  const d3X = mmToPixels(x0 - d3Length/2);
+  const d3Y = mmToPixels(y0);
+  const d3Segment = Bodies.rectangle(d3X, d3Y, mmToPixels(d3Length), 40, {
+      isStatic: true,
+    friction: trackFriction,
+    restitution: 0.1,
+    collisionFilter: { group: 1 }, // Prevent ball from passing through
+    render: { fillStyle: '#666666' }
+  });
+  trackSegments.push(d3Segment);
+  World.add(world, d3Segment);
+  
+  // Track segment d0 (horizontal)
+  const d0X = mmToPixels(x0 + d0/2);
+  const d0Y = mmToPixels(y0);
+  const d0Segment = Bodies.rectangle(d0X, d0Y, mmToPixels(d0), 40, {
+    isStatic: true,
+    friction: trackFriction,
+    restitution: 0.1,
+    collisionFilter: { group: 1 }, // Prevent ball from passing through
+    render: { fillStyle: '#666666' }
+  });
+  trackSegments.push(d0Segment);
+  World.add(world, d0Segment);
+  
+  // Track segment d1 (horizontal)
+  const d1X = mmToPixels(x0 + d0 + d1/2);
+  const d1Y = mmToPixels(y0);
+  const d1Segment = Bodies.rectangle(d1X, d1Y, mmToPixels(d1), 40, {
+        isStatic: true,
+    friction: trackFriction,
+    restitution: 0.1,
+    collisionFilter: { group: 1 }, // Prevent ball from passing through
+    render: { fillStyle: '#666666' }
+  });
+  trackSegments.push(d1Segment);
+  World.add(world, d1Segment);
+  
+  // Create curved track segment using multiple small rectangles
+  createCurvedTrack();
+  
+  // Track segment d2 (tangent to curve)
+  const curveEndX = x0 + d0 + d1 + (r1 * A1);
+  const curveEndY = y0 - r1 + r1 * Math.sin(Math.PI / 2 - A1);
+  const tangentAngle = Math.PI / 2 - A1;
+  
+  const d2X = mmToPixels(curveEndX + d2Length/2 * Math.cos(tangentAngle));
+  const d2Y = mmToPixels(curveEndY + d2Length/2 * Math.sin(tangentAngle));
+  const d2Segment = Bodies.rectangle(d2X, d2Y, mmToPixels(d2Length), 40, {
+      isStatic: true,
+    friction: trackFriction,
+    restitution: 0.1,
+    angle: tangentAngle,
+    collisionFilter: { group: 1 }, // Prevent ball from passing through
+    render: { fillStyle: '#666666' }
+  });
+  trackSegments.push(d2Segment);
+  World.add(world, d2Segment);
+}
+
+function createCurvedTrack() {
+  const arcCenterX = x0 + d0 + d1;
+  const arcCenterY = y0 - r1;
+  const numSegments = Math.ceil(A1 * 180 / Math.PI); // One segment per degree
+  
+  for (let i = 0; i < numSegments; i++) {
+    const angle = Math.PI / 2 - (i * A1 / numSegments);
+    const nextAngle = Math.PI / 2 - ((i + 1) * A1 / numSegments);
+    
+    const segmentLength = r1 * A1 / numSegments;
+    const segmentX = arcCenterX + r1 * Math.cos((angle + nextAngle) / 2);
+    const segmentY = arcCenterY + r1 * Math.sin((angle + nextAngle) / 2);
+    const segmentAngle = (angle + nextAngle) / 2;
+    
+    const segment = Bodies.rectangle(
+      mmToPixels(segmentX), 
+      mmToPixels(segmentY), 
+      mmToPixels(segmentLength), 
+      40, 
+    {
+      isStatic: true,
+        friction: trackFriction,
+        restitution: 0.1,
+        angle: segmentAngle,
+        collisionFilter: { group: 1 }, // Prevent ball from passing through
+        render: { fillStyle: '#666666' }
+      }
+    );
+    trackSegments.push(segment);
+    World.add(world, segment);
+  }
+}
+
+// --- Conversion Functions ---
+function mmToPixels(mm) {
+  return mm * scale;
+}
+
+function pixelsToMm(pixels) {
+  return pixels / scale;
+}
+
+// --- Matter.js Drawing Functions ---
+function drawTrack() {
+  // Draw track segments with actual thickness (40px) to match Matter.js bodies
+  const x0Px = mmToPixels(x0);
+  const y0Px = mmToPixels(y0);
+  const d0Px = mmToPixels(d0);
+  const d1Px = mmToPixels(d1);
+  const r1Px = mmToPixels(r1);
+  const d2LengthPx = mmToPixels(d2Length);
+  const trackThickness = 40; // Match Matter.js body thickness
+
+  // Set up track drawing style
+  ctx.fillStyle = '#666666';
+  ctx.strokeStyle = '#333333';
+  ctx.lineWidth = 2;
+
+  // --- d3 segment (left of d0) with thickness ---
+  const d3Px = mmToPixels(d3Length);
+  ctx.beginPath();
+  ctx.rect(x0Px - d3Px, y0Px - trackThickness/2, d3Px, trackThickness);
+  ctx.fill();
+  ctx.stroke();
+
+  // --- d0 segment with thickness ---
+  ctx.beginPath();
+  ctx.rect(x0Px, y0Px - trackThickness/2, d0Px, trackThickness);
+  ctx.fill();
+  ctx.stroke();
+
+  // --- d1 segment with thickness ---
+  const d1StartXPx = x0Px + d0Px;
+  const d1EndXPx = d1StartXPx + d1Px;
+  ctx.beginPath();
+  ctx.rect(d1StartXPx, y0Px - trackThickness/2, d1Px, trackThickness);
+  ctx.fill();
+  ctx.stroke();
+
+  // --- Curve k with thickness ---
+  const arcCenterXPx = d1EndXPx;
+  const arcCenterYPx = y0Px - r1Px;
+  const startAngle = Math.PI / 2;       // 90 deg
+  const endAngle = startAngle - A1;     // 90 - A1
+
+  // Draw curved track as thick arc
+  ctx.beginPath();
+  ctx.arc(arcCenterXPx, arcCenterYPx, r1Px - trackThickness/2, startAngle, endAngle, true);
+  ctx.arc(arcCenterXPx, arcCenterYPx, r1Px + trackThickness/2, endAngle, startAngle, false);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // --- Curve end point ---
+  const curveEndXPx = arcCenterXPx + r1Px * Math.cos(endAngle);
+  const curveEndYPx = arcCenterYPx + r1Px * Math.sin(endAngle);
+
+  // --- Tangent direction at end of arc ---
+  const tangentAngle = endAngle - Math.PI / 2;  // tangent angle
+
+  // --- d2 segment with thickness ---
+  const d2EndXPx = curveEndXPx + d2LengthPx * Math.cos(tangentAngle);
+  const d2EndYPx = curveEndYPx + d2LengthPx * Math.sin(tangentAngle);
+
+  // Draw d2 as rotated rectangle
+  ctx.save();
+  ctx.translate(curveEndXPx, curveEndYPx);
+  ctx.rotate(tangentAngle);
+  ctx.beginPath();
+  ctx.rect(0, -trackThickness/2, d2LengthPx, trackThickness);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+
+  // --- Draw connection points ---
+  ctx.fillStyle = '#9c27b0'; // Purple for d3 connection
+  ctx.beginPath();
+  ctx.arc(x0Px, y0Px, 4, 0, 2 * Math.PI);
+  ctx.fill();
+
+  ctx.fillStyle = '#ff6b6b';
+  ctx.beginPath();
+  ctx.arc(x0Px + d0Px, y0Px, 4, 0, 2 * Math.PI);
+  ctx.fill();
+
+  ctx.fillStyle = '#2196f3';
+  ctx.beginPath();
+  ctx.arc(d1EndXPx, y0Px, 4, 0, 2 * Math.PI);
+  ctx.fill();
+
+  ctx.fillStyle = '#4caf50';
+  ctx.beginPath();
+  ctx.arc(curveEndXPx, curveEndYPx, 4, 0, 2 * Math.PI);
+  ctx.fill();
+
+  ctx.fillStyle = '#ff9800';
+  ctx.beginPath();
+  ctx.arc(d2EndXPx, d2EndYPx, 4, 0, 2 * Math.PI);
+  ctx.fill();
+
+  // --- Draw labels ---
+  ctx.fillStyle = '#333';
+  ctx.font = '14px Arial';
+  ctx.fillText('d3', x0Px - d3Px/2, y0Px + 30);
+  ctx.fillText('d0', x0Px + d0Px/2, y0Px + 30);
+  ctx.fillText('d1', d1StartXPx + d1Px/2, y0Px + 30);
+  ctx.fillText('k', arcCenterXPx, arcCenterYPx - 20);
+  ctx.fillText('d2', curveEndXPx + d2LengthPx/2, curveEndYPx - 20);
+
+  // --- Update info panel ---
+  updateInfoPanel(arcCenterXPx, arcCenterYPx, curveEndXPx, curveEndYPx, d2EndXPx, d2EndYPx);
+}
+
+function drawWheel() {
+  if (!wheel) return;
+  
+  const wheelXPx = wheel.position.x;
+  const wheelYPx = wheel.position.y;
+  const wheelRadiusPx = mmToPixels(wheelRadius);
+  
+  // Draw wheel shadow (slightly offset and darker)
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+  ctx.beginPath();
+  ctx.arc(wheelXPx + 2, wheelYPx + 2, wheelRadiusPx, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Draw wheel with black high-friction material appearance
+  const gradient = ctx.createRadialGradient(wheelXPx - wheelRadiusPx/3, wheelYPx - wheelRadiusPx/3, 0, wheelXPx, wheelYPx, wheelRadiusPx);
+  gradient.addColorStop(0, '#666666');
+  gradient.addColorStop(0.7, '#333333');
+  gradient.addColorStop(1, '#000000');
+  
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.arc(wheelXPx, wheelYPx, wheelRadiusPx, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Draw wheel outline (dark)
+  ctx.strokeStyle = '#111111';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  
+  // Draw wheel center (dark)
+  ctx.fillStyle = '#222222';
+  ctx.beginPath();
+  ctx.arc(wheelXPx, wheelYPx, 3, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Draw spinning friction texture lines (rotating with wheel)
+  ctx.strokeStyle = '#444444';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 8; i++) {
+    const angle = (i * Math.PI * 2) / 8 + wheelRotation; // Add rotation
+    const startX = wheelXPx + Math.cos(angle) * (wheelRadiusPx * 0.3);
+    const startY = wheelYPx + Math.sin(angle) * (wheelRadiusPx * 0.3);
+    const endX = wheelXPx + Math.cos(angle) * (wheelRadiusPx * 0.8);
+    const endY = wheelYPx + Math.sin(angle) * (wheelRadiusPx * 0.8);
+    
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+  }
+  
+  // Draw motion blur effect for high RPM
+  if (wheelRPM > 3000) {
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.lineWidth = 3;
+    for (let i = 0; i < 4; i++) {
+      const angle = (i * Math.PI * 2) / 4 + wheelRotation;
+      const startX = wheelXPx + Math.cos(angle) * (wheelRadiusPx * 0.2);
+      const startY = wheelYPx + Math.sin(angle) * (wheelRadiusPx * 0.2);
+      const endX = wheelXPx + Math.cos(angle) * (wheelRadiusPx * 0.9);
+      const endY = wheelYPx + Math.sin(angle) * (wheelRadiusPx * 0.9);
+      
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+    }
+  }
+  
+  // Draw wheel label with RPM
+  ctx.fillStyle = '#333';
+  ctx.font = '12px Arial';
+  ctx.fillText(`Flying Wheel (${wheelRPM} RPM)`, wheelXPx + wheelRadiusPx + 10, wheelYPx);
+  
+  // Draw connection line from wheel to ground
+  ctx.strokeStyle = '#666';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.moveTo(wheelXPx, wheelYPx);
+  ctx.lineTo(wheelXPx, mmToPixels(y0));
+  ctx.stroke();
+  ctx.setLineDash([]); // Reset line dash
+}
+
+function drawBall() {
+  if (!ball) return;
+  
+  const ballXPx = ball.position.x;
+  const ballYPx = ball.position.y;
+  const ballRadiusPx = mmToPixels(ballRadius);
+  
+  // Calculate deformation based on collision forces and softness
+  const deformation = calculateBallDeformation();
+  const deformedRadiusX = ballRadiusPx * (1 - deformation.x);
+  const deformedRadiusY = ballRadiusPx * (1 - deformation.y);
+  
+  // Draw ball shadow (slightly offset and darker)
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+  ctx.beginPath();
+  ctx.arc(ballXPx + 2, ballYPx + 2, ballRadiusPx, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Draw deformed ball with gradient effect
+  const gradient = ctx.createRadialGradient(ballXPx - deformedRadiusX/3, ballYPx - deformedRadiusY/3, 0, ballXPx, ballYPx, Math.max(deformedRadiusX, deformedRadiusY));
+  gradient.addColorStop(0, '#ff4444');
+  gradient.addColorStop(1, '#cc0000');
+  
+  ctx.fillStyle = gradient;
+  ctx.save();
+  ctx.translate(ballXPx, ballYPx);
+  ctx.scale(deformedRadiusX / ballRadiusPx, deformedRadiusY / ballRadiusPx);
+  ctx.beginPath();
+  ctx.arc(0, 0, ballRadiusPx, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  // Draw ball outline
+  ctx.strokeStyle = '#aa0000';
+  ctx.lineWidth = 2;
+  ctx.save();
+  ctx.translate(ballXPx, ballYPx);
+  ctx.scale(deformedRadiusX / ballRadiusPx, deformedRadiusY / ballRadiusPx);
+  ctx.beginPath();
+  ctx.arc(0, 0, ballRadiusPx, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+  
+  // Draw rotation lines to show ball spinning
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 3; i++) {
+    const angle = ball.angle + (i * Math.PI * 2 / 3);
+    const startX = ballXPx + Math.cos(angle) * (ballRadiusPx * 0.3);
+    const startY = ballYPx + Math.sin(angle) * (ballRadiusPx * 0.3);
+    const endX = ballXPx + Math.cos(angle) * (ballRadiusPx * 0.8);
+    const endY = ballYPx + Math.sin(angle) * (ballRadiusPx * 0.8);
+    
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+  }
+  
+  // Draw ball center dot
+  ctx.fillStyle = '#ff6666';
+  ctx.beginPath();
+  ctx.arc(ballXPx, ballYPx, 3, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Draw velocity vector if simulation is running
+  if (isSimulationRunning && (ball.velocity.x !== 0 || ball.velocity.y !== 0)) {
+    const velocityScale = 10; // Scale factor for velocity visualization
+    const velEndX = ballXPx + ball.velocity.x * velocityScale;
+    const velEndY = ballYPx + ball.velocity.y * velocityScale;
+    
+    // Draw velocity arrow
+    ctx.strokeStyle = '#00ff00';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(ballXPx, ballYPx);
+    ctx.lineTo(velEndX, velEndY);
+    ctx.stroke();
+    
+    // Draw arrowhead
+    const angle = Math.atan2(velEndY - ballYPx, velEndX - ballXPx);
+    const arrowLength = 8;
+    ctx.beginPath();
+    ctx.moveTo(velEndX, velEndY);
+    ctx.lineTo(velEndX - arrowLength * Math.cos(angle - Math.PI/6), velEndY - arrowLength * Math.sin(angle - Math.PI/6));
+    ctx.moveTo(velEndX, velEndY);
+    ctx.lineTo(velEndX - arrowLength * Math.cos(angle + Math.PI/6), velEndY - arrowLength * Math.sin(angle + Math.PI/6));
+    ctx.stroke();
+  }
+  
+  // Draw ball label
+  ctx.fillStyle = '#333';
+  ctx.font = '12px Arial';
+  const labelText = isSimulationRunning ? `Ball (${ball.velocity.x.toFixed(1)}, ${ball.velocity.y.toFixed(1)})` : 'Ball';
+  ctx.fillText(labelText, ballXPx + ballRadiusPx + 10, ballYPx);
+  
+  // Draw connection line from ball to track (only when not running)
+  if (!isSimulationRunning) {
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(ballXPx, ballYPx);
+    ctx.lineTo(ballXPx, mmToPixels(y0));
+    ctx.stroke();
+    ctx.setLineDash([]); // Reset line dash
+  }
+}
+
+function calculateBallDeformation() {
+  if (!ball) return { x: 0, y: 0 };
+  
+  // Calculate deformation based on collision forces and ball softness
+  const speed = Math.sqrt(ball.velocity.x * ball.velocity.x + ball.velocity.y * ball.velocity.y);
+  const maxDeformation = ballSoftness * 0.3; // Maximum 30% deformation based on softness
+  
+  // Deformation increases with speed and softness
+  const deformationFactor = Math.min(speed / 100, 1) * maxDeformation;
+  
+  // Different deformation in X and Y based on collision direction
+  const deformationX = Math.abs(ball.velocity.x) / 100 * deformationFactor;
+  const deformationY = Math.abs(ball.velocity.y) / 100 * deformationFactor;
+  
+  return { x: deformationX, y: deformationY };
+}
+
+function updateInfoPanel(arcCenterXPx, arcCenterYPx, curveEndXPx, curveEndYPx, d2EndXPx, d2EndYPx) {
+  // Convert pixels back to mm for display
+  const arcCenterX = pixelsToMm(arcCenterXPx);
+  const arcCenterY = pixelsToMm(arcCenterYPx);
+  const curveEndX = pixelsToMm(curveEndXPx);
+  const curveEndY = pixelsToMm(curveEndYPx);
+  const d2EndX = pixelsToMm(d2EndXPx);
+  const d2EndY = pixelsToMm(d2EndYPx);
+  
+  const totalLength = d3Length + d0 + d1 + (r1 * A1) + d2Length;
+  const wheelX = x0 + d0;
+  const wheelY = y0 - wheelHeight;
+  
+  // Get current ball position from Matter.js
+  const ballX = ball ? pixelsToMm(ball.position.x) : x0;
+  const ballY = ball ? pixelsToMm(ball.position.y) : (y0 - ballRadius - 10);
+  
+  // Calculate angular velocity from RPM
+  const angularVelocity = wheelRPM * 2 * Math.PI / 60; // rad/s
+  
+  document.getElementById('totalLength').textContent = `${totalLength.toFixed(1)} mm (${mmToInches(totalLength).toFixed(2)}")`;
+  document.getElementById('curveCenter').textContent = `(${arcCenterX.toFixed(1)}, ${arcCenterY.toFixed(1)}) mm`;
+  document.getElementById('curveEnd').textContent = `(${curveEndX.toFixed(1)}, ${curveEndY.toFixed(1)}) mm`;
+  document.getElementById('d2End').textContent = `(${d2EndX.toFixed(1)}, ${d2EndY.toFixed(1)}) mm`;
+  document.getElementById('wheelPos').textContent = `(${wheelX.toFixed(1)}, ${wheelY.toFixed(1)}) mm`;
+  document.getElementById('displayScale').textContent = `${scale} pixels/mm`;
+  document.getElementById('ballPos').textContent = `(${ballX.toFixed(1)}, ${ballY.toFixed(1)}) mm`;
+  document.getElementById('ballRadiusDisplay').textContent = `${ballRadius.toFixed(1)} mm (${mmToInches(ballRadius).toFixed(2)}")`;
+  document.getElementById('wheelFrictionDisplay').textContent = `${wheelFriction.toFixed(1)} μ`;
+  document.getElementById('wheelRPMDisplay').textContent = `${wheelRPM} rpm`;
+  document.getElementById('angularVelocityDisplay').textContent = `${angularVelocity.toFixed(1)} rad/s`;
+  document.getElementById('ballSpeedDisplay').textContent = `${ballSpeed.toFixed(1)} mm/s`;
+  document.getElementById('ballFrictionDisplay').textContent = `${ballFriction.toFixed(2)} μ`;
+  document.getElementById('trackFrictionDisplay').textContent = `${trackFriction.toFixed(2)} μ`;
+  document.getElementById('ballWeightDisplay').textContent = `${ballWeight.toFixed(0)} g`;
+  document.getElementById('ballSoftnessDisplay').textContent = `${ballSoftness.toFixed(1)}`;
+  document.getElementById('contactTimeDisplay').textContent = `${contactTime.toFixed(3)} s`;
+}
+
+// --- Matter.js Physics Functions ---
+function setupCollisionEvents() {
+  Events.on(engine, 'collisionStart', function(event) {
+    const pairs = event.pairs;
+    
+    for (let i = 0; i < pairs.length; i++) {
+      const pair = pairs[i];
+      const bodyA = pair.bodyA;
+      const bodyB = pair.bodyB;
+      
+      // Check for ball-wheel collision
+      if ((bodyA === ball && bodyB === wheel) || (bodyA === wheel && bodyB === ball)) {
+        handleBallWheelCollision();
+      }
+    }
+  });
+}
+
+function handleBallWheelCollision() {
+  if (!ball || !wheel) return;
+  
+  // Apply wheel force to ball
+    const wheelAngularVelocity = wheelRPM * 2 * Math.PI / 60; // rad/s
+    const wheelSurfaceSpeed = wheelAngularVelocity * wheelRadius; // mm/s
+    
+  // Calculate force direction (wheel pushes ball to the right)
+  const forceX = wheelSurfaceSpeed * wheelFriction * 0.1; // Scale factor
+  const forceY = -wheelSurfaceSpeed * wheelFriction * 0.05; // Small upward component
+        
+        // Apply impulse to ball
+  Body.applyForce(ball, ball.position, { x: forceX, y: forceY });
+  
+  // Add some angular velocity to ball
+  Body.setAngularVelocity(ball, ball.angularVelocity + wheelAngularVelocity * 0.1);
+  
+  // Ensure ball doesn't get stuck inside wheel by applying separation force
+  const distance = Math.sqrt(Math.pow(ball.position.x - wheel.position.x, 2) + Math.pow(ball.position.y - wheel.position.y, 2));
+  const minDistance = mmToPixels(wheelRadius + ballRadius);
+  
+  if (distance < minDistance) {
+    const separationForce = (minDistance - distance) * 0.1;
+    const angle = Math.atan2(ball.position.y - wheel.position.y, ball.position.x - wheel.position.x);
+    const separationX = Math.cos(angle) * separationForce;
+    const separationY = Math.sin(angle) * separationForce;
+    
+    Body.applyForce(ball, ball.position, { x: separationX, y: separationY });
+  }
+  
+  console.log('Ball-Wheel collision detected!');
+  console.log('Wheel surface speed:', wheelSurfaceSpeed.toFixed(2), 'mm/s');
+  console.log('Applied force:', forceX.toFixed(2), forceY.toFixed(2));
+}
+
+function updateWheelPosition() {
+  if (!wheel) return;
+  
+  // Update wheel position based on current parameters
+  const wheelX = mmToPixels(x0 + d0);
+  const wheelY = mmToPixels(y0 - wheelHeight);
+  
+  // Update wheel position in Matter.js
+  Body.setPosition(wheel, { x: wheelX, y: wheelY });
+  
+  // Update wheel radius if it changed
+  const newRadius = mmToPixels(wheelRadius);
+  if (wheel.circleRadius !== newRadius) {
+    // Remove old wheel and create new one with updated radius
+    World.remove(world, wheel);
+    wheel = Bodies.circle(wheelX, wheelY, newRadius, {
+      isStatic: true,
+      friction: wheelFriction,
+      restitution: 0.1,
+      collisionFilter: { group: 1 },
+      render: { fillStyle: '#333333' }
+    });
+    World.add(world, wheel);
+  }
+}
+
+function updateWheelRotation() {
+  if (!wheel) return;
+  
+  if (startTime === null) {
+    startTime = Date.now();
+  }
+  
+  const currentTime = Date.now();
+  const elapsedTime = (currentTime - startTime) / 1000; // seconds
+  
+  // Calculate wheel rotation (counter-clockwise)
+  const angularVelocity = wheelRPM * 2 * Math.PI / 60; // rad/s
+  wheelRotation = -angularVelocity * elapsedTime * animationSpeed; // negative for counter-clockwise
+  
+  // Update wheel angle in Matter.js
+  Body.setAngle(wheel, wheelRotation);
+}
+
+function updateBallPosition() {
+  if (!ball) return;
+  
+  // Update ball radius if it changed
+  const newRadius = mmToPixels(ballRadius);
+  if (ball.circleRadius !== newRadius) {
+    // Remove old ball and create new one with updated radius
+    const currentPos = ball.position;
+    World.remove(world, ball);
+    ball = Bodies.circle(currentPos.x, currentPos.y, newRadius, {
+      friction: ballFriction,
+      frictionAir: 0.01,
+      restitution: ballSoftness * 0.5, // Reduce bounciness to prevent excessive bouncing
+      density: ballWeight / 1000 / (Math.PI * ballRadius * ballRadius / 1000000),
+      collisionFilter: { group: 2 },
+      render: { fillStyle: '#ff4444' }
+    });
+    World.add(world, ball);
+  }
+  
+  // When simulation is not running, make ball static (no physics)
+  if (!isSimulationRunning) {
+    if (!ball.isStatic) {
+      Body.setStatic(ball, true);
+    }
+    // Keep ball at starting position on ground
+    const startX = mmToPixels(x0);
+    const startY = mmToPixels(y0 - ballRadius - 10);
+    Body.setPosition(ball, { x: startX, y: startY });
+    Body.setVelocity(ball, { x: 0, y: 0 });
+    Body.setAngularVelocity(ball, 0);
+  } else {
+    // When simulation is running, make ball dynamic
+    if (ball.isStatic) {
+      Body.setStatic(ball, false);
+    }
+    
+    // Prevent ball from passing through track segments
+    preventBallPassThrough();
+  }
+}
+
+function preventBallPassThrough() {
+  if (!ball || !isSimulationRunning) return;
+  
+  // Only apply correction if ball is actually penetrating a track segment
+  // This prevents constant bouncing by being more selective
+  trackSegments.forEach(segment => {
+    const distance = Math.sqrt(
+      Math.pow(ball.position.x - segment.position.x, 2) + 
+      Math.pow(ball.position.y - segment.position.y, 2)
+    );
+    
+    // Only push away if ball is significantly penetrating (not just close)
+    const minDistance = mmToPixels(ballRadius + 15); // Slightly less than track thickness/2
+    if (distance < minDistance) {
+      // Check if ball is actually moving toward the segment
+      const ballVelocity = ball.velocity;
+      const velocityMagnitude = Math.sqrt(ballVelocity.x * ballVelocity.x + ballVelocity.y * ballVelocity.y);
+      
+      // Only correct if ball has significant velocity (not just sitting)
+      if (velocityMagnitude > 0.1) {
+        const angle = Math.atan2(ball.position.y - segment.position.y, ball.position.x - segment.position.x);
+        const pushDistance = minDistance - distance;
+        const pushX = Math.cos(angle) * pushDistance * 0.5; // Reduce push force
+        const pushY = Math.sin(angle) * pushDistance * 0.5;
+        
+        Body.setPosition(ball, { 
+          x: ball.position.x + pushX, 
+          y: ball.position.y + pushY 
+        });
+      }
+    }
+  });
+}
+
+function updateAnimation() {
+  updateWheelPosition();
+  updateWheelRotation();
+  updateBallPosition();
+}
+
+// Matter.js handles all physics automatically, so we just need to update wheel rotation
+
+// --- Simulation Control Functions ---
+function beginSimulation() {
+  if (!isSimulationRunning) {
+    isSimulationRunning = true;
+    simulationStartTime = Date.now();
+    
+    // Initialize ball physics with Matter.js
+    if (ball) {
+      Body.setStatic(ball, false); // Make ball dynamic for simulation
+      Body.setPosition(ball, { x: mmToPixels(x0), y: mmToPixels(y0 - ballRadius - 10) });
+      // Increase initial velocity to make ball move more purposefully
+      const initialVelocity = ballSpeed * 2; // Double the ball speed for better movement
+      Body.setVelocity(ball, { x: mmToPixels(initialVelocity), y: 0 });
+      Body.setAngularVelocity(ball, initialVelocity / ballRadius);
+    }
+    
+    // Update button states
+    document.getElementById('beginBtn').textContent = 'Running...';
+    document.getElementById('beginBtn').disabled = true;
+    document.getElementById('resetBtn').disabled = false;
+    
+    // Reset animation timing
+    startTime = null;
+    wheelRotation = 0;
+    
+    console.log('Simulation started at:', new Date().toLocaleTimeString());
+    console.log('Ball initial velocity:', ballSpeed, 'mm/s');
+  }
+}
+
+function resetSimulation() {
+  isSimulationRunning = false;
+  simulationStartTime = null;
+  
+  // Reset ball physics with Matter.js
+  if (ball) {
+    Body.setStatic(ball, true); // Make ball static when not running
+    Body.setPosition(ball, { x: mmToPixels(x0), y: mmToPixels(y0 - ballRadius - 10) });
+    Body.setVelocity(ball, { x: 0, y: 0 });
+    Body.setAngularVelocity(ball, 0);
+  }
+  
+  // Update button states
+  document.getElementById('beginBtn').textContent = 'Begin Simulation';
+  document.getElementById('beginBtn').disabled = false;
+  document.getElementById('resetBtn').disabled = true;
+  
+  // Reset animation timing
+  startTime = null;
+  wheelRotation = 0;
+  
+  console.log('Simulation reset at:', new Date().toLocaleTimeString());
+}
+
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  updateParameters();
+  updateAnimation();
+  
+  // Update Matter.js engine
+  Engine.update(engine, 1000 / 60); // 60 FPS
+  
+  drawTrack();
+  drawWheel();
+  drawBall();
+  
+  // Continue animation
+  animationId = requestAnimationFrame(render);
+}
+
+// --- Event Listeners ---
+function setupEventListeners() {
+  const parameterIds = ['r1', 'A1', 'd0', 'd1', 'd2Length', 'd3Length', 'x0', 'y0', 'wheelRadius', 'wheelHeight', 'wheelFriction', 'wheelRPM', 'animationSpeed', 'scale', 'ballRadius', 'ballHeight', 'ballSpeed', 'ballFriction', 'trackFriction', 'ballWeight', 'ballSoftness', 'contactTime'];
+  
+  parameterIds.forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.addEventListener('input', () => {
+        // Reset animation when parameters change
+        startTime = null;
+        wheelRotation = 0;
+        
+        // Recreate physics bodies for track-related parameters
+        if (['r1', 'A1', 'd0', 'd1', 'd2Length', 'd3Length', 'x0', 'y0'].includes(id)) {
+          createPhysicsBodies();
+        }
+      });
+      element.addEventListener('change', () => {
+        // Reset animation when parameters change
+        startTime = null;
+        wheelRotation = 0;
+        
+        // Recreate physics bodies for track-related parameters
+        if (['r1', 'A1', 'd0', 'd1', 'd2Length', 'd3Length', 'x0', 'y0'].includes(id)) {
+          createPhysicsBodies();
+        }
+      });
+    }
+  });
+  
+  // Simulation control buttons
+  document.getElementById('beginBtn').addEventListener('click', beginSimulation);
+  document.getElementById('resetBtn').addEventListener('click', resetSimulation);
+  
+  // Initialize button states
+  document.getElementById('resetBtn').disabled = true;
+}
+
+// --- Initialize ---
+function initializeSimulation() {
+  // Set up Matter.js engine with proper collision detection
+  engine.world.gravity.y = 0.8; // Slightly reduced gravity for better control
+  engine.world.gravity.x = 0;
+  
+  // Configure engine for better collision detection
+  engine.timing.timeScale = 1;
+  engine.timing.timestamp = 0;
+  
+  // Set up collision detection settings
+  engine.broadphase = { 
+    controller: 'SAP' // Sweep and Prune algorithm for better performance
+  };
+  
+  // Create physics bodies
+  createPhysicsBodies();
+  
+  // Set up collision events
+  setupCollisionEvents();
+  
+  // Set up event listeners
+setupEventListeners();
+  
+  // Start rendering
+render();
+}
+
+// Initialize when page loads
+initializeSimulation();
+</script>
+</body>
+</html>

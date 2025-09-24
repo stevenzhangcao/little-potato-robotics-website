@@ -2850,3 +2850,302 @@ nav {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(96, 165, 250, 0.3);
 }
+
+/* ========================================
+   SIMULATIONS SECTION STYLES
+   ======================================== */
+
+.simulations {
+  padding: 2rem 0;
+  background: var(--bg-secondary);
+}
+
+.simulations-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: var(--bg-primary);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
+}
+
+.simulations-hero-icon {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.simulations-hero-content h3 {
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.simulations-hero-content p {
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-size: 1rem;
+}
+
+.simulations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.simulation-card {
+  background: var(--bg-primary);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.simulation-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.simulation-card.coming-soon {
+  opacity: 0.7;
+  background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+}
+
+.simulation-icon {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 0.75rem;
+}
+
+.simulation-info h4 {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.simulation-description {
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.simulation-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.feature-tag {
+  background: var(--primary-color);
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.simulation-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.simulation-actions .btn {
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+}
+
+.educational-value {
+  background: var(--bg-primary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+}
+
+.educational-value h3 {
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.benefit-icon {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+
+.benefit-content h4 {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.benefit-content p {
+  color: var(--text-secondary);
+  line-height: 1.4;
+  font-size: 0.9rem;
+}
+
+/* Dark mode styles for simulations */
+[data-theme="dark"] .simulations {
+  background: var(--dark-bg-secondary);
+}
+
+[data-theme="dark"] .simulations-hero-card {
+  background: var(--dark-bg-primary);
+  border-color: var(--dark-border-color);
+}
+
+[data-theme="dark"] .simulation-card {
+  background: var(--dark-bg-primary);
+  border-color: var(--dark-border-color);
+}
+
+[data-theme="dark"] .simulation-card.coming-soon {
+  background: linear-gradient(135deg, var(--dark-bg-primary), var(--dark-bg-secondary));
+}
+
+[data-theme="dark"] .educational-value {
+  background: var(--dark-bg-primary);
+  border-color: var(--dark-border-color);
+}
+
+[data-theme="dark"] .simulations-hero-content h3,
+[data-theme="dark"] .simulation-info h4,
+[data-theme="dark"] .educational-value h3,
+[data-theme="dark"] .benefit-content h4 {
+  color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .simulations-hero-content p,
+[data-theme="dark"] .simulation-description,
+[data-theme="dark"] .benefit-content p {
+  color: var(--dark-text-secondary);
+}
+
+/* ========================================
+   NAVIGATION HIGHLIGHTS
+   ======================================== */
+
+/* Special rainbow highlight for Simulations navigation */
+.nav-link[href="#simulations"] {
+  background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+  background-size: 400% 400%;
+  animation: rainbow 3s ease infinite;
+  color: white !important;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.nav-link[href="#simulations"]:hover,
+.nav-link[href="#simulations"]:focus,
+.nav-link[href="#simulations"]:active,
+.nav-link[href="#simulations"]:visited {
+  background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+  background-size: 400% 400%;
+  animation: rainbow 2s ease infinite;
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Highlight simulations nav item (fallback) */
+.nav-link-highlighted {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light)) !important;
+  color: white !important;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+.nav-link-highlighted::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.nav-link-highlighted:hover::before {
+  left: 100%;
+}
+
+.nav-link-highlighted:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+}
+
+/* Add a small icon to simulations nav */
+.nav-link-highlighted::after {
+  content: ' 🎮';
+  font-size: 0.9rem;
+}
+
+/* Dark mode styles for highlighted nav */
+[data-theme="dark"] .nav-link-highlighted {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light)) !important;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.4);
+}
+
+[data-theme="dark"] .nav-link-highlighted:hover {
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.6);
+}
+
+/* Rainbow highlight for Simulations in dark mode */
+[data-theme="dark"] .nav-link[href="#simulations"] {
+  background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+  background-size: 400% 400%;
+  animation: rainbow 3s ease infinite;
+  color: white !important;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .nav-link[href="#simulations"]:hover,
+[data-theme="dark"] .nav-link[href="#simulations"]:focus,
+[data-theme="dark"] .nav-link[href="#simulations"]:active,
+[data-theme="dark"] .nav-link[href="#simulations"]:visited {
+  background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+  background-size: 400% 400%;
+  animation: rainbow 2s ease infinite;
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
