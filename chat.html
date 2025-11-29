@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title data-en="FTC Interview Practice - Little Potato Robotics" data-zh="FTC面试练习 - 小土豆机器人">FTC Interview Practice - Little Potato Robotics</title>
+    <meta name="description" content="Practice for FTC interviews with our AI-powered interview assistant. Answer questions about your robotics experience using voice input.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-96x96.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* Full-page chatbot layout */
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chat-page-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .chat-page-header a {
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+        
+        .chat-page-header a:hover {
+            opacity: 1;
+        }
+        
+        .chatbot-fullscreen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .chatbot-fullscreen .chatbot-window {
+            position: relative;
+            bottom: auto;
+            right: auto;
+            width: 100%;
+            max-width: 100%;
+            max-height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .chatbot-fullscreen .chatbot-messages {
+            max-height: calc(100vh - 350px);
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .chatbot-fullscreen {
+                padding: 10px;
+            }
+            
+            .chat-page-header h1 {
+                font-size: 1.2rem;
+            }
+            
+            .chatbot-fullscreen .chatbot-messages {
+                max-height: calc(100vh - 300px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Header -->
+    <div class="chat-page-header">
+        <h1 data-en="FTC Interview Practice" data-zh="FTC面试练习">FTC Interview Practice</h1>
+        <a href="index.html">
+            <i class="fas fa-arrow-left"></i>
+            <span data-en="Back to Home" data-zh="返回首页">Back to Home</span>
+        </a>
+    </div>
+
+    <!-- Chatbot Container (Full Screen) -->
+    <div class="chatbot-fullscreen">
+        <div class="chatbot-window" id="chatbot-window">
+            <div class="chatbot-header">
+                <h3 data-en="FTC Interview Practice" data-zh="FTC面试练习">FTC Interview Practice</h3>
+            </div>
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chatbot-welcome">
+                    <p data-en="Welcome to FTC Interview Practice! I'll ask you questions about your robotics experience, and you can answer using voice. Let's get started!" data-zh="欢迎来到FTC面试练习！我会问你关于机器人经验的问题，你可以用语音回答。让我们开始吧！">Welcome to FTC Interview Practice! I'll ask you questions about your robotics experience, and you can answer using voice. Let's get started!</p>
+                </div>
+            </div>
+            <div class="chatbot-input-area">
+                <div class="audio-controls">
+                    <button class="audio-btn" id="audio-record-btn" aria-label="Record audio">
+                        <i class="fas fa-microphone"></i>
+                        <span data-en="Hold to Record" data-zh="按住录音">Hold to Record</span>
+                    </button>
+                    <div class="audio-status" id="audio-status">
+                        <span data-en="Click and hold to record your answer" data-zh="点击并按住以录制您的答案">Click and hold to record your answer</span>
+                    </div>
+                </div>
+                <div class="chatbot-transcript" id="chatbot-transcript" style="display: none;">
+                    <p data-en="Your answer:" data-zh="您的答案：">Your answer:</p>
+                    <p id="transcript-text"></p>
+                    <button class="btn-send" id="send-transcript-btn" data-en="Send Answer" data-zh="发送答案">Send Answer</button>
+                    <button class="btn-cancel" id="cancel-transcript-btn" data-en="Cancel" data-zh="取消">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/chatbot.js"></script>
+    <script>
+        // Initialize chatbot when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Make chatbot window visible immediately (no toggle needed)
+            const chatbotWindow = document.getElementById('chatbot-window');
+            if (chatbotWindow) {
+                chatbotWindow.classList.add('open');
+            }
+            
+            // Initialize chatbot
+            if (typeof FTCChatbot !== 'undefined') {
+                window.ftcChatbot = new FTCChatbot();
+                
+                // Start with first question after a short delay
+                setTimeout(() => {
+                    if (window.ftcChatbot && window.ftcChatbot.conversationHistory.length === 0) {
+                        window.ftcChatbot.askFirstQuestion();
+                    }
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>
+
