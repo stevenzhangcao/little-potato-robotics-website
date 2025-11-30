@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title data-en="FTC Best Practices - Little Potato Robotics" data-zh="FTC最佳实践 - 小土豆机器人">FTC Best Practices - Little Potato Robotics</title>
+    <meta name="description" content="FTC Best Practices guide and community forum. Share your experiences, tips, and feedback to help the FTC community.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-96x96.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        .best-practice-page {
+            padding: var(--spacing-4xl) 0;
+            background: var(--bg-primary);
+        }
+        
+        .practice-hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: var(--spacing-3xl);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--spacing-3xl);
+            text-align: center;
+        }
+        
+        .practice-hero h1 {
+            color: white;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .practice-hero p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .comments-section {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-2xl);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .comments-section h2 {
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .comment-form {
+            background: var(--bg-tertiary);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: var(--font-primary);
+            transition: border-color var(--transition-fast);
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .submit-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+        
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        .comments-list {
+            margin-top: var(--spacing-xl);
+        }
+        
+        .comment-item {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--primary-color);
+            transition: all var(--transition-normal);
+        }
+        
+        .comment-item:hover {
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .comment-type {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .comment-meta {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+        
+        .comment-content {
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .comment-status {
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .comment-status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .comment-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-bottom: var(--spacing-xl);
+            transition: color var(--transition-fast);
+        }
+        
+        .back-link:hover {
+            color: var(--primary-dark);
+        }
+        
+        .best-practices-content {
+            margin-bottom: var(--spacing-3xl);
+        }
+        
+        .best-practices-content .section-title {
+            text-align: center;
+            margin-bottom: var(--spacing-3xl);
+            color: var(--text-primary);
+        }
+        
+        .practice-category {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-2xl);
+            margin-bottom: var(--spacing-2xl);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .category-header i {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+        
+        .category-header h3 {
+            color: var(--text-primary);
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .practice-items {
+            display: grid;
+            gap: var(--spacing-lg);
+        }
+        
+        .practice-item {
+            background: var(--bg-tertiary);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--primary-color);
+            transition: all var(--transition-normal);
+        }
+        
+        .practice-item:hover {
+            box-shadow: var(--shadow-sm);
+            transform: translateX(5px);
+        }
+        
+        .practice-item h4 {
+            color: var(--primary-color);
+            margin: 0 0 15px 0;
+            padding-bottom: 8px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border-bottom: 2px solid var(--primary-color);
+            display: block;
+        }
+        
+        .practice-item p {
+            color: var(--text-secondary);
+            margin: 0 0 10px 0;
+            line-height: 1.6;
+        }
+        
+        .practice-item p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .practice-item code {
+            background: var(--bg-primary);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: var(--primary-color);
+        }
+        
+        .practice-item strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        /* Dark mode support */
+        [data-theme="dark"] .practice-category {
+            background: var(--dark-bg-secondary);
+            border-color: var(--dark-bg-tertiary);
+        }
+        
+        [data-theme="dark"] .practice-item {
+            background: var(--dark-bg-tertiary);
+        }
+        
+        [data-theme="dark"] .category-header {
+            border-bottom-color: var(--dark-bg-tertiary);
+        }
+        
+        [data-theme="dark"] .category-header h3 {
+            color: var(--dark-text-primary);
+        }
+        
+        [data-theme="dark"] .practice-item h4 {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        [data-theme="dark"] .practice-item p {
+            color: var(--dark-text-secondary);
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .category-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .category-header i {
+                font-size: 1.5rem;
+            }
+            
+            .category-header h3 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="images/logo_clean copy.png" alt="Little Potato Robotics" class="logo-img">
+                        <h1 class="logo-text">Little Potato Robotics - Fremont FTC Team 30592</h1>
+                    </a>
+                </div>
+                
+                <!-- Language Switcher -->
+                <div class="language-switcher">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="zh">中文</button>
+                </div>
+                
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="index.html#home" class="nav-link" data-en="Home" data-zh="首页">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.html#team-members" class="nav-link" data-en="Members" data-zh="成员">Members</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.html#media" class="nav-link" data-en="Photos" data-zh="照片">Photos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.html#resources" class="nav-link" data-en="Resources" data-zh="资源">Resources</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="ftc-best-practice.html" class="nav-link active" data-en="Best Practices" data-zh="最佳实践">Best Practices</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.html#simulations" class="nav-link" data-en="Simulations" data-zh="模拟">Simulations</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.html#robot" class="nav-link" data-en="Robot" data-zh="机器人">Robot</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.html#sponsors" class="nav-link" data-en="Sponsors" data-zh="赞助商">Sponsors</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.html#contact" class="nav-link" data-en="Contact" data-zh="联系我们">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.html#foundation" class="nav-link" data-en="NPO" data-zh="非营利组织">NPO</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="best-practice-page">
+        <div class="container">
+            <a href="index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                <span data-en="Back to Home" data-zh="返回首页">Back to Home</span>
+            </a>
+
+            <!-- Hero Section -->
+            <div class="practice-hero">
+                <h1 data-en="FTC Best Practices" data-zh="FTC最佳实践">FTC Best Practices</h1>
+                <p data-en="A comprehensive guide to FTC best practices, compiled from team experiences and community knowledge. Share your own tips and feedback!" data-zh="FTC最佳实践综合指南，汇集了团队经验和社区知识。分享您自己的技巧和反馈！">A comprehensive guide to FTC best practices, compiled from team experiences and community knowledge. Share your own tips and feedback!</p>
+            </div>
+
+            <!-- Best Practices Content Display -->
+            <div class="best-practices-content">
+                <h2 class="section-title" data-en="Best Practices Content" data-zh="最佳实践内容">Best Practices Content</h2>
+                
+                <!-- Chassis & Drivetrain -->
+                <div class="practice-category">
+                    <div class="category-header">
+                        <i class="fas fa-cogs"></i>
+                        <h3 data-en="Chassis & Drivetrain" data-zh="底盘和驱动系统">Chassis & Drivetrain</h3>
+                    </div>
+                    <div class="practice-items">
+                        <div class="practice-item">
+                            <h4 data-en="Frame Construction" data-zh="框架构建">Frame Construction</h4>
+                            <p><strong>Rigidity:</strong> Utilize strong, lightweight structural elements (e.g., aluminum extrusion like Gobilda, REV Robotics, Actobotics) to minimize frame flex and ensure consistent performance.</p>
+                            <p><strong>Low Center of Gravity (CoG):</strong> Design the chassis to keep the robot's CoG as low as possible for stability during rapid movements, turns, and impacts.</p>
+                            <p><strong>Component Protection:</strong> Integrate bumpers or structural elements to protect sensitive internal components (electronics, motors) from external collisions.</p>
+                            <p><strong>Modularity:</strong> Design with standardized hole patterns and modular components to facilitate easy assembly, modification, and repair.</p>
+                            <p><strong>Weight Distribution:</strong> Aim for balanced weight distribution, especially for mecanum drives, to ensure consistent traction and maneuverability.</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="Drive Motors & Gearing" data-zh="驱动电机和齿轮">Drive Motors & Gearing</h4>
+                            <p><strong>Motor Selection:</strong> Use FTC-legal motors (e.g., REV HD Hex, Gobilda Yellow Jacket) with appropriate torque and speed characteristics for the drivetrain type and game strategy.</p>
+                            <p><strong>Gear Ratio Optimization:</strong> Select gear ratios that balance speed and pushing power. Calculate stall current and free speed to avoid motor burnout and optimize performance.</p>
+                            <p><strong>Secure Mounting:</strong> Mount motors securely using robust brackets to prevent rotation or displacement under load.</p>
+                            <p><strong>Power Transmission:</strong> Use high-quality gears, sprockets, and chains/belts. Ensure proper tensioning and alignment to prevent slippage and maximize efficiency.</p>
+                            <p><strong>Encoder Integration:</strong> Integrate motor encoders for precise distance and velocity control, crucial for autonomous navigation.</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="Wheel Selection & Configuration" data-zh="轮子选择和配置">Wheel Selection & Configuration</h4>
+                            <p><strong>Mecanum Wheels:</strong> Best for omnidirectional movement, offering high maneuverability. Requires precise weight distribution and coordinated motor control.</p>
+                            <p><strong>Omni Wheels:</strong> Can be used in combination with traction wheels for lateral movement or in an H-drive configuration for omnidirectional capability.</p>
+                            <p><strong>Traction Wheels:</strong> Provide maximum pushing power and grip, often used in tank drives. Consider tread material for optimal friction on the field.</p>
+                            <p><strong>Wheel Size:</strong> Choose wheel diameter based on desired speed (larger = faster, given same RPM) and ground clearance requirements.</p>
+                            <p><strong>Axle & Bearing Support:</strong> Ensure axles are properly supported by bearings (not just bushings) to reduce friction and improve durability.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manipulators & Mechanisms -->
+                <div class="practice-category">
+                    <div class="category-header">
+                        <i class="fas fa-tools"></i>
+                        <h3 data-en="Manipulators & Mechanisms" data-zh="机械臂和机构">Manipulators & Mechanisms</h3>
+                    </div>
+                    <div class="practice-items">
+                        <div class="practice-item">
+                            <h4 data-en="Intake Systems" data-zh="进料系统">Intake Systems</h4>
+                            <p><strong>Reliable Acquisition:</strong> Design for consistent and rapid acquisition of game elements, minimizing missed attempts or jamming.</p>
+                            <p><strong>Game Element Compatibility:</strong> Ensure the intake mechanism is specifically designed to handle the size, shape, and material of the game elements without damage.</p>
+                            <p><strong>Passive vs. Active:</strong> Consider if a passive intake (e.g., funnel) or an active intake (e.g., rollers, compliant wheels) is more effective for the game challenge.</p>
+                            <p><strong>Clearance & Protection:</strong> Design the intake to extend and retract safely within robot dimensions and be protected from impacts.</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="Scoring & Outtake Mechanisms" data-zh="得分和出料机构">Scoring & Outtake Mechanisms</h4>
+                            <p><strong>Accuracy & Repeatability:</strong> Optimize for precise and consistent placement of game elements into scoring zones or targets.</p>
+                            <p><strong>Speed & Efficiency:</strong> Minimize the time required to score, maximizing cycle times.</p>
+                            <p><strong>Multi-Position Capability:</strong> If the game requires scoring at different heights or orientations, design a mechanism that can adapt.</p>
+                            <p><strong>Robust Deployment:</strong> Ensure the mechanism can withstand repeated use and potential impacts without failure.</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="Lifting & Extension Systems" data-zh="升降和伸展系统">Lifting & Extension Systems</h4>
+                            <p><strong>Stability & Rigidity:</strong> Use robust linear slides (e.g., telescopic, drawer slides, continuous rigging) or articulated arms that maintain stability even at full extension.</p>
+                            <p><strong>Power & Speed:</strong> Select motors and gearing that provide sufficient power to lift the mechanism and game elements quickly and reliably.</p>
+                            <p><strong>Control & Precision:</strong> Incorporate encoders and/or limit switches for accurate positioning and to prevent over-extension or collision.</p>
+                            <p><strong>Counterbalancing:</strong> Consider using springs, elastic bands, or counterweights to reduce the load on motors and improve efficiency.</p>
+                            <p><strong>Cable Management:</strong> Route power and sensor cables neatly to prevent snagging or damage during extension/retraction.</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="End Effectors (Grippers/Claws)" data-zh="末端执行器（夹爪/爪子）">End Effectors (Grippers/Claws)</h4>
+                            <p><strong>Secure Grip:</strong> Design for a firm, non-damaging grip on game elements.</p>
+                            <p><strong>Actuation Method:</strong> Choose between servo-actuated, motor-driven, or pneumatic systems based on required force, speed, and complexity.</p>
+                            <p><strong>Rapid Release:</strong> Ensure the end effector can quickly and reliably release game elements.</p>
+                            <p><strong>Compliance:</strong> Incorporate compliant materials or designs (e.g., 3D printed flexible parts, rubber padding) to adapt to slight variations in element position or shape.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Design -->
+                <div class="practice-category">
+                    <div class="category-header">
+                        <i class="fas fa-drafting-compass"></i>
+                        <h3 data-en="Design" data-zh="设计">Design</h3>
+                    </div>
+                    <div class="practice-items">
+                        <div class="practice-item">
+                            <h4 data-en="Deadwheel" data-zh="死轮">Deadwheel</h4>
+                            <p><strong>Signal Synchronization:</strong> Connect to same hub to ensure synced signal</p>
+                            <p><strong>Installation Stability:</strong> Install to stable location</p>
+                            <p><strong>Installation Height:</strong> Optimum height should be 72mm</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="Holes" data-zh="孔">Holes</h4>
+                            <p><strong>Punch Holes Size:</strong> 4.5mm holes is best practice</p>
+                            <p><strong>Custom Bases Quantity:</strong> Always keep enough holes in custom bases</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="Custom Design" data-zh="自定义设计">Custom Design</h4>
+                            <p><strong>Weight Minimization Goal:</strong> Minimize weight to improve machine speed</p>
+                            <p><strong>Weight Minimization Method:</strong> Best method through triangle design</p>
+                            <p><strong>Angle:</strong> Avoid sharp angle as much as possible, use chamfer to reduce risk of hurt during installation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control System & Electronics -->
+                <div class="practice-category">
+                    <div class="category-header">
+                        <i class="fas fa-microchip"></i>
+                        <h3 data-en="Control System & Electronics" data-zh="控制系统和电子设备">Control System & Electronics</h3>
+                    </div>
+                    <div class="practice-items">
+                        <div class="practice-item">
+                            <h4 data-en="Wiring & Power Management" data-zh="布线和电源管理">Wiring & Power Management</h4>
+                            <p><strong>Emergency Stop:</strong> Ensure the main power switch is easily accessible and clearly marked.</p>
+                            <p><strong>Accidental Touch Prevention:</strong> Should be at location that is not easily to be mistakenly touched by human or any game artifacts</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="Control Hub & Peripherals" data-zh="控制中心和外围设备">Control Hub & Peripherals</h4>
+                            <p><strong>Secure Mounting:</strong> Mount the REV Control Hub/Expansion Hub securely, protecting it from impacts and vibrations.</p>
+                            <p><strong>Ventilation:</strong> Ensure adequate airflow around the hubs to prevent overheating.</p>
+                            <p><strong>Firmware Updates:</strong> Regularly update the firmware on all REV components to the latest version.</p>
+                            <p><strong>USB Connection:</strong> Use a high-quality, short USB-C cable for connecting the Control Hub to the driver station if using a separate driver hub.</p>
+                            <p><strong>Wi-Fi Channel Selection:</strong> Optimize Wi-Fi channel selection to minimize interference at competition venues.</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="Sensor Integration" data-zh="传感器集成">Sensor Integration</h4>
+                            <p><strong>Strategic Placement:</strong> Mount sensors (e.g., IMU, color, distance, touch, encoders, vision cameras) in locations that provide reliable and unobstructed data.</p>
+                            <p><strong>Calibration:</strong> Calibrate all sensors (especially IMU, color sensors) before competition.</p>
+                            <p><strong>Noise Reduction:</strong> Shield sensor wires from motor wires to minimize electrical interference.</p>
+                            <p><strong>Data Fusion:</strong> Consider fusing data from multiple sensors (e.g., IMU and encoders for odometry) for more robust autonomous navigation.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Software & Programming -->
+                <div class="practice-category">
+                    <div class="category-header">
+                        <i class="fas fa-code"></i>
+                        <h3 data-en="Software & Programming" data-zh="软件和编程">Software & Programming</h3>
+                    </div>
+                    <div class="practice-items">
+                        <div class="practice-item">
+                            <h4 data-en="Code Structure & Best Practices" data-zh="代码结构和最佳实践">Code Structure & Best Practices</h4>
+                            <p><strong>Modularity:</strong> Organize code into logical classes and methods (e.g., separate classes for drivetrain, intake, lift) to improve readability and maintainability.</p>
+                            <p><strong>Comments & Documentation:</strong> Use clear and concise comments to explain complex logic or non-obvious code sections.</p>
+                            <p><strong>Consistent Naming:</strong> Follow consistent naming conventions for variables, methods, and classes.</p>
+                            <p><strong>Version Control:</strong> Utilize Git (GitHub, GitLab) for collaborative development, tracking changes, and enabling rollbacks.</p>
+                            <p><strong>Telemetry:</strong> Make extensive use of <code>telemetry</code> for real-time debugging and monitoring robot state during matches.</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="Autonomous Programming" data-zh="自主编程">Autonomous Programming</h4>
+                            <p><strong>Robust Navigation:</strong> Implement advanced navigation techniques using encoders, IMU, and vision (e.g., AprilTags, OpenCV for object detection) for accurate and repeatable movement.</p>
+                            <p><strong>State Machines/Finite State Automata:</strong> Structure autonomous routines using state machines for clear, manageable, and debuggable logic.</p>
+                            <p><strong>Error Handling:</strong> Include mechanisms to handle minor deviations (e.g., missed game element, slight bump) to prevent complete failure of the routine.</p>
+                            <p><strong>Path Planning:</strong> Consider using advanced path planning libraries (e.g., Road Runner) for smooth and optimized trajectories.</p>
+                            <p><strong>Testing:</strong> Thoroughly test autonomous routines on a full-size field under various conditions.</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="TeleOp Programming" data-zh="遥控编程">TeleOp Programming</h4>
+                            <p><strong>Intuitive Controls:</strong> Design driver controls to be intuitive and comfortable, allowing drivers to focus on strategy rather than complex button sequences.</p>
+                            <p><strong>Smooth Motion:</strong> Implement smooth acceleration/deceleration curves for drivetrain and manipulators to prevent jerky movements and improve control.</p>
+                            <p><strong>Driver Feedback:</strong> Provide telemetry or visual cues (e.g., LED patterns) to inform drivers about robot state, sensor readings, or mechanism positions.</p>
+                            <p><strong>Macro Functions:</strong> Implement macro functions for complex, repeatable actions (e.g., 'score high pole') to reduce driver workload.</p>
+                            <p><strong>Dead Zones & Sensitivity:</strong> Tune joystick dead zones and sensitivity curves to match driver preferences and prevent accidental inputs.</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="Debugging & Optimization" data-zh="调试和优化">Debugging & Optimization</h4>
+                            <p><strong>Systematic Debugging:</strong> Approach debugging systematically, isolating issues and testing small changes.</p>
+                            <p><strong>Logging:</strong> Implement logging (e.g., writing to a file on the Control Hub) for detailed post-match analysis of robot behavior.</p>
+                            <p><strong>Performance Profiling:</strong> Identify and optimize performance bottlenecks in code, especially for time-critical operations.</p>
+                            <p><strong>Unit & Integration Testing:</strong> Test individual code components (unit testing) and how they interact (integration testing) to catch errors early.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Process & Strategy -->
+                <div class="practice-category">
+                    <div class="category-header">
+                        <i class="fas fa-project-diagram"></i>
+                        <h3 data-en="Team Process & Strategy" data-zh="团队流程和策略">Team Process & Strategy</h3>
+                    </div>
+                    <div class="practice-items">
+                        <div class="practice-item">
+                            <h4 data-en="Game Analysis & Strategy Development" data-zh="游戏分析和策略制定">Game Analysis & Strategy Development</h4>
+                            <p><strong>Thorough Manual Review:</strong> Read and re-read the game manual immediately upon release, paying attention to scoring elements, penalties, and robot rules.</p>
+                            <p><strong>Scoring Prioritization:</strong> Identify the most efficient and highest-value scoring opportunities. Prioritize robot functions based on these.</p>
+                            <p><strong>Alliance Strategy:</strong> Develop strategies that consider potential alliance partners and their robot capabilities, as well as opponent strategies.</p>
+                            <p><strong>Autonomous & TeleOp Synergy:</strong> Design autonomous routines that seamlessly transition into TeleOp, setting up the robot for immediate scoring.</p>
+                            <p><strong>Risk Assessment:</strong> Evaluate the risks associated with complex mechanisms or strategies and have backup plans.</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="Design & Iteration Cycle" data-zh="设计和迭代周期">Design & Iteration Cycle</h4>
+                            <p><strong>CAD (Computer-Aided Design):</strong> Utilize CAD software (e.g., Onshape, Fusion 360, SolidWorks) for detailed design, assembly, and interference checking before physical construction.</p>
+                            <p><strong>Prototyping:</strong> Build quick, low-fidelity prototypes to test concepts and validate designs before committing to final construction.</p>
+                            <p><strong>Iterative Design:</strong> Embrace a continuous cycle of design, build, test, and refine. Don't be afraid to scrap a design that isn't working.</p>
+                            <p><strong>Documentation:</strong> Maintain a detailed Engineering Notebook documenting design decisions, challenges, solutions, and testing results.</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="Team Organization & Communication" data-zh="团队组织和沟通">Team Organization & Communication</h4>
+                            <p><strong>Role Assignment:</strong> Clearly define roles and responsibilities within the team (e.g., mechanical, electrical, software, strategy, notebook).</p>
+                            <p><strong>Regular Meetings:</strong> Hold regular meetings to discuss progress, challenges, and next steps.</p>
+                            <p><strong>Effective Communication:</strong> Foster open and respectful communication among team members and with mentors.</p>
+                            <p><strong>Mentorship:</strong> Leverage mentor expertise in various fields (engineering, programming, project management).</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4 data-en="Testing & Maintenance" data-zh="测试和维护">Testing & Maintenance</h4>
+                            <p><strong>Comprehensive Testing:</strong> Conduct thorough testing of all robot functions, both individually and as an integrated system, on a practice field.</p>
+                            <p><strong>Durability Testing:</strong> Subject the robot to realistic competition conditions to identify weak points and potential failure modes.</p>
+                            <p><strong>Preventative Maintenance:</strong> Establish a routine for checking fasteners, wire connections, motor mounts, and moving parts before and after each competition day.</p>
+                            <p><strong>Spare Parts:</strong> Maintain an organized inventory of spare parts for critical components (motors, wheels, sensors, structural elements).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="comments-section">
+                <h2 data-en="Community Feedback & Additional Practices" data-zh="社区反馈和更多实践">Community Feedback & Additional Practices</h2>
+                <p data-en="Share your own best practices, tips, feedback, or suggestions. Help build a comprehensive resource for the FTC community!" data-zh="分享您自己的最佳实践、技巧、反馈或建议。帮助为FTC社区建立综合资源！">Share your own best practices, tips, feedback, or suggestions. Help build a comprehensive resource for the FTC community!</p>
+
+                <!-- Comment Form -->
+                <div class="comment-form">
+                    <div id="commentStatus" class="comment-status"></div>
+                    
+                    <div class="form-group">
+                        <label for="userName" data-en="Your Name/Team" data-zh="您的姓名/团队">Your Name/Team</label>
+                        <input type="text" id="userName" placeholder="e.g., Team 30592, John Smith" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userLocation" data-en="Location (Optional)" data-zh="位置（可选）">Location (Optional)</label>
+                        <input type="text" id="userLocation" placeholder="City, State/Country (e.g., Fremont, CA)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="commentType" data-en="Category" data-zh="类别">Category</label>
+                        <select id="commentType">
+                            <option value="best-practice" data-en="Best Practice" data-zh="最佳实践">Best Practice</option>
+                            <option value="tip" data-en="Tip/Suggestion" data-zh="技巧/建议">Tip/Suggestion</option>
+                            <option value="feedback" data-en="Feedback" data-zh="反馈">Feedback</option>
+                            <option value="improvement" data-en="Improvement" data-zh="改进">Improvement</option>
+                            <option value="general" data-en="General Comment" data-zh="一般评论">General Comment</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userComment" data-en="Your Comment/Practice" data-zh="您的评论/实践">Your Comment/Practice</label>
+                        <textarea id="userComment" placeholder="Share your best practice, tip, or feedback..." rows="5" required></textarea>
+                    </div>
+                    
+                    <button type="button" class="submit-btn" onclick="submitComment()">
+                        <i class="fas fa-paper-plane"></i>
+                        <span data-en="Submit Comment" data-zh="提交评论">Submit Comment</span>
+                    </button>
+                </div>
+
+                <!-- Comments List -->
+                <div class="comments-list">
+                    <h3 data-en="Community Comments" data-zh="社区评论">Community Comments</h3>
+                    <div id="commentsList">
+                        <!-- Comments will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 data-en="Little Potato Robotics" data-zh="小土豆机器人">Little Potato Robotics</h3>
+                    <p data-en="Team 30592" data-zh="队伍 30592">Team 30592</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-en="&copy; 2025 Little Potato Robotics. FusionSTEM Foundation. All rights reserved." data-zh="&copy; 2025 小土豆机器人团队，FusionSTEM基金会。保留所有权利。">&copy; 2025 Little Potato Robotics, FusionSTEM Foundation. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/best-practice-comments.js"></script>
+</body>
+</html>
+
