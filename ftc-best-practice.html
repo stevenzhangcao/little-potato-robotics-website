@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="css/responsive.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     
     <style>
         .best-practice-page {
@@ -619,15 +621,25 @@
             <!-- Comments Section -->
             <div class="comments-section">
                 <h2 data-en="Community Feedback & Additional Practices" data-zh="社区反馈和更多实践">Community Feedback & Additional Practices</h2>
-                <p data-en="Share your own best practices, tips, feedback, or suggestions. Help build a comprehensive resource for the FTC community!" data-zh="分享您自己的最佳实践、技巧、反馈或建议。帮助为FTC社区建立综合资源！">Share your own best practices, tips, feedback, or suggestions. Help build a comprehensive resource for the FTC community!</p>
+                <p data-en="Share your own best practices, tips, feedback, or suggestions. Your feedback will be sent directly to our team via email!" data-zh="分享您自己的最佳实践、技巧、反馈或建议。您的反馈将通过电子邮件直接发送给我们的团队！">Share your own best practices, tips, feedback, or suggestions. Your feedback will be sent directly to our team via email!</p>
 
                 <!-- Comment Form -->
                 <div class="comment-form">
                     <div id="commentStatus" class="comment-status"></div>
                     
                     <div class="form-group">
-                        <label for="userName" data-en="Your Name/Team" data-zh="您的姓名/团队">Your Name/Team</label>
-                        <input type="text" id="userName" placeholder="e.g., Team 30592, John Smith" required>
+                        <label for="userName" data-en="Your Name" data-zh="您的姓名">Your Name</label>
+                        <input type="text" id="userName" placeholder="e.g., John Smith" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="teamId" data-en="Team ID" data-zh="队伍编号">Team ID</label>
+                        <input type="text" id="teamId" placeholder="e.g., Team 30592" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="connectionMethod" data-en="Connection Method" data-zh="联系方式">Connection Method</label>
+                        <input type="text" id="connectionMethod" placeholder="e.g., Email: your@email.com or Phone: 123-456-7890" required>
                     </div>
                     
                     <div class="form-group">
