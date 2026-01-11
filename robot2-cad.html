@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title data-en="Rose Finn Apple Potato CAD Design - Little Potato Robotics" data-zh="玫瑰芬苹果薯CAD设计 - 小土豆机器人">Rose Finn Apple Potato CAD Design - Little Potato Robotics</title>
+    <meta name="description" content="Interactive 3D CAD design viewer for Rose Finn Apple Potato robot - Little Potato Robotics Team 30592">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-96x96.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        .cad-viewer-page {
+            min-height: 100vh;
+            background: var(--bg-primary);
+            padding: var(--spacing-2xl) 0;
+        }
+        
+        .cad-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+        }
+        
+        .cad-header h1 {
+            color: white;
+            margin-bottom: var(--spacing-md);
+            font-size: 2rem;
+        }
+        
+        .cad-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            margin-bottom: var(--spacing-md);
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            transition: background 0.3s ease;
+        }
+        
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .cad-viewer-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .cad-iframe-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 75%; /* 4:3 aspect ratio */
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .cad-iframe-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            min-height: 600px;
+        }
+        
+        .cad-info {
+            background: var(--bg-secondary);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+        }
+        
+        .cad-info h3 {
+            margin-bottom: var(--spacing-md);
+            color: var(--text-primary);
+        }
+        
+        .cad-info p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .cad-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .cad-iframe-wrapper {
+                padding-bottom: 100%; /* Square on mobile */
+            }
+            
+            .cad-iframe-wrapper iframe {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cad-viewer-page">
+            <div class="cad-header">
+                <a href="index.html#robot" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    <span data-en="Back to Robots" data-zh="返回机器人">Back to Robots</span>
+                </a>
+                <h1 data-en="Rose Finn Apple Potato - CAD Design" data-zh="玫瑰芬苹果薯 - CAD设计">Rose Finn Apple Potato - CAD Design</h1>
+                <p data-en="Interactive 3D CAD model viewer for our 2nd robot that won the Winning Alliance award" data-zh="我们获得获胜联盟奖的第二台机器人的交互式3D CAD模型查看器">Interactive 3D CAD model viewer for our 2nd robot that won the Winning Alliance award</p>
+            </div>
+            
+            <div class="cad-viewer-container">
+                <div class="cad-iframe-wrapper">
+                    <iframe 
+                        src="https://gmail2439230.autodesk360.com/g/shares/SH90d2dQT28d5b60281141357c53d1ddf9de" 
+                        allowfullscreen 
+                        allow="autoplay; fullscreen; xr-spatial-tracking"
+                        title="Rose Finn Apple Potato CAD Design">
+                    </iframe>
+                </div>
+            </div>
+            
+            <div class="cad-info">
+                <h3 data-en="About This Design" data-zh="关于此设计">About This Design</h3>
+                <p data-en="This is the CAD design for our 2nd robot, Rose Finn Apple Potato, which achieved the Winning Alliance award in our first qualification game. The design showcases our team's engineering capabilities and innovative approach to FTC robotics competition." data-zh="这是我们第二台机器人玫瑰芬苹果薯的CAD设计，该机器人在我们的第一场资格赛中获得了获胜联盟奖。该设计展示了我们团队的工程能力和FTC机器人竞赛的创新方法。">This is the CAD design for our 2nd robot, Rose Finn Apple Potato, which achieved the Winning Alliance award in our first qualification game. The design showcases our team's engineering capabilities and innovative approach to FTC robotics competition.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+</body>
+</html>
