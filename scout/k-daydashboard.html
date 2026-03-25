@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FTC Scouting — KDays Rankings</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 1.5rem;
+      background: #1a1d23;
+      color: #e6e8ec;
+      min-height: 100vh;
+    }
+    .dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+      color: #fff;
+    }
+    .subtitle {
+      color: #8b9199;
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .file-wrap {
+      position: relative;
+    }
+    .file-wrap input[type="file"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: #2d3239;
+      color: #e6e8ec;
+    }
+    .btn:hover {
+      background: #3d434c;
+    }
+    .btn-primary {
+      background: #1976d2;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #1565c0;
+    }
+    .summary {
+      font-size: 0.9rem;
+      color: #8b9199;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid #2d3239;
+      background: #22262d;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th, td {
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #2d3239;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      background: #2d3239;
+      color: #b0b5bb;
+      font-weight: 600;
+      white-space: nowrap;
+      user-select: none;
+      cursor: pointer;
+    }
+    th:hover {
+      background: #3d434c;
+      color: #fff;
+    }
+    th .sort-icon {
+      margin-left: 0.25rem;
+      opacity: 0.6;
+      font-size: 0.75rem;
+    }
+    th.sorted-asc .sort-icon::after { content: ' ▲'; }
+    th.sorted-desc .sort-icon::after { content: ' ▼'; }
+    tbody tr:hover {
+      background: rgba(255,255,255,0.03);
+    }
+    td {
+      color: #d0d4d9;
+    }
+    td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    td a.team-link {
+      color: #5ba3f5;
+      text-decoration: none;
+    }
+    td a.team-link:hover {
+      text-decoration: underline;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #6b7280;
+    }
+    .empty-state p { margin: 0.5rem 0; }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>FTC Scouting — KDays Rankings</h1>
+    <p class="subtitle">Canadian Rockies Premier Event @ KDays (FPEROC) · 2025 DECODE</p>
+
+    <div class="toolbar">
+      <div class="file-wrap">
+        <input type="file" id="file" accept=".csv" />
+        <button type="button" class="btn btn-primary">Load different CSV</button>
+      </div>
+      <span class="summary" id="summary"></span>
+    </div>
+
+    <div class="table-wrap">
+      <table id="table">
+        <thead id="thead"></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="empty-state" id="empty">No rankings data. Use "Load different CSV" or regenerate <strong>rankings.csv</strong> and refresh.</div>
+    </div>
+  </div>
+
+  <script type="text/plain" id="rankings-csv">
+Rank,Team,Name,Location,Total NP,Auto,Teleop,Endgame,World Rk,Pct%,Ev Rk,Ev W-L-T,npOPR,npAVG,Events,W,L,T,Win%,Qual (W-L-T),Playoff (W-L),Avg Score,Matches
+1,24068,B.R.M,上海,134.0,29.9,104.9,7.0,131,98.4,5,4-2-0,134.0,215.5,4,18,13,0,58.1,12-6-0,6-7,,31
+2,16093,Cosmic Spark,北京,125.5,35.4,96.2,9.6,184,97.7,18,3-3-0,123.7,215.5,3,11,14,0,44.0,8-10-0,3-4,,25
+3,23542,TechnoBotz,Frisco,122.1,36.0,86.1,10.8,212,97.4,9,3-3-0,100.6,186.0,7,33,16,0,67.3,24-8-0,9-8,,49
+4,19682,Imagineers,Shanghai,117.8,27.1,92.2,11.5,247,97.0,9,4-2-0,117.8,191.7,3,14,9,0,60.9,11-7-0,3-2,,23
+5,11138,Robo Eclipse,Bellevue,104.3,36.8,67.5,11.5,428,94.7,15,3-3-0,65.3,159.5,5,21,10,0,67.7,20-6-0,1-4,,31
+6,32008,Innovators,Minhang,103.3,28.4,74.9,8.0,440,94.6,8,4-1-1,103.3,202.7,3,10,7,1,55.6,10-7-1,0-0,,18
+7,10111,Herberger Javelinas,Glendale,94.0,32.7,64.6,7.1,606,92.5,4,5-1-0,94.0,146.7,4,28,6,0,82.4,17-4-0,11-2,,34
+8,25193,Sipinine,Kokshetau,92.9,27.1,73.5,6.0,626,92.3,11,5-3-0,92.9,161.6,4,12,15,0,44.4,11-13-0,1-2,,27
+9,18448,LYBOTICS Castle Team,Sebha,89.1,19.8,69.3,7.4,709,91.2,3,4-1-0,89.1,140.4,2,9,8,0,52.9,6-4-0,3-4,,17
+10,13968,Herberger Howlers,Glendale,86.4,23.1,63.3,8.5,769,90.5,3,5-1-0,86.4,151.5,4,17,16,0,51.5,11-10-0,6-6,,33
+11,30592,Little Potato,Fremont,85.9,41.2,50.9,5.7,779,90.4,6,3-2-0,85.9,186.6,3,13,10,0,56.5,9-6-0,4-4,,23
+12,24135,Cybertronic PenguinZ,Calgary,85.8,27.8,61.8,8.0,781,90.4,17,4-4-0,85.8,137.8,4,19,12,0,61.3,15-8-0,4-4,,31
+13,28008,Sea Master_4,Tainan,84.4,29.3,55.1,7.6,815,89.9,6,3-2-0,84.4,144.0,1,5,4,0,55.6,3-2-0,2-2,,9
+14,16596,CAI - Crazy Artificial Intelligence,Calgary,82.3,19.3,63.0,7.9,869,89.3,5,7-1-0,82.3,130.2,4,24,10,0,70.6,17-6-0,7-4,,34
+15,18809,Atomic Liquitabs,Owen Sound,82.1,21.9,60.2,5.7,875,89.2,6,6-1-0,69.2,151.3,3,22,7,0,75.9,15-2-0,7-5,,29
+16,13702,Joe Bots - White,Saint Joseph,79.9,26.5,57.5,6.9,941,88.4,5,6-1-0,79.9,149.7,3,15,9,1,60.0,11-5-1,4-4,,25
+17,24124,Nighthawks North Star,Calgary,76.8,26.1,53.2,13.0,1020,87.4,18,4-4-0,76.8,120.8,4,14,14,0,50.0,13-10-0,1-4,,28
+18,20125,Webber Cosmic Cats,Calgary,76.1,29.3,49.5,6.4,1050,87.0,8,5-3-0,76.0,135.0,4,24,10,0,70.6,17-6-0,7-4,,34
+19,21339,Salisbury Robotics,Sherwood Park,76.1,20.8,55.3,8.8,1053,87.0,19,3-5-0,76.1,118.1,4,16,16,0,50.0,11-12-0,5-4,,32
+20,25751,Dread Pirate Robotics,Huntsville,75.3,26.4,56.8,11.3,1072,86.8,12,2-3-0,70.5,96.6,3,15,9,0,62.5,9-7-0,6-2,,24
+21,26181,Cloud 9,Brookline,73.8,20.5,55.5,13.4,1118,86.2,7,3-2-0,69.6,160.2,3,13,9,0,59.1,10-5-0,3-4,,22
+22,20159,Archangel Holy Gears,Alpena,71.5,24.0,47.5,11.6,1205,85.1,15,4-3-0,57.5,133.4,3,15,10,0,60.0,11-6-0,4-4,,25
+23,31730,All About Jeff,Wilmington,70.7,14.9,55.8,7.0,1226,84.8,7,4-1-0,70.7,99.2,1,10,2,0,83.3,4-1-0,6-1,,12
+24,33387,pirates team,Tripoli,70.6,13.8,56.8,9.8,1230,84.8,4,4-1-0,70.6,136.6,2,13,3,0,81.2,8-2-0,5-1,,16
+25,20681,Giga Bite,South Lake Tahoe,66.7,17.6,49.1,7.7,1370,83.1,12,4-3-1,41.2,82.1,5,18,7,2,66.7,17-5-2,1-2,,27
+26,23684,Tech Titans,Calgary,60.0,21.7,38.4,9.7,1706,78.9,23,4-4-0,60.0,104.6,4,14,13,0,51.9,12-11-0,2-2,,27
+27,30532,CyberStorm,San Juan,55.2,14.5,40.8,7.5,1988,75.4,1,5-0-0,55.2,92.8,1,9,1,0,90.0,5-0-0,4-1,,10
+28,33055,Campbell Robotics 2,Regina,50.6,15.6,35.0,3.6,2285,71.7,4,4-1-0,50.6,69.8,1,7,3,0,70.0,4-1-0,3-2,,10
+29,28613,A.I.R.,Hwaseong-si,44.5,19.9,32.7,9.0,2748,66.0,12,3-2-0,44.5,75.2,1,6,4,0,60.0,3-2-0,3-2,,10
+30,26242,1 M0RE Zip_Tie,Whitehorse,42.2,10.6,31.7,8.8,2976,63.2,1,5-1-0,42.2,65.8,1,7,1,0,87.5,5-1-0,2-0,,8
+31,31856,SESI THUNDERBÓTICOS,Rio Claro,40.9,13.3,27.6,5.3,3123,61.4,36,3-5-0,40.9,95.1,2,8,10,0,44.4,6-8-0,2-2,,18
+32,9378,Magma Robotics,Honolulu,40.1,15.6,34.0,5.9,3224,60.1,6,3-2-0,40.1,109.0,5,13,9,0,59.1,13-7-0,0-2,,22
+33,15352,St. Jago - Iterations,Spanish Town,28.3,4.9,23.4,5.6,4740,41.4,8,3-2-0,28.3,39.4,1,3,4,0,42.9,3-2-0,0-2,,7
+34,34148,CDC.zip,San Rafael,23.2,3.1,20.1,3.5,5515,31.8,4,3-2-0,23.2,57.8,1,6,2,0,75.0,3-2-0,3-0,,8
+35,28942,Tech Titans of Knox,Spalding,23.1,1.5,21.6,7.0,5537,31.5,6,4-1-0,23.1,32.8,1,4,3,0,57.1,4-1-0,0-2,,7
+36,15060,Blue Flames,Kingston,4.9,1.0,4.0,1.9,7842,3.0,7,4-1-0,4.9,29.4,1,6,3,0,66.7,4-1-0,2-2,,9
+37,24950,NOVATARD,Casablanca,0.2,1.0,-0.8,4.3,8015,0.9,7,2-3-0,0.2,26.8,1,2,3,0,40.0,2-3-0,0-0,,5
+</script>
+
+  <script>
+    (function () {
+      const fileInput = document.getElementById('file');
+      const thead = document.getElementById('thead');
+      const tbody = document.getElementById('tbody');
+      const empty = document.getElementById('empty');
+      const summary = document.getElementById('summary');
+
+      let data = [];
+      let columns = [];
+      let sortCol = -1;
+      let sortAsc = true;
+
+      function parseCSV(text) {
+        const rows = [];
+        let cur = [];
+        let cell = '';
+        let inQuotes = false;
+        for (let i = 0; i < text.length; i++) {
+          const ch = text[i];
+          if (ch === '"') {
+            inQuotes = !inQuotes;
+          } else if (inQuotes) {
+            cell += ch;
+          } else if (ch === ',' || ch === '\n' || ch === '\r') {
+            if (ch === ',' || ch === '\n') {
+              cur.push(cell.trim());
+              cell = '';
+            }
+            if (ch === '\n' || (ch === '\r' && text[i + 1] === '\n')) {
+              if (cur.length) rows.push(cur);
+              cur = [];
+              if (ch === '\r') i++;
+            }
+          } else {
+            cell += ch;
+          }
+        }
+        if (cell || cur.length) {
+          cur.push(cell.trim());
+          rows.push(cur);
+        }
+        return rows;
+      }
+
+      function isNumeric(val) {
+        if (val === '' || val == null) return false;
+        return !isNaN(Number(val)) && isFinite(Number(val));
+      }
+
+      function compare(a, b, colIdx) {
+        const ac = a[colIdx];
+        const bc = b[colIdx];
+        const an = isNumeric(ac) ? Number(ac) : null;
+        const bn = isNumeric(bc) ? Number(bc) : null;
+        if (an != null && bn != null) return an - bn;
+        const as = String(ac ?? '');
+        const bs = String(bc ?? '');
+        return as.localeCompare(bs, undefined, { numeric: true });
+      }
+
+      function sortData() {
+        if (sortCol < 0 || sortCol >= columns.length) return;
+        data.sort((a, b) => {
+          const c = compare(a, b, sortCol);
+          return sortAsc ? c : -c;
+        });
+      }
+
+      const TEAM_PAGE_BASE = 'https://ftc-events.firstinspires.org/2025/team/';
+
+      function render() {
+        if (!columns.length) {
+          thead.innerHTML = '';
+          tbody.innerHTML = '';
+          empty.style.display = 'block';
+          summary.textContent = '';
+          return;
+        }
+        empty.style.display = 'none';
+
+        const teamColIdx = columns.findIndex(c => c.trim().toLowerCase() === 'team');
+
+        thead.innerHTML = '<tr>' + columns.map((col, i) => {
+          const isSorted = i === sortCol;
+          const dir = isSorted ? (sortAsc ? 'sorted-asc' : 'sorted-desc') : '';
+          return `<th class="${dir}" data-col="${i}">${escapeHtml(col)}<span class="sort-icon"></span></th>`;
+        }).join('') + '</tr>';
+
+        tbody.innerHTML = data.map(row =>
+          '<tr>' + row.map((cell, i) => {
+            const numClass = isNumeric(cell) ? ' num' : '';
+            let content = escapeHtml(String(cell ?? ''));
+            if (i === teamColIdx && cell != null && String(cell).trim() !== '') {
+              const teamNum = String(cell).trim();
+              const url = TEAM_PAGE_BASE + encodeURIComponent(teamNum);
+              content = '<a class="team-link" href="' + url + '" target="_blank" rel="noopener">' + content + '</a>';
+            }
+            return '<td class="' + numClass + '">' + content + '</td>';
+          }).join('') + '</tr>'
+        ).join('');
+
+        summary.textContent = data.length + ' team' + (data.length !== 1 ? 's' : '');
+
+        thead.querySelectorAll('th').forEach(th => {
+          th.addEventListener('click', () => {
+            const col = parseInt(th.dataset.col, 10);
+            if (sortCol === col) sortAsc = !sortAsc;
+            else { sortCol = col; sortAsc = true; }
+            sortData();
+            render();
+          });
+        });
+      }
+
+      function escapeHtml(s) {
+        const div = document.createElement('div');
+        div.textContent = s;
+        return div.innerHTML;
+      }
+
+      fileInput.addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function () {
+          loadFromCSV(reader.result);
+        };
+        reader.readAsText(file, 'UTF-8');
+      });
+
+      function loadFromCSV(text) {
+        const rows = parseCSV(text);
+        if (rows.length < 2) {
+          columns = [];
+          data = [];
+        } else {
+          columns = rows[0];
+          data = rows.slice(1).map(row => {
+            while (row.length < columns.length) row.push('');
+            return row.slice(0, columns.length);
+          });
+          sortCol = columns.findIndex(c => c.trim().toLowerCase() === 'total np');
+          if (sortCol < 0) sortCol = 0;
+          sortAsc = false;
+          sortData();
+        }
+        render();
+      }
+
+      const embeddedEl = document.getElementById('rankings-csv');
+      if (embeddedEl && embeddedEl.textContent.trim()) {
+        loadFromCSV(embeddedEl.textContent.trim());
+      }
+    })();
+  </script>
+</body>
+</html>
