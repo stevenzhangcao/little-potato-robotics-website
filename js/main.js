@@ -3,339 +3,61 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all functionality
     initSmoothScrolling();
-    initFormHandling();
     initScrollEffects();
     initAccessibility();
+    initLazyLoading();
+    initializeLanguageSwitcher();
 });
-
-// Mobile Menu Functionality
-// Mobile menu functionality removed - navigation is now always visible
 
 // Smooth Scrolling for Anchor Links
 function initSmoothScrolling() {
     const anchorLinks = document.querySelectorAll('a[href^="#"]');
-    
+
     anchorLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-            
+
             const targetId = this.getAttribute('href');
             const targetElement = document.querySelector(targetId);
-            
+
             if (targetElement) {
                 const headerHeight = document.querySelector('.header').offsetHeight;
                 const targetPosition = targetElement.offsetTop - headerHeight - 20;
-                
+
                 window.scrollTo({
                     top: targetPosition,
                     behavior: 'smooth'
                 });
-                
-                // Close mobile menu if open
-                const nav = document.querySelector('.nav');
-                const mobileToggle = document.querySelector('.mobile-menu-toggle');
-                if (nav && nav.classList.contains('active')) {
-                    nav.classList.remove('active');
-                    mobileToggle.classList.remove('active');
-                    const spans = mobileToggle.querySelectorAll('span');
-                    spans[0].style.transform = 'none';
-                    spans[1].style.opacity = '1';
-                    spans[2].style.transform = 'none';
-                }
             }
         });
     });
-}
-
-// Form Handling with EmailJS
-function initFormHandling() {
-    console.log('=== INITIALIZING FORM HANDLING ===');
-    
-    // Try multiple selectors to find the form
-    const contactForm = document.querySelector('#contactForm') || 
-                       document.querySelector('.contact-form .form') ||
-                       document.querySelector('form.form') ||
-                       document.querySelector('.contact-form form');
-    
-    console.log('Looking for contact form...');
-    console.log('Contact form found:', contactForm);
-    console.log('Form element:', contactForm ? contactForm.tagName : 'null');
-    
-    if (contactForm) {
-        console.log('Form found, setting up EmailJS...');
-        
-        // Initialize EmailJS with your public key
-        try {
-            emailjs.init('VzlpHD2wwgOBDvjrm');
-            console.log('EmailJS initialized successfully with key: VzlpHD2wwgOBDvjrm');
-        } catch (error) {
-            console.error('EmailJS initialization failed:', error);
-        }
-        
-        contactForm.addEventListener('submit', function(e) {
-            console.log('Form submit event triggered!');
-            e.preventDefault();
-            
-            // Get form data using name attributes
-            const formData = {
-                name: this.querySelector('input[name="name"]')?.value || '',
-                email: this.querySelector('input[name="email"]')?.value || '',
-                subject: this.querySelector('input[name="subject"]')?.value || '',
-                message: this.querySelector('textarea[name="message"]')?.value || ''
-            };
-            
-            console.log('Form submit - Form data:', formData);
-            
-            // Call the form submission function
-            handleFormSubmission(formData, contactForm);
-        });
-        
-        // Fallback: Add click listener to submit button
-        const submitButton = contactForm.querySelector('button[type="submit"]');
-        if (submitButton) {
-            console.log('Submit button found, adding click listener');
-            submitButton.addEventListener('click', function(e) {
-                console.log('Submit button clicked!');
-                e.preventDefault();
-                
-                // Get form data directly
-                const formData = {
-                    name: contactForm.querySelector('input[name="name"]')?.value || '',
-                    email: contactForm.querySelector('input[name="email"]')?.value || '',
-                    subject: contactForm.querySelector('input[name="subject"]')?.value || '',
-                    message: contactForm.querySelector('textarea[name="message"]')?.value || ''
-                };
-                
-                console.log('Button click - Form data:', formData);
-                
-                // Call the form submission function
-                handleFormSubmission(formData, contactForm);
-            });
-        }
-    } else {
-        console.error('Contact form not found!');
-        console.log('Available forms on page:', document.querySelectorAll('form'));
-    }
-}
-
-// Handle form submission (used by both form submit and button click)
-function handleFormSubmission(formData, contactForm) {
-    console.log('=== HANDLING FORM SUBMISSION ===');
-    console.log('Form data received:', formData);
-    
-    const { name, email, subject, message } = formData;
-    
-    // Basic validation
-    if (!name || !email || !message) {
-        showNotification('Please fill in all required fields.', 'error');
-        return;
-    }
-    
-    if (!isValidEmail(email)) {
-        showNotification('Please enter a valid email address.', 'error');
-        return;
-    }
-    
-    // Clean and validate form data
-    const cleanName = name.trim();
-    const cleanEmail = email.trim().toLowerCase();
-    const cleanSubject = subject ? subject.trim() : '';
-    const cleanMessage = message.trim();
-    
-    console.log('Cleaned form data:', { cleanName, cleanEmail, cleanSubject, cleanMessage });
-    
-    // Check if message contains contact information
-    const hasContactInfo = cleanMessage.toLowerCase().includes('email') || 
-                         cleanMessage.toLowerCase().includes('phone') || 
-                         cleanMessage.toLowerCase().includes('contact') ||
-                         cleanMessage.toLowerCase().includes('@');
-    
-    if (!hasContactInfo) {
-        const confirmSend = confirm('We recommend including your email address or phone number in your message so we can reach you back. Do you want to continue without adding contact information?');
-        if (!confirmSend) {
-            return;
-        }
-    }
-    
-    // Show loading state
-    const submitBtn = contactForm.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Sending...';
-    submitBtn.disabled = true;
-    
-    // Prepare template parameters for EmailJS
-    const templateParams = {
-        // Sender information
-        from_name: cleanName,
-        from_email: cleanEmail,
-        user_name: cleanName,
-        user_email: cleanEmail,
-        
-        // Message content
-        subject: cleanSubject || 'Contact Form Message from Little Potato Robotics Website',
-        message: cleanMessage,
-        user_message: cleanMessage,
-        message_text: cleanMessage,
-        
-        // Recipient information
-        to_email: 'info@fusionstem-foundation.org',
-        to_name: 'Little Potato Robotics Team',
-        
-        // Additional context
-        website: 'Little Potato Robotics',
-        team_name: 'Little Potato Robotics',
-        team_number: '30592',
-        location: 'Fremont, California',
-        
-        // Timestamp
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString(),
-        
-        // Form type
-        form_type: 'Contact Form',
-        source: 'Website Contact Form'
-    };
-    
-    // Send email using EmailJS
-    console.log('Sending email with params:', templateParams);
-    console.log('Using Service ID: service_u5yub0k');
-    console.log('Using Template ID: template_wb9r0jk');
-    console.log('Sending to: info@fusionstem-foundation.org');
-    
-    // Log the complete email content that will be sent
-    console.log('=== EMAIL CONTENT PREVIEW ===');
-    console.log('From:', cleanName, '<' + cleanEmail + '>');
-    console.log('Subject:', cleanSubject || 'Contact Form Message from Little Potato Robotics Website');
-    console.log('Message:', cleanMessage);
-    console.log('Team: Little Potato Robotics (Team 30592)');
-    console.log('Location: Fremont, California');
-    console.log('Date:', new Date().toLocaleDateString());
-    console.log('Time:', new Date().toLocaleTimeString());
-    console.log('================================');
-    
-    emailjs.send('service_u5yub0k', 'template_wb9r0jk', templateParams)
-        .then(function(response) {
-            console.log('SUCCESS!', response.status, response.text);
-            console.log('Email sent successfully to info@fusionstem-foundation.org');
-            showNotification('Thank you for your message! We\'ll get back to you soon.', 'success');
-            contactForm.reset();
-        }, function(error) {
-            console.log('FAILED...', error);
-            console.error('EmailJS Error Details:', error);
-            console.error('Error Status:', error.status);
-            console.error('Error Text:', error.text);
-            showNotification('Sorry, there was an error sending your message. Please try again or email us directly at info@fusionstem-foundation.org', 'error');
-        })
-        .finally(function() {
-            // Reset button state
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        });
-}
-
-// Email validation helper
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-// Notification system
-function showNotification(message, type = 'info') {
-    // Remove existing notifications
-    const existingNotifications = document.querySelectorAll('.notification');
-    existingNotifications.forEach(notification => notification.remove());
-    
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <span class="notification-message">${message}</span>
-            <button class="notification-close">&times;</button>
-        </div>
-    `;
-    
-    // Add styles
-    notification.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
-        color: white;
-        padding: 16px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        z-index: 10000;
-        max-width: 400px;
-        animation: slideInRight 0.3s ease-out;
-    `;
-    
-    // Add animation keyframes
-    if (!document.querySelector('#notification-styles')) {
-        const style = document.createElement('style');
-        style.id = 'notification-styles';
-        style.textContent = `
-            @keyframes slideInRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOutRight {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    // Add to page
-    document.body.appendChild(notification);
-    
-    // Close button functionality
-    const closeBtn = notification.querySelector('.notification-close');
-    closeBtn.addEventListener('click', function() {
-        notification.style.animation = 'slideOutRight 0.3s ease-out';
-        setTimeout(() => notification.remove(), 300);
-    });
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.style.animation = 'slideOutRight 0.3s ease-out';
-            setTimeout(() => notification.remove(), 300);
-        }
-    }, 5000);
 }
 
 // Scroll Effects
 function initScrollEffects() {
-    // Header scroll effect
     const header = document.querySelector('.header');
     let lastScrollTop = 0;
-    
+
     window.addEventListener('scroll', function() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
+
         if (scrollTop > 100) {
             header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
             header.style.backdropFilter = 'blur(10px)';
-            // Ensure text colors remain visible
-            header.style.setProperty('--header-text-color', '#333');
         } else {
             header.style.backgroundColor = '#fff';
             header.style.backdropFilter = 'none';
-            // Ensure text colors remain visible
-            header.style.setProperty('--header-text-color', '#333');
         }
-        
+
         lastScrollTop = scrollTop;
     });
-    
+
     // Intersection Observer for fade-in animations
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
     };
-    
+
     const observer = new IntersectionObserver(function(entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -343,17 +65,15 @@ function initScrollEffects() {
             }
         });
     }, observerOptions);
-    
-    // Observe elements for animation
+
     const animateElements = document.querySelectorAll('.robot-card, .program-card, .resource-card, .media-item, .sponsor-item');
     animateElements.forEach(el => observer.observe(el));
 }
 
 // Accessibility Features
 function initAccessibility() {
-    // Keyboard navigation for navigation links
     const navLinks = document.querySelectorAll('.nav-link');
-    
+
     navLinks.forEach(link => {
         link.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -362,7 +82,7 @@ function initAccessibility() {
             }
         });
     });
-    
+
     // Skip to content link
     const skipLink = document.createElement('a');
     skipLink.href = '#home';
@@ -379,22 +99,19 @@ function initAccessibility() {
         z-index: 10001;
         transition: top 0.3s;
     `;
-    
+
     skipLink.addEventListener('focus', function() {
         this.style.top = '6px';
     });
-    
+
     skipLink.addEventListener('blur', function() {
         this.style.top = '-40px';
     });
-    
+
     document.body.insertBefore(skipLink, document.body.firstChild);
-    
-    // Focus management for navigation
+
     const nav = document.querySelector('.nav');
-    
     if (nav) {
-        // Ensure navigation links are keyboard accessible
         const navLinks = nav.querySelectorAll('.nav-link');
         navLinks.forEach(link => {
             link.setAttribute('tabindex', '0');
@@ -402,40 +119,7 @@ function initAccessibility() {
     }
 }
 
-// Utility Functions
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Performance optimization for scroll events
-const optimizedScrollHandler = debounce(function() {
-    // Scroll-related operations
-}, 16); // ~60fps
-
-window.addEventListener('scroll', optimizedScrollHandler);
-
-// Service Worker Registration (for PWA features)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(registration) {
-                console.log('ServiceWorker registration successful');
-            })
-            .catch(function(err) {
-                console.log('ServiceWorker registration failed');
-            });
-    });
-}
-
-// Lazy loading for images (if needed)
+// Lazy loading for images
 function initLazyLoading() {
     if ('IntersectionObserver' in window) {
         const imageObserver = new IntersectionObserver((entries, observer) => {
@@ -448,22 +132,21 @@ function initLazyLoading() {
                 }
             });
         });
-        
+
         document.querySelectorAll('img[data-src]').forEach(img => {
             imageObserver.observe(img);
         });
     }
 }
 
-
 // Language Switcher
 function initializeLanguageSwitcher() {
     const langButtons = document.querySelectorAll('.lang-btn');
     const currentLang = localStorage.getItem('preferredLanguage') || 'en';
-    
+
     // Set initial language
     setLanguage(currentLang);
-    
+
     // Add click event listeners
     langButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -480,7 +163,7 @@ function setLanguage(lang) {
         btn.classList.remove('active');
     });
     document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
-    
+
     // Update all elements with data attributes
     document.querySelectorAll('[data-en][data-zh]').forEach(element => {
         if (lang === 'zh') {
@@ -489,7 +172,7 @@ function setLanguage(lang) {
             element.textContent = element.dataset.en;
         }
     });
-    
+
     // Update page title
     const titleElement = document.querySelector('title[data-en][data-zh]');
     if (titleElement) {
@@ -499,7 +182,7 @@ function setLanguage(lang) {
             document.title = titleElement.dataset.en;
         }
     }
-    
+
     // Update form placeholders
     document.querySelectorAll('input[data-en-placeholder][data-zh-placeholder], textarea[data-en-placeholder][data-zh-placeholder]').forEach(element => {
         if (lang === 'zh') {
@@ -508,13 +191,7 @@ function setLanguage(lang) {
             element.placeholder = element.dataset.enPlaceholder;
         }
     });
-    
+
     // Update document language
     document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
 }
-
-// Initialize lazy loading when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    initLazyLoading();
-    initializeLanguageSwitcher();
-});
