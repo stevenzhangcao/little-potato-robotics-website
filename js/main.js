@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScrolling();
     initScrollEffects();
     initAccessibility();
-    initLazyLoading();
     initializeLanguageSwitcher();
 });
 
@@ -66,7 +65,7 @@ function initScrollEffects() {
         });
     }, observerOptions);
 
-    const animateElements = document.querySelectorAll('.robot-card, .program-card, .resource-card, .media-item, .sponsor-item');
+    const animateElements = document.querySelectorAll('.robot-card, .resource-item, .media-item, .sponsor-item, .team-member, .simulation-card');
     animateElements.forEach(el => observer.observe(el));
 }
 
@@ -119,26 +118,6 @@ function initAccessibility() {
     }
 }
 
-// Lazy loading for images
-function initLazyLoading() {
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.classList.remove('lazy');
-                    imageObserver.unobserve(img);
-                }
-            });
-        });
-
-        document.querySelectorAll('img[data-src]').forEach(img => {
-            imageObserver.observe(img);
-        });
-    }
-}
-
 // Language Switcher
 function initializeLanguageSwitcher() {
     const langButtons = document.querySelectorAll('.lang-btn');
@@ -182,15 +161,6 @@ function setLanguage(lang) {
             document.title = titleElement.dataset.en;
         }
     }
-
-    // Update form placeholders
-    document.querySelectorAll('input[data-en-placeholder][data-zh-placeholder], textarea[data-en-placeholder][data-zh-placeholder]').forEach(element => {
-        if (lang === 'zh') {
-            element.placeholder = element.dataset.zhPlaceholder;
-        } else {
-            element.placeholder = element.dataset.enPlaceholder;
-        }
-    });
 
     // Update document language
     document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
