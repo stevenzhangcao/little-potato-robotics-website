@@ -1059,29 +1059,6 @@ nav {
   transform: scale(1.05);
 }
 
-.media-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  background: linear-gradient(135deg, rgba(74, 144, 226, 0.9), rgba(53, 122, 189, 0.9));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-}
-
-.media-item:hover .media-overlay {
-  opacity: 1;
-}
-
-.media-overlay i {
-    color: white;
-  font-size: var(--font-size-3xl);
-}
-
 .media-badge {
     position: absolute;
   top: var(--spacing-md);
@@ -1117,23 +1094,6 @@ nav {
     color: var(--text-secondary);
   margin-bottom: var(--spacing-md);
   font-weight: 500;
-}
-
-.media-source {
-  background: rgba(74, 144, 226, 0.1);
-  color: var(--primary-color);
-  padding: var(--spacing-xs) var(--spacing-md);
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-sm);
-    font-weight: 600;
-  border: 1px solid rgba(74, 144, 226, 0.2);
-  transition: all var(--transition-fast);
-}
-
-.media-item:hover .media-source {
-  background: rgba(74, 144, 226, 0.2);
-  color: var(--primary-color);
-  border-color: var(--primary-color);
 }
 
 /* ========================================
@@ -1894,18 +1854,6 @@ nav {
 .media-description {
     color: var(--dark-text-secondary);
 }
-
-.media-source {
-    background: rgba(74, 144, 226, 0.2);
-    color: var(--primary-color);
-    border: 1px solid rgba(74, 144, 226, 0.3);
-}
-
-.media-item:hover .media-source {
-    background: rgba(74, 144, 226, 0.3);
-    color: white;
-    border-color: var(--primary-color);
-  }
   
 .resources {
     background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
@@ -3072,6 +3020,376 @@ nav {
 [data-theme="dark"] .simulation-description,
 [data-theme="dark"] .benefit-content p {
   color: var(--dark-text-secondary);
+}
+
+/* ========================================
+   ACHIEVEMENTS (inside Home introduction)
+   ======================================== */
+
+/* BIOBUZZ News (inside Home introduction) */
+.about-biobuzz-news {
+  max-width: 1000px;
+  margin: var(--spacing-3xl) auto 0;
+}
+
+.about-biobuzz-title {
+  color: #ffffff;
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-bottom: var(--spacing-lg);
+}
+
+.biobuzz-news-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-xl);
+}
+
+.biobuzz-news-icon {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-dark) 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xl);
+}
+
+.biobuzz-news-content h4 {
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin: 0 0 var(--spacing-sm);
+}
+
+.biobuzz-news-content p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 var(--spacing-lg);
+}
+
+.biobuzz-news-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.biobuzz-news-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.biobuzz-news-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.biobuzz-news-btn.video {
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
+  color: #ffffff;
+}
+
+.biobuzz-news-btn.simulator {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: #ffffff;
+}
+
+.about-achievements {
+  max-width: 1000px;
+  margin: var(--spacing-3xl) auto 0;
+}
+
+.about-achievements-title {
+  color: #ffffff;
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+}
+
+.about-achievements-lead {
+  color: #ffffff;
+  font-size: var(--font-size-lg);
+  line-height: 1.6;
+  opacity: 0.95;
+  max-width: 800px;
+  margin: 0 auto var(--spacing-2xl);
+}
+
+/* Season highlight cards */
+.achievements-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.achievement-highlight {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-xl);
+  text-align: center;
+  transition: all var(--transition-normal);
+}
+
+.achievement-highlight:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-color);
+}
+
+.achievement-highlight-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto var(--spacing-md);
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xl);
+}
+
+.achievement-highlight-value {
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin-bottom: var(--spacing-sm);
+}
+
+.achievement-highlight-label {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Season timeline */
+.achievements-timeline-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-2xl);
+}
+
+.achievements-timeline-card h3 {
+  color: var(--text-primary);
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-sm);
+}
+
+.achievements-timeline-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.achievements-timeline-heading .achievements-timeline-sub {
+  margin-bottom: 0;
+}
+
+.achievements-recap-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
+  color: #ffffff;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.achievements-recap-link:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  color: #ffffff;
+}
+
+.achievements-recap-link i {
+  font-size: var(--font-size-base);
+}
+
+.achievements-timeline-sub {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xl);
+}
+
+.achievements-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.achievements-timeline::before {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--border-color);
+}
+
+.achievement-event {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) 0;
+}
+
+.event-marker {
+  position: relative;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+}
+
+.achievement-event.milestone .event-marker {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  border-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.achievement-event.won .event-marker {
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
+  border-color: var(--accent-color);
+  color: #ffffff;
+}
+
+.event-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.event-name {
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin: 0 0 2px;
+}
+
+.event-meta {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.event-badge {
+  flex-shrink: 0;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.event-badge.advance {
+  background: rgba(74, 144, 226, 0.15);
+  color: var(--primary-dark);
+}
+
+.event-badge.award {
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
+  color: #ffffff;
+}
+
+.achievements-source {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  margin: var(--spacing-xl) 0 0;
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
+}
+
+.achievements-source a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.achievements-source a:hover {
+  text-decoration: underline;
+}
+
+/* Dark mode styles for achievements */
+[data-theme="dark"] .achievement-highlight,
+[data-theme="dark"] .achievements-timeline-card {
+  background: var(--dark-bg-primary);
+  border-color: var(--dark-border-color);
+}
+
+[data-theme="dark"] .achievement-highlight-value,
+[data-theme="dark"] .achievements-timeline-card h3,
+[data-theme="dark"] .event-name {
+  color: var(--dark-text-primary);
+}
+
+[data-theme="dark"] .achievement-highlight-label,
+[data-theme="dark"] .achievements-timeline-sub,
+[data-theme="dark"] .event-meta,
+[data-theme="dark"] .achievements-source {
+  color: var(--dark-text-secondary);
+}
+
+[data-theme="dark"] .achievements-timeline::before {
+  background: var(--dark-border-color);
+}
+
+[data-theme="dark"] .event-marker {
+  background: var(--dark-bg-tertiary);
+  border-color: var(--dark-border-color);
+}
+
+[data-theme="dark"] .event-badge {
+  background: var(--dark-bg-tertiary);
+  color: var(--dark-text-secondary);
+}
+
+[data-theme="dark"] .event-badge.advance {
+  background: rgba(74, 144, 226, 0.25);
+  color: var(--primary-light);
+}
+
+[data-theme="dark"] .achievements-source {
+  border-top-color: var(--dark-border-color);
 }
 
 /* ========================================

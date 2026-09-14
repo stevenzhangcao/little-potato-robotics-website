@@ -1,0 +1,1802 @@
+<!--
+  BIOBUZZ Shooting Zone  —  FTC 2025-26 field & HIVE model with a ballistics solver
+
+  Single self-contained page. No server, no build step. Open it directly or
+  serve it from GitHub Pages. Only external dependency is three.js from unpkg,
+  so the first load needs a network connection.
+
+  Team: <your team number here>
+  Licence: MIT (see LICENSE)
+
+  WHAT IT DOES
+    - 3D model of the BIOBUZZ field, frame, HIVE seesaw, CELLs and FLOWERs,
+      built from the game manual figures.
+    - Solves POLLEN/NECTAR trajectories with quadratic drag and paints the
+      field with where a shot can actually score.
+    - Colour by launch-speed tolerance, yaw tolerance, hood tolerance, or a
+      combined make-rate estimate against your own error budget.
+    - Click any tile for the full shot solution.
+
+  READ THIS BEFORE TRUSTING A NUMBER
+    Dimensions are tagged FIG (from the manual), DER (derived from those) or
+    EST (estimated). The one remaining EST is the drag coefficient Cd, and it
+    is worth roughly half your speed-error budget at long range. Measure it:
+    fit_drag.py in this repo fits Cd from a filmed shot.
+
+    Scoring rules are NOT modelled. The tool tells you where you CAN score,
+    not what scoring is worth.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BIOBUZZ — Shooting Zone</title>
+<style>
+  :root{--bg:#0e1116;--panel:#161b22;--line:#2a313c;--txt:#d7dde5;--dim:#8b95a3;
+        --ok:#3fb950;--warn:#d29922;--est:#58a6ff;--red:#e5484d;--blue:#3e7bfa;--gold:#e3b341}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);
+    font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;overflow:hidden}
+  #view{position:fixed;inset:0}
+  #panel{position:fixed;top:0;right:0;width:360px;height:100%;background:var(--panel);
+    border-left:1px solid var(--line);overflow-y:auto;padding:14px 14px 70px;z-index:10;
+    transition:transform .18s}
+  #panel.hidden{transform:translateX(100%)}
+  h1{font-size:14px;margin:0 0 2px;letter-spacing:.04em}
+  h2{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);
+    margin:18px 0 7px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+  .sub{color:var(--dim);font-size:11px;margin:0 0 4px}
+  table{width:100%;border-collapse:collapse;font-size:11.5px}
+  td{padding:2.5px 0;vertical-align:top}
+  td.v{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .tag{display:inline-block;font-size:9px;padding:0 4px;border-radius:3px;margin-left:5px;
+       vertical-align:1px;letter-spacing:.04em}
+  .t-ok{background:#12321c;color:var(--ok);border:1px solid #1d5c2e}
+  .t-de{background:#2a2210;color:var(--warn);border:1px solid #5c4a1d}
+  .t-es{background:#11243d;color:var(--est);border:1px solid #1d4a7c}
+  .row{display:flex;align-items:center;gap:8px;margin:6px 0}
+  .row label{flex:1;font-size:11.5px}
+  input[type=range]{width:104px;accent-color:#58a6ff}
+  input[type=number]{width:56px;background:#0d1117;color:var(--txt);border:1px solid var(--line);
+    border-radius:4px;padding:2px 5px;font:inherit;font-size:11px}
+  button{background:#21262d;color:var(--txt);border:1px solid var(--line);border-radius:5px;
+    padding:5px 8px;font:inherit;font-size:11px;cursor:pointer}
+  button:hover{background:#2d333b;border-color:#444c56}
+  button.on{background:#1f3a5f;border-color:#2f6fc0;color:#cfe3ff}
+  .btns{display:flex;flex-wrap:wrap;gap:5px}
+  .chk{display:flex;align-items:center;gap:7px;margin:4px 0;font-size:11.5px;cursor:pointer}
+  .chk input{accent-color:#58a6ff;margin:0}
+  .note{font-size:10.5px;color:var(--dim);background:#0d1117;border:1px solid var(--line);
+    border-left:2px solid var(--warn);padding:7px 9px;border-radius:4px;margin:8px 0}
+  .note b{color:var(--warn)} .note.q{border-left-color:var(--est)} .note.q b{color:var(--est)}
+  .sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
+  .cal{background:#191408;border:1px solid #5c4a1d;border-left:3px solid var(--warn);
+    border-radius:6px;padding:10px 11px;margin:8px 0}
+  .cal h5{margin:0 0 2px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--warn)}
+  .cal .why{font-size:10px;color:#a89778;margin:0 0 8px;line-height:1.5}
+  .cal .sens{font-size:10px;color:#c3ccd6;background:#0d1117;border:1px solid #2a313c;
+    border-radius:4px;padding:6px 8px;margin-top:8px;line-height:1.6;
+    font-variant-numeric:tabular-nums}
+  .cal .sens b{color:var(--warn)}
+  details.howto{margin-top:8px}
+  details.howto summary{cursor:pointer;font-size:10.5px;color:var(--est);outline:none;
+    list-style:none}
+  details.howto summary::-webkit-details-marker{display:none}
+  details.howto summary:before{content:'▸ ';}
+  details.howto[open] summary:before{content:'▾ ';}
+  details.howto div{font-size:10px;color:#8b95a3;line-height:1.65;margin-top:7px;
+    padding-left:2px}
+  details.howto code{background:#0d1117;border:1px solid #232a34;border-radius:3px;
+    padding:0 4px;color:#9ecbff}
+  details.howto table{margin:6px 0;font-size:9.5px}
+  details.howto td{padding:1px 6px 1px 0;color:#8b95a3}
+  details.howto td.n{color:#c3ccd6;text-align:right;font-variant-numeric:tabular-nums}
+  #toggle{position:fixed;top:10px;right:374px;z-index:11}
+  #toggle.closed{right:10px}
+  #legend{position:fixed;left:12px;top:12px;z-index:12;width:214px;
+    background:rgba(13,17,23,.9);border:1px solid #2a313c;border-radius:8px;
+    padding:10px 12px 11px;backdrop-filter:blur(6px)}
+  #legend h4{margin:0 0 1px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:#d7dde5}
+  #legend .cap{font-size:10px;color:#8b95a3;margin:0 0 7px}
+  #legend .lr{display:flex;align-items:center;gap:7px;margin:2.5px 0;font-size:10.5px;
+    color:#c3ccd6}
+  #legend .sq{width:26px;height:11px;border-radius:2px;flex:0 0 auto;
+    border:1px solid rgba(255,255,255,.14)}
+  #legend .dim{color:#7d8794}
+  #legend .ft{margin-top:8px;padding-top:7px;border-top:1px solid #2a313c;
+    font-size:10px;color:#8b95a3;line-height:1.5}
+  #legend .ft b{color:#d7dde5}
+  #legend button{margin-top:7px;width:100%;font-size:10px;padding:3px}
+  #ballsw{display:flex;gap:0;margin:0 0 9px;border:1px solid #2a313c;border-radius:6px;
+    overflow:hidden}
+  #ballsw button{margin:0;width:50%;border:0;border-radius:0;padding:6px 0;font-size:10.5px;
+    background:#0d1117;color:#7d8794;cursor:pointer;letter-spacing:.03em}
+  #ballsw button:hover{background:#171d25;color:#c3ccd6}
+  #ballsw button.on{color:#0e1116;font-weight:700}
+  #ballsw button.on#swP{background:#e3b341}
+  #ballsw button.on#swN{background:#e0575c}
+  #ballsw .dot{display:inline-block;width:9px;height:9px;border-radius:50%;
+    margin-right:5px;vertical-align:-1px}
+  #metsw{display:flex;gap:0;margin:0 0 9px;border:1px solid #2a313c;border-radius:6px;
+    overflow:hidden}
+  #metsw button{margin:0;width:25%;border:0;border-radius:0;padding:6px 0;font-size:10px;
+    background:#0d1117;color:#7d8794;cursor:pointer;letter-spacing:.02em}
+  #metsw button:hover{background:#171d25;color:#c3ccd6}
+  #metsw button.on{background:#2f6fc0;color:#fff;font-weight:700}
+  #metsw .sub2{display:block;font-size:8.5px;opacity:.8;font-weight:400;letter-spacing:0}
+  #probe{position:fixed;left:12px;bottom:64px;z-index:12;width:338px;display:none;
+    background:rgba(13,17,23,.93);border:1px solid #2a313c;border-radius:8px;
+    padding:10px 12px 11px;backdrop-filter:blur(6px)}
+  #probe.on{display:block}
+  #probe h4{margin:0 0 7px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:#ffd166;display:flex;justify-content:space-between}
+  #probe table{width:100%;border-collapse:collapse}
+  #probe td{padding:2px 0;vertical-align:top;font-size:10.5px;line-height:1.35}
+  #probe td.k{color:#c3ccd6;white-space:nowrap;width:74px}
+  #probe td.v{color:#fff;font-weight:700;text-align:right;white-space:nowrap;width:78px;
+    font-variant-numeric:tabular-nums}
+  #probe td.d{color:#7d8794;padding-left:9px;font-size:9.5px}
+  #probe .sec{color:#6e7681;font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+    padding-top:7px}
+  #probe .bad{color:#e5484d}
+  #pClose{background:#21262d;color:#8b95a3;border:1px solid #2a313c;border-radius:4px;
+    padding:1px 6px;font:inherit;font-size:9px;cursor:pointer}
+  #hud{position:fixed;left:12px;bottom:12px;z-index:10;font-size:11px;color:var(--dim);
+    background:rgba(13,17,23,.85);border:1px solid var(--line);border-radius:6px;padding:8px 11px}
+  #hud b{color:var(--txt)}
+  #modal{position:fixed;inset:0;display:none;z-index:40;background:rgba(5,7,10,.72);
+    padding:34px 20px;overflow-y:auto}
+  #modal.on{display:block}
+  #mbox{max-width:840px;margin:0 auto;background:#12171e;border:1px solid #2a313c;
+    border-radius:10px;padding:22px 26px 30px;box-shadow:0 18px 60px rgba(0,0,0,.6)}
+  #mbox h3{font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:#8b95a3;
+    margin:22px 0 8px;padding-bottom:5px;border-bottom:1px solid #2a313c}
+  #mbox h3:first-of-type{margin-top:6px}
+  #mbox p,#mbox li{font-size:12.5px;line-height:1.65;color:#c3ccd6}
+  #mbox ol,#mbox ul{padding-left:20px;margin:6px 0}
+  #mbox li{margin:4px 0}
+  #mbox code{background:#0a0d12;border:1px solid #232a34;border-radius:3px;
+    padding:1px 5px;color:#9ecbff;font-size:11.5px}
+  #mbox table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12px}
+  #mbox th{text-align:left;color:#8b95a3;font-weight:600;padding:5px 8px;
+    border-bottom:1px solid #2a313c;font-size:11px;letter-spacing:.05em}
+  #mbox td{padding:5px 8px;border-bottom:1px solid #1c222b;color:#c3ccd6}
+  #mbox .chip{display:inline-block;width:30px;height:14px;border-radius:3px;
+    vertical-align:-2px;margin-right:8px;border:1px solid rgba(255,255,255,.16)}
+  #mbox .warn{background:#17120a;border-left:2px solid #d29922;padding:10px 13px;
+    border-radius:4px;margin:10px 0}
+  #mbox .eq{background:#0a0d12;border:1px solid #232a34;border-radius:6px;
+    padding:11px 14px;margin:9px 0;color:#9ecbff;font-size:12px;white-space:pre-wrap}
+  #mclose{float:right;background:#21262d;color:#d7dde5;border:1px solid #2a313c;
+    border-radius:5px;padding:5px 11px;cursor:pointer;font:inherit;font-size:11px}
+  #err{position:fixed;inset:0;display:none;place-items:center;background:#0e1116;z-index:50;
+    text-align:center;padding:40px;color:#e5484d}
+</style>
+</head>
+<body>
+<div id="view"></div>
+<button id="toggle">◀ panel</button>
+<div id="legend">
+  <h4 id="lgTitle">Shooting zone — RED UP</h4>
+  <p class="cap">colour = launch-speed tolerance</p>
+  <div id="ballsw">
+    <button id="swP" class="on"><span class="dot" style="background:#e3b341"></span>POLLEN 2.8″</button>
+    <button id="swN"><span class="dot" style="background:#e0575c"></span>NECTAR 3.6″</button>
+  </div>
+  <div id="metsw">
+    <button id="mS" class="on">SPEED<span class="sub2">m/s</span></button>
+    <button id="mX">X-ANGLE<span class="sub2">yaw</span></button>
+    <button id="mY">Y-ANGLE<span class="sub2">hood</span></button>
+    <button id="mA">ALL<span class="sub2">make %</span></button>
+  </div>
+  <div id="lgRows"></div>
+  <div class="ft" id="lgFoot">computing…</div>
+  <button id="lgHelp">? how this is computed</button>
+</div>
+
+<div id="probe">
+  <h4><span>Shot from this tile</span><button id="pClose">clear ✕</button></h4>
+  <table id="pTbl"></table>
+</div>
+
+<div id="hud">
+  <b>drag</b> orbit · <b>right-drag</b> pan · <b>scroll</b> zoom<br>
+  origin = field center @ tile surface · <b>+X</b> → BLUE wall · <b>+Y</b> → far side wall
+</div>
+
+<div id="panel">
+  <h1>BIOBUZZ — SHOOTING ZONE</h1>
+  <p class="sub">Where a POLLEN can be launched into the RED up-CELL.
+     Geometry controls are further down.</p>
+
+  <div class="note"><b>The HIVE is a weight-triggered flipper.</b> Each alliance's two
+    CELLs ride one beam on a central pivot + damper. You shoot into the <i>high</i> CELL
+    (opening 53.5–65.6″). Balls accumulate, the moment arm grows, and past a threshold
+    the beam flips — dumping the load and sending the <i>other</i> CELL high.<br><br>
+    <b>Consequence for your robot:</b> after every flip the live target moves to the
+    opposite end of the beam, so it now faces the <i>other</i> side wall. A single fixed
+    shooting spot cannot feed both. Drag <i>Seesaw tilt</i> to see the swap.</div>
+
+  <h2>Target surface</h2>
+  <div class="row"><label>Highlight</label>
+    <select id="tSel" style="flex:0 0 150px;background:#0d1117;color:var(--txt);
+      border:1px solid var(--line);border-radius:4px;padding:3px;font:inherit;font-size:11px">
+      <option value="RED UP">RED UP  ◄ your target</option>
+      <option value="RED DOWN">RED DOWN</option>
+      <option value="BLUE UP">BLUE UP</option>
+      <option value="BLUE DOWN">BLUE DOWN</option>
+      <option value="">none</option>
+    </select></div>
+  <label class="chk"><input type="checkbox" id="tSolo"> Hide the other three CELLs</label>
+  <div class="btns" style="margin-top:6px">
+    <button data-v="tgtface">Look square at it</button>
+    <button data-v="tgtedge">Edge-on (see the tilt)</button>
+  </div>
+  <p class="sub" id="tInfo" style="margin-top:8px"></p>
+  <div class="note q"><b>Cyan face</b> = the surface a ball must pass through.
+    <b>Yellow inner outline</b> = what's left after POLLEN's 1.4″ radius — that is the
+    real target. Cyan arrow = outward normal.</div>
+
+  <h2>Shooting zone</h2>
+  <div class="btns" style="margin-bottom:8px">
+    <button id="zHelp">? colour code &amp; method</button>
+    <button id="zRun">Compute zone</button>
+    <button id="zClear">Clear</button>
+  </div>
+  <div class="row"><label>Target CELL</label>
+    <select id="zTgt" style="flex:0 0 150px;background:#0d1117;color:var(--txt);
+      border:1px solid var(--line);border-radius:4px;padding:3px;font:inherit;font-size:11px">
+      <option value="RED UP">RED UP (53.5–65.6″)</option>
+      <option value="RED DOWN">RED DOWN (25.5–37.6″)</option>
+      <option value="BLUE UP">BLUE UP</option>
+      <option value="BLUE DOWN">BLUE DOWN</option>
+      <option value="DUAL">RED — both flip states</option>
+    </select></div>
+  <div class="row"><label>Hood angle</label>
+    <select id="zMode" style="flex:0 0 150px;background:#0d1117;color:var(--txt);
+      border:1px solid var(--line);border-radius:4px;padding:3px;font:inherit;font-size:11px">
+      <option value="var">Variable (best per spot)</option>
+      <option value="fix">Fixed hood →</option>
+    </select></div>
+  <div class="row"><label>&nbsp;&nbsp;fixed hood (deg)</label>
+    <input type="range" id="zHd" min="20" max="85" step="1" value="70">
+    <input type="number" id="zHdn" value="70" step="1"></div>
+  <div class="row"><label>Shooter exit height</label>
+    <input type="range" id="zH0" min="6" max="36" step="1" value="14">
+    <input type="number" id="zH0n" value="14" step="1"></div>
+  <div class="row"><label>Max launch speed (m/s)</label>
+    <input type="range" id="zVm" min="5" max="16" step="0.5" value="12">
+    <input type="number" id="zVmn" value="12" step="0.5"></div>
+  <div class="row"><label>Max apex (in)</label>
+    <input type="range" id="zAp" min="70" max="140" step="2" value="84">
+    <input type="number" id="zApn" value="84" step="2"></div>
+  <div class="cal">
+    <h5>⚠ Calibration — the soft number</h5>
+    <p class="why">Every other dimension here is from the manual or derived from one.
+      <b style="color:var(--warn)">C<sub>d</sub> is a guess.</b> These balls are
+      perforated, so air passes through the holes and the real value could be
+      anywhere in 0.4–0.8. Tune it below, or measure it.</p>
+    <div class="row"><label>drag coefficient C<sub>d</sub><span class="tag t-es">EST</span></label>
+      <input type="range" id="sCd" min="0.25" max="0.95" step="0.01" value="0.55">
+      <input type="number" id="bCd" value="0.55" step="0.01"></div>
+    <div class="row"><label>POLLEN mass (g)<span class="tag t-ok">MEAS</span></label>
+      <input type="number" id="bMp" value="26" step="1" style="width:58px"></div>
+    <div class="row"><label>NECTAR mass (g)<span class="tag t-ok">MEAS</span></label>
+      <input type="number" id="bMn" value="42" step="1" style="width:58px"></div>
+    <div class="sens" id="calSens">—</div>
+
+    <details class="howto"><summary>How to get the right number</summary><div>
+      <b style="color:#c3ccd6">Film one shot and fit it.</b> Three unknowns
+      (v<sub>0</sub>, launch angle, C<sub>d</sub>) against 30–60 tracked points.
+      A tool is included: <code>fit_drag.py</code> in this folder. Run it with no
+      arguments for a self-test and full instructions.
+      <ol style="padding-left:16px;margin:6px 0">
+        <li>Shoot one ball across open space — <b>flat and fast</b>, not at your
+            game hood angle.</li>
+        <li>Film 60–240 fps, camera <b>square to the plane of flight</b>, no panning.</li>
+        <li>Put a metre stick <b>in the plane of flight</b>. Wrong pixels-per-metre
+            is the dominant error.</li>
+        <li>Track the ball centre in 15–40 frames; save <code>t,x,y</code> rows in
+            seconds and metres.</li>
+        <li><code>python3 fit_drag.py track.csv</code>, repeat ×3, average, type the
+            answer into the box above.</li>
+      </ol>
+      <b style="color:#c3ccd6">Why flat and fast:</b> C<sub>d</sub> precision (1σ,
+      3 mm tracking noise)
+      <table>
+        <tr><td>lofted 70°, 5.9 m/s</td><td class="n">2.1 m span</td><td class="n">±1.5%</td></tr>
+        <tr><td>medium 50°, 6.6 m/s</td><td class="n">3.8 m</td><td class="n">±0.8%</td></tr>
+        <tr><td>flat 30°, 9.0 m/s</td><td class="n">5.9 m</td><td class="n">±0.4%</td></tr>
+        <tr><td>very flat 15°, 12 m/s</td><td class="n">6.5 m</td><td class="n">±0.3%</td></tr>
+      </table>
+      A lofted shot only travels ~2 m, so there is little drag signal. Frame rate
+      barely matters (30 fps → ±0.6%); tracking precision matters more.
+      <br><br>
+      <b style="color:#c3ccd6">Bonus:</b> the fit returns v<sub>0</sub> too. Pair it
+      with the flywheel RPM you used and you have your RPM → exit-speed calibration —
+      which this model cannot predict, and which differs between POLLEN and NECTAR
+      because they differ in mass by 62%.
+      <br><br>
+      <b style="color:#c3ccd6">Weaker alternative:</b> drop from 3 m and time the
+      fall. Only ~22 ms of drag signal (~5 frames at 240 fps); ±30% on
+      C<sub>d</sub> moves it just ~7 frames. Needs many repeats.
+    </div></details>
+  </div>
+  <p class="sub" style="margin:10px 0 3px;color:var(--dim)">ALL mode — your 1σ error budget:</p>
+  <div class="row"><label>speed σ (% of launch)</label>
+    <input type="number" id="eSv" value="3" step="0.5" style="width:52px"></div>
+  <div class="row"><label>yaw σ (deg)</label>
+    <input type="number" id="eSy" value="3" step="0.5" style="width:52px"></div>
+  <div class="row"><label>hood σ (deg)</label>
+    <input type="number" id="eSh" value="1.5" step="0.5" style="width:52px"></div>
+  <label class="chk"><input type="checkbox" id="zFine"> Fine grid (3″, ~4× slower)</label>
+  <p class="sub" id="zStat" style="margin-top:8px">Not computed yet.</p>
+  <p class="sub" style="line-height:1.9">
+    <span class="sw" style="background:#2ecc71"></span>tol ≥10%
+    <span class="sw" style="background:#78d250;margin-left:6px"></span>8–10%
+    <span class="sw" style="background:#c8d23c;margin-left:6px"></span>6–8%<br>
+    <span class="sw" style="background:#f0b432"></span>4.5–6%
+    <span class="sw" style="background:#e67832;margin-left:6px"></span>2–4.5%
+    <span class="sw" style="background:#c83c32;margin-left:6px"></span>&lt;2%
+    <span class="sw" style="background:#7a4fd0;margin-left:6px"></span>both states</p>
+  <div class="note q" style="margin-top:6px"><b>Click any tile</b> to drop a shooter
+    there and draw the best trajectory.</div>
+
+  <h2>Confirmed — from manual figures</h2>
+  <table>
+    <tr><td>Field, 6×6 × 24″ TILES</td><td class="v">144 × 144″<span class="tag t-ok">FIG</span></td></tr>
+    <tr><td>Frame width (X)</td><td class="v">49.46″<span class="tag t-ok">9-8</span></td></tr>
+    <tr><td>Frame depth (Y)</td><td class="v">38.95″<span class="tag t-ok">9-8</span></td></tr>
+    <tr><td>Pivot height</td><td class="v">43.95″<span class="tag t-ok">9-8</span></td></tr>
+    <tr><td>HIVE center-to-center</td><td class="v">25.5″<span class="tag t-ok">10-3</span></td></tr>
+    <tr><td>CELL pair total span</td><td class="v">42.91″<span class="tag t-ok">CELL</span></td></tr>
+    <tr><td>CELL extent / gap</td><td class="v">12.04″ / 18.84″<span class="tag t-ok">CELL</span></td></tr>
+    <tr><td>CELL opening width</td><td class="v">20.0″<span class="tag t-ok">9-11</span></td></tr>
+    <tr><td>CELL opening height (in-plane)</td><td class="v">14.0″<span class="tag t-ok">9-11</span></td></tr>
+    <tr><td>Gable shoulder height</td><td class="v">7.61″<span class="tag t-ok">9-11</span></td></tr>
+    <tr><td>Opening tilt callout</td><td class="v">30°<span class="tag t-ok">10-3</span></td></tr>
+    <tr><td>Top of opening (up CELL)</td><td class="v">65.6″<span class="tag t-ok">10-3</span></td></tr>
+    <tr><td>Bottom of opening (up CELL)</td><td class="v">53.5″<span class="tag t-ok">10-3</span></td></tr>
+    <tr><td>Bottom of HIVE (down CELL)</td><td class="v">25.5″<span class="tag t-ok">10-3</span></td></tr>
+    <tr><td>POLLEN / NECTAR dia.</td><td class="v">2.8″ / 3.6″<span class="tag t-ok">9-8</span></td></tr>
+  </table>
+
+  <h2>Derived</h2>
+  <table>
+    <tr><td>CELL center-to-center<br><span style="color:var(--dim)">12.04 + 18.84</span></td>
+        <td class="v">30.88″<span class="tag t-de">DER</span></td></tr>
+    <tr><td>Beam half-length</td><td class="v">15.44″<span class="tag t-de">DER</span></td></tr>
+    <tr><td>Opening plane tilt<br><span style="color:var(--dim)">asin(12.1 / 14.0) — makes the
+        30° callout exact</span></td>
+        <td class="v">59.87° from horiz.<span class="tag t-de">DER</span></td></tr>
+    <tr><td>Outward normal</td><td class="v">30.13° above horiz.<span class="tag t-de">DER</span></td></tr>
+    <tr><td>Opening horizontal span</td><td class="v">7.03″<span class="tag t-de">DER</span></td></tr>
+    <tr><td>Effective target, POLLEN<br><span style="color:var(--dim)">less 2×1.4″ ball radius</span></td>
+        <td class="v">11.2 × 17.2″<span class="tag t-de">DER</span></td></tr>
+    <tr><td>Mouth radius along the arm<br><span style="color:var(--dim)">14.0 / sin30.13° — CELL is
+        square to its arm</span></td><td class="v">27.88″<span class="tag t-de">DER</span></td></tr>
+    <tr><td>Mouth offset from mast<br><span style="color:var(--dim)">cross-check 15.44 + 12.04 = 27.48</span></td>
+        <td class="v">24.11″<span class="tag t-de">DER</span></td></tr>
+    <tr><td>Outer-to-outer check<br><span style="color:var(--dim)">2×(15.44+12.04/2) = 42.91 ✓</span></td>
+        <td class="v">42.91″<span class="tag t-ok">MATCH</span></td></tr>
+    <tr><td>Pair symmetry center<br><span style="color:var(--dim)">(25.5+65.6)/2 — 1.6″ above pivot</span></td>
+        <td class="v">45.55″<span class="tag t-de">DER</span></td></tr>
+    <tr><td>UP opening center z</td><td class="v">59.55″<span class="tag t-de">DER</span></td></tr>
+    <tr><td>DOWN opening<br><span style="color:var(--dim)">180° copy: 91.1−65.6 / 91.1−53.5</span></td>
+        <td class="v">25.50 → 37.60″<span class="tag t-de">DER</span></td></tr>
+    <tr><td>DOWN opening center z</td><td class="v">31.55″<span class="tag t-de">DER</span></td></tr>
+  </table>
+
+  <h2>Still estimated — tune &amp; confirm</h2>
+  <label class="chk"><input type="checkbox" id="cSquare" checked>
+    Lock CELL square to its arm (derives the offset)</label>
+  <div class="row"><label>Mouth offset from mast</label>
+    <input type="range" id="sOff" min="14" max="34" step="0.25" value="24.11">
+    <input type="number" id="nOff" value="24.11" step="0.25"></div>
+  <div class="row"><label>Aperture width across (X)</label>
+    <input type="range" id="sWid" min="14" max="26" step="0.5" value="20">
+    <input type="number" id="nWid" value="20" step="0.5"></div>
+  <div class="row"><label>Opening plane tilt from horiz.</label>
+    <input type="range" id="sPln" min="30" max="80" step="1" value="60">
+    <input type="number" id="nPln" value="60" step="1"></div>
+  <div class="row"><label>Seesaw tilt Δ (live)</label>
+    <input type="range" id="sTilt" min="-25" max="25" step="1" value="0">
+    <input type="number" id="nTilt" value="0" step="1"></div>
+  <div class="btns" style="margin-top:9px">
+    <button id="bRot">Rotate HIVE 90°</button>
+    <button id="bSwap">Swap up/down sides</button>
+    <button id="bReset">Reset tilt</button>
+    <button id="bMode" class="on">Opening: OUTBOARD FACE</button>
+  </div>
+  <p class="sub" style="margin-top:7px">Beams run along <b id="axTxt">Y</b>;
+     RED up-CELL on <b id="highTxt">+Y</b>.</p>
+
+  <div class="note q"><b>Corrected:</b> openings are the <i>outboard end faces</i> of each
+    CELL box — they face OUT, not up. Normal sits 30° above horizontal. The arrows show it.<br><br>
+    <b>Still to verify:</b><br>
+    1. Beams run along <i>Y</i> (side walls), 25.5″ apart along <i>X</i> (red↔blue) — read from
+       Fig 10-3-left's ~40″ base span matching Frame Depth 38.95″.<br>
+    2. RED's up-CELL faces +Y, down-CELL faces −Y (pinwheel).<br>
+    3. Every dimension is now either from the manual or derived from one — nothing
+       is a free estimate. The CELL is square to its support arm.</div>
+
+  <h2>Views</h2>
+  <div class="btns">
+    <button data-v="zone">Zone view</button>
+    <button data-v="iso">Iso</button><button data-v="top">Top (Fig 10-2)</button>
+    <button data-v="fig3L">Fig 10-3 L (along X)</button><button data-v="fig3R">Fig 10-3 R (along Y)</button>
+    <button data-v="red">From RED wall</button><button data-v="hive">HIVE close-up</button>
+    <button data-v="frame">Frame (Fig 9-8)</button>
+  </div>
+
+  <h2>Layers</h2>
+  <label class="chk"><input type="checkbox" id="cDim" checked> Dimension ladder</label>
+  <label class="chk"><input type="checkbox" id="cNorm" checked> Aperture normals (aim vectors)</label>
+  <label class="chk"><input type="checkbox" id="cFan" checked> Floor region each CELL faces</label>
+  <label class="chk"><input type="checkbox" id="cLabel" checked> CELL labels</label>
+  <label class="chk"><input type="checkbox" id="cBeam" checked> Beam / pivot / damper</label>
+  <label class="chk"><input type="checkbox" id="cStage" checked> Staged scoring elements</label>
+  <label class="chk"><input type="checkbox" id="cWall" checked> Perimeter wall</label>
+  <label class="chk"><input type="checkbox" id="cAlli" checked> ALLIANCE AREAs (54 × 97″, off-field)</label>
+  <label class="chk"><input type="checkbox" id="cTape" checked> Red/blue tape on TILES</label>
+  <label class="chk"><input type="checkbox" id="cBody"> Baskets solid</label>
+
+  <h2>Live CELL coordinates</h2>
+  <table id="coords"></table>
+  <p class="sub" style="margin-top:9px">Aperture center + outward normal <b>n</b>.
+     A shot scores when it crosses the mouth with velocity opposing <b>n</b>.</p>
+
+  <h2>Legend</h2>
+  <p class="sub">
+    <span class="sw" style="background:#e5484d"></span>RED CELL
+    <span class="sw" style="background:#3e7bfa;margin-left:8px"></span>BLUE CELL<br>
+    <span class="sw" style="background:#e3b341"></span>POLLEN 2.8″
+    <span class="sw" style="background:#33d17a;margin-left:8px"></span>FLOWER<br>
+    <span class="tag t-ok">FIG</span> manual <span class="tag t-de">DER</span> derived
+    <span class="tag t-es">EST</span> estimated</p>
+</div>
+
+<div id="modal"><div id="mbox">
+<button id="mclose">close ✕</button>
+<h1 style="font-size:15px;margin:0 0 3px">Shooting zone — colour code &amp; tolerance</h1>
+<p class="sub" style="color:#8b95a3;font-size:11px;margin:0">How every tile on the field gets its colour.</p>
+
+<h3>What the colour means</h3>
+<p>The colour encodes one number: <b style="color:#d7dde5">launch-speed tolerance</b> — how far
+the exit speed can drift and still score. It is <i>not</i> distance, and <i>not</i> a
+probability of scoring.</p>
+<table>
+<tr><th>colour</th><th>tolerance</th><th>read it as</th></tr>
+<tr><td><span class="chip" style="background:#2ecc71"></span>#2ecc71</td><td><b>≥ 10 %</b></td><td>wide margin — build here</td></tr>
+<tr><td><span class="chip" style="background:#78d250"></span>#78d250</td><td>8 – 10 %</td><td>good</td></tr>
+<tr><td><span class="chip" style="background:#c8d23c"></span>#c8d23c</td><td>6 – 8 %</td><td>workable</td></tr>
+<tr><td><span class="chip" style="background:#f0b432"></span>#f0b432</td><td>4.5 – 6 %</td><td>marginal — practical floor</td></tr>
+<tr><td><span class="chip" style="background:#e67832"></span>#e67832</td><td>2 – 4.5 %</td><td>tight</td></tr>
+<tr><td><span class="chip" style="background:#c83c32"></span>#c83c32</td><td>&lt; 2 %</td><td>not repeatable in a match</td></tr>
+<tr><td><span class="chip" style="background:#7a4fd0"></span>#7a4fd0</td><td>—</td><td><i>DUAL mode only:</i> scores in <b>both</b> flip states</td></tr>
+<tr><td><span class="chip" style="background:#20262e"></span>none</td><td>—</td><td>no shot exists from here</td></tr>
+</table>
+<p>Tiles are drawn at 72 % opacity (80 % for purple).</p>
+
+<h3>Why speed tolerance and not "how centred is the shot"</h3>
+<p>The first version of this tool coloured tiles by how close the ball passed to the centre of
+the opening. That metric <b>saturated</b> — the speed list almost always contains some value
+that threads the middle, so nearly every tile scored full marks and the map was useless.
+Speed tolerance is what actually limits a real shooter, so that is what is plotted.</p>
+
+<h3>How tolerance is computed</h3>
+<ol>
+<li><b>Build a trajectory table.</b> For every hood angle 25–80° in 5° steps, and every launch
+speed from 3.0 m/s to your max in <code>0.25 m/s</code> steps, integrate one flight.
+Trajectories do not depend on where the robot stands, so the table is built once and reused
+for all tiles.</li>
+<li><b>Integrate</b> a point mass with quadratic drag, <code>dt = 1.5 ms</code>, resampled onto a
+1-inch horizontal grid out to 160 in.</li>
+<li><b>For one tile</b>, aim at the opening centre, then walk the speed list at each hood and
+test every trajectory against the seven scoring conditions below.</li>
+<li><b>Find the longest unbroken run</b> of speeds that all score. Gaps do not count — only a
+continuous window is usable.</li>
+<li><b>Convert to a percentage</b>, then keep the best hood (or the one you pinned in
+<i>Fixed hood</i> mode).</li>
+</ol>
+<div class="eq">a  =  −g·ẑ  −  k·|v|·v        k = ½·ρ·C_d·A / m
+
+POLLEN   d 2.8 in   m 24 g   C_d 0.55  →  k = 0.0558 /m   v_term 13.3 m/s
+NECTAR   d 3.6 in   m 45 g   C_d 0.55  →  k = 0.0492 /m   v_term 14.1 m/s
+
+tolerance  =  100 · ½ · (n · ΔV) / v_centre        ΔV = 0.25 m/s
+             n = number of consecutive speeds that score</div>
+
+<h3>Worked example</h3>
+<p>Say a tile scores at 5.50, 5.75, 6.00, 6.25, 6.50, 6.75 and 7.00 m/s, and fails either side.
+That is <code>n = 7</code>, centre <code>6.25 m/s</code>, width <code>7 × 0.25 = 1.75 m/s</code>:</p>
+<div class="eq">tolerance = 100 · 0.5 · 1.75 / 6.25  =  ±14 %     →  ±0.875 m/s</div>
+<p>Click any tile and the readout prints the window it found, so you can check this yourself.</p>
+<div class="warn"><b style="color:#d29922">Quantisation.</b> With <code>n</code> discrete samples the true
+continuous window lies between <code>(n−1)·ΔV</code> and <code>(n+1)·ΔV</code>. The tool reports
+<code>n·ΔV</code>, the midpoint — so every tolerance carries about <b>±0.125 m/s</b> of
+grid error, which is roughly ±2 % at 6 m/s. Do not read the last digit as meaningful.</div>
+
+<h3>What counts as a score</h3>
+<p>All seven must hold:</p>
+<ol>
+<li><b>Inward crossing.</b> The path crosses the opening plane with <code>v·n &lt; 0</code> — moving
+into the box, not out of it.</li>
+<li><b>Inside the frame.</b> The crossing point lies within the real gabled outline, inset by the
+ball radius (1.4 in for POLLEN), so the ball clears the tube frame.</li>
+<li><b>Entry angle ≥ 18°</b> to the plane. Shallower than that and it skips off the lip.</li>
+<li><b>Penetration.</b> Carrying one full ball-diameter along the inward normal, the ball must
+<i>still</i> be clear of the frame — it has to end up in the box, not graze the mouth.</li>
+<li><b>No obstruction.</b> The path is tested every 3 in against bounding boxes for the other
+three CELLs and the sponsor banner.</li>
+<li><b>Apex ≤ 84 in</b> (adjustable). Without this the solver finds 124-inch moon shots that
+score from behind the HIVE — geometrically real, practically nonsense.</li>
+<li><b>Speed ≤ your max</b> slider.</li>
+</ol>
+
+<h3>What the colour does not tell you</h3>
+<ul>
+<li><b>Gradient.</b> Tolerance is evaluated at the tile centre only. Two yellow tiles can differ
+wildly in how fast the required speed changes as the robot moves, so one forgives a 3-inch
+localisation error and the other does not.</li>
+<li><b>Aim error.</b> Only launch <i>speed</i> is swept. Yaw and hood error are not folded in.</li>
+<li><b>No spin.</b> Backspin and Magnus lift are not modelled — real shots with heavy backspin
+fly flatter and longer than this predicts.</li>
+<li><b>Nominal seesaw.</b> The map is computed with the HIVE level. Tilt it and recompute.</li>
+</ul>
+
+<h3>Numbers that are still estimates</h3>
+<table>
+<tr><th>quantity</th><th>value</th><th>source</th></tr>
+<tr><td>Opening width across</td><td>22 in</td><td><b style="color:#58a6ff">estimated</b> from Fig 10-3 right view</td></tr>
+<tr><td>Opening offset from mast</td><td>18 in</td><td><b style="color:#58a6ff">estimated</b> from CAD proportions</td></tr>
+<tr><td>POLLEN mass / C_d</td><td>24 g / 0.55</td><td><b style="color:#58a6ff">estimated</b> — perforated PE ball</td></tr>
+<tr><td>Opening 53.5 – 65.6 in, 30° tilt</td><td>—</td><td><b style="color:#3fb950">manual, Fig 10-3</b></td></tr>
+<tr><td>Frame 49.46 × 38.95, pivot 43.95</td><td>—</td><td><b style="color:#3fb950">manual, Fig 9-8</b></td></tr>
+<tr><td>CELL 12.04 deep, 42.91 span</td><td>—</td><td><b style="color:#3fb950">manual, Fig 9-9</b></td></tr>
+</table>
+<p style="color:#8b95a3">Ball mass and drag coefficient scale the required speed directly. If you
+weigh a real POLLEN and it is 30 g rather than 24 g, every speed here shifts — the
+<i>shape</i> of the zone barely moves, but the numbers do.</p>
+</div></div>
+
+<div id="err"><div><h2 style="border:0;color:#e5484d">three.js failed to load</h2>
+  <p style="color:#8b95a3">Needs network access to unpkg.com on first load.</p></div></div>
+
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+let THREE, OrbitControls;
+try{ THREE = await import('three');
+     ({OrbitControls} = await import('three/addons/controls/OrbitControls.js')); }
+catch(e){ document.getElementById('err').style.display='grid'; throw e; }
+
+/* ═══════════════════════════ PARAMETERS ═══════════════════════════ */
+const P = {
+  field:144, wallH:12.5,
+  frameW:49.46, frameD:38.95, pivotZ:43.95,     // FIG 9-8
+  mastSep:25.5,                                  // FIG 10-3
+  cellCtc:30.88, cellExt:12.04, cellGap:18.84,   // CELL fig (42.91 total)
+  // plane tilt from horizontal = asin(12.1/14.0) = 59.87 deg  =>  normal 30.13 deg
+  // above horizontal, outward.  Matches the 30 deg callout in Fig 10-3 exactly.
+  tilt:Math.asin((65.6-53.5)/14.0),
+  upLow:53.5, upHigh:65.6,                       // FIG 10-3
+  symZ:45.55,                                    // DER: (25.5+65.6)/2
+  // aperOff is DERIVED, not free: the CELL is square to its arm, so the arm
+  // direction equals the opening normal.  The mouth centre sits 14.0 in above
+  // the pivot, so  rho = 14.0/sin(30.13 deg) = 27.88  ->  horizontal 24.11 in.
+  // Cross-check: beam half 15.44 + CELL depth 12.04 = 27.48.  Agrees to 0.4 in.
+  aperOff:24.11, aperWid:20.0, squareArm:true,   // both now fixed by geometry
+  aperH:14.0, aperShoulder:7.61,                 // CONFIRMED Fig 9-11
+  dTilt:0, rotated:false, swapped:false,
+  pollen:2.8, nectar:3.6,
+};
+let APER_LEN = P.aperH;      // 14.0 in, CONFIRMED (Fig 9-11) -- no longer derived
+const upCz  = (P.upLow+P.upHigh)/2;                          // 59.55
+const loLow = 2*P.symZ-P.upHigh, loHigh = 2*P.symZ-P.upLow;  // 25.50 / 37.60
+const loCz  = (loLow+loHigh)/2;                              // 31.55
+const BEAM_HALF = P.cellCtc/2;                               // 15.44
+
+const V = (x,y,z)=> new THREE.Vector3(x, z, -y);   // field(x,y,z_up) -> three
+const H = P.field/2;
+
+/* ═══════════════════════════ SCENE ════════════════════════════════ */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0e1116);
+scene.fog = new THREE.Fog(0x0e1116, 420, 1150);
+const cam = new THREE.PerspectiveCamera(42,1,1,4000);
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+document.getElementById('view').appendChild(renderer.domElement);
+const controls = new OrbitControls(cam, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor=.08;
+scene.add(new THREE.HemisphereLight(0xbcd4ff,0x1e232b,1.55));
+const k1=new THREE.DirectionalLight(0xffffff,1.45); k1.position.set(130,220,160); scene.add(k1);
+const k2=new THREE.DirectionalLight(0x88aaff,.5);  k2.position.set(-170,95,-140); scene.add(k2);
+
+/* ═══════════════════════════ HELPERS ══════════════════════════════ */
+function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);
+  g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+function label(text,color='#d7dde5',px=40){
+  const pad=12,c=document.createElement('canvas'),m=c.getContext('2d');
+  m.font=`600 ${px}px ui-monospace,Menlo,monospace`;
+  c.width=Math.ceil(m.measureText(text).width)+pad*2; c.height=px+pad*2;
+  const g=c.getContext('2d'); g.font=`600 ${px}px ui-monospace,Menlo,monospace`;
+  g.fillStyle='rgba(13,17,23,.8)'; g.strokeStyle='rgba(120,132,148,.4)'; g.lineWidth=2;
+  rr(g,1,1,c.width-2,c.height-2,10); g.fill(); g.stroke();
+  g.fillStyle=color; g.textBaseline='middle'; g.fillText(text,pad,c.height/2+1);
+  const t=new THREE.CanvasTexture(c); t.anisotropy=8;
+  const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,depthTest:true,transparent:true}));
+  s.scale.set(c.width/px*1.75, c.height/px*1.75, 1); return s;
+}
+const tube=(pts,r,color,closed=false)=>new THREE.Mesh(
+  new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts,closed,'catmullrom',0),
+    Math.max(2,pts.length*6), r, 10, closed),
+  new THREE.MeshStandardMaterial({color,roughness:.4,metalness:.55}));
+// Group.clear() detaches children but frees nothing. Every probe click builds
+// fresh geometries and canvas-texture labels, so without this they accumulate.
+function purge(grp){
+  grp.traverse(o=>{
+    if(o.geometry) o.geometry.dispose();
+    const m=o.material;
+    if(m) (Array.isArray(m)?m:[m]).forEach(mm=>{ if(mm.map) mm.map.dispose(); mm.dispose(); });
+  });
+  grp.clear();
+}
+const polyLine=(pts,color,closed=true)=>new THREE.Line(
+  new THREE.BufferGeometry().setFromPoints(closed?pts.concat([pts[0]]):pts),
+  new THREE.LineBasicMaterial({color}));
+
+function biobuzzTexture(){
+  const W=1024, H=250, c=document.createElement('canvas');
+  c.width=W; c.height=H; const g=c.getContext('2d');
+  g.fillStyle='#f4eeb4'; g.fillRect(0,0,W,H);
+  const hex=(cx,cy,r)=>{ g.beginPath();
+    for(let i=0;i<6;i++){ const a=Math.PI/180*(60*i-30);
+      const x=cx+r*Math.cos(a), y=cy+r*Math.sin(a); i?g.lineTo(x,y):g.moveTo(x,y); }
+    g.closePath(); };
+  g.fillStyle='#e9cb2c';                       // honeycomb bands at both ends
+  const r=21, dx=r*1.732, dy=r*1.5;
+  for(let row=-1; row*dy<H+r; row++)
+    for(let col=-1; col*dx<W+dx; col++){
+      const cx=col*dx+(row%2?dx/2:0), cy=row*dy;
+      if(cx<W*0.115 || cx>W*0.885){ hex(cx,cy,r*0.9); g.fill(); }
+    }
+  g.fillStyle='#111';
+  g.font='bold 25px Arial,Helvetica,sans-serif'; g.textBaseline='middle'; g.textAlign='left';
+  g.fillText('FIRST',     W*0.205, H/2-28);
+  g.fillText('TECH',      W*0.205, H/2);
+  g.fillText('CHALLENGE', W*0.205, H/2+28);
+  g.strokeStyle='#111'; g.lineWidth=3;
+  g.beginPath(); g.moveTo(W*0.40,H*0.17); g.lineTo(W*0.40,H*0.83); g.stroke();
+  g.save(); g.translate(W*0.635,H/2); g.transform(1,0,-0.13,1,0,0);
+  g.font='bold 96px "Arial Black",Impact,sans-serif'; g.textAlign='center';
+  g.fillText('BIOBUZZ',0,5); g.restore();
+  g.font='bold 17px Arial,sans-serif'; g.textAlign='right';
+  g.fillText('presented by  RTX', W*0.868, H/2+46);
+  const t=new THREE.CanvasTexture(c); t.anisotropy=16; return t;
+}
+
+/* ═══════════════════════════ FIELD ════════════════════════════════ */
+const gField=new THREE.Group(); scene.add(gField);
+const gWall=new THREE.Group(), gAlli=new THREE.Group(), gTape=new THREE.Group(),
+      gFan=new THREE.Group(),
+      gStage=new THREE.Group(), gHive=new THREE.Group(), gDim=new THREE.Group();
+gField.add(gWall,gAlli,gTape,gStage,gHive,gDim,gFan);
+
+(function floor(){
+  const N=1024,c=document.createElement('canvas'); c.width=c.height=N;
+  const g=c.getContext('2d'); const cell=N/6;
+  g.fillStyle='#3a3f46'; g.fillRect(0,0,N,N);
+  for(let i=0;i<6;i++)for(let j=0;j<6;j++){
+    g.fillStyle=((i+j)%2)?'#41464e':'#383d44'; g.fillRect(i*cell+3,j*cell+3,cell-6,cell-6);}
+  g.strokeStyle='#22262c'; g.lineWidth=5;
+  for(let i=0;i<=6;i++){g.beginPath();g.moveTo(i*cell,0);g.lineTo(i*cell,N);g.stroke();
+                        g.beginPath();g.moveTo(0,i*cell);g.lineTo(N,i*cell);g.stroke();}
+  const t=new THREE.CanvasTexture(c); t.anisotropy=16;
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(P.field,P.field),
+    new THREE.MeshStandardMaterial({map:t,roughness:.95}));
+  m.rotation.x=-Math.PI/2; m.name='floorplane'; gField.add(m);
+})();
+
+(function wall(){
+  const lo=new THREE.MeshStandardMaterial({color:0x1b1f25,roughness:.7});
+  const hi=new THREE.MeshPhysicalMaterial({color:0xaecbe8,transparent:true,opacity:.15,
+    roughness:.05,transmission:.7,thickness:.5,side:THREE.DoubleSide});
+  for(const [x,y,rot] of [[0,H,0],[0,-H,Math.PI],[H,0,-Math.PI/2],[-H,0,Math.PI/2]]){
+    const a=new THREE.Mesh(new THREE.BoxGeometry(P.field+2,2.5,1.2),lo);
+    a.position.copy(V(x,y,1.25)); a.rotation.y=rot; gWall.add(a);
+    const b=new THREE.Mesh(new THREE.PlaneGeometry(P.field,P.wallH-2.5),hi);
+    b.position.copy(V(x,y,2.5+(P.wallH-2.5)/2)); b.rotation.y=rot; gWall.add(b);
+    const c=new THREE.Mesh(new THREE.BoxGeometry(P.field+2,1.4,1.6),lo);
+    c.position.copy(V(x,y,P.wallH)); c.rotation.y=rot; gWall.add(c);
+  }
+})();
+
+(function alliance(){
+  const D=54,W=97;
+  for(const [s,col,txt] of [[-1,0xe5484d,'ALLIANCE AREA — RED'],[1,0x3e7bfa,'ALLIANCE AREA — BLUE']]){
+    gAlli.add(polyLine([V(s*H,-W/2,.3),V(s*(H+D),-W/2,.3),V(s*(H+D),W/2,.3),V(s*H,W/2,.3)],col));
+    const l=label(txt, s<0?'#ff8d90':'#8fb4ff',38); l.position.copy(V(s*(H+D/2),0,7)); gAlli.add(l);
+  }
+})();
+
+/* ───────── TAPE MARKINGS ON THE TILES (Fig 9-6 / 10-2) ─────────
+   The manual figures show these lines but the text defining them was not
+   supplied, so the NAMES below are inferred from the staging figure and
+   should be checked against the game manual's definitions section.      */
+(function tape(){
+  const W=2.0, T=0.16;                       // tape width / thickness, in
+  const strip=(x1,y1,x2,y2,col)=>{
+    const L=Math.hypot(x2-x1,y2-y1);
+    const m=new THREE.Mesh(new THREE.BoxGeometry(L,T,W),
+      new THREE.MeshStandardMaterial({color:col,roughness:.85}));
+    m.position.copy(V((x1+x2)/2,(y1+y2)/2,T/2+0.05));
+    m.rotation.y = -Math.atan2(y2-y1, x2-x1);
+    gTape.add(m);
+  };
+  const rect=(x1,y1,x2,y2,col)=>{
+    strip(x1,y1,x2,y1,col); strip(x2,y1,x2,y2,col);
+    strip(x2,y2,x1,y2,col); strip(x1,y2,x1,y1,col);
+  };
+  const tag=(t,x,y,c)=>{ const l=label(t,c,32); l.position.copy(V(x,y,7)); gTape.add(l); };
+
+  for(const [sx,col,cs] of [[-1,0xe5484d,'#ff8d90'],[1,0x3e7bfa,'#8fb4ff']]){
+    const sy = -sx;                          // RED box sits at +Y, BLUE at -Y
+    // Taped box against the alliance wall where the 8 POLLEN pre-loads stage.
+    rect(sx*72, sy*24, sx*60, sy*48, col);
+    tag('ROBOT pre-load box  ~24 × 12″', sx*54, sy*36, cs);
+    // GARDEN line: short strip along the side wall in the own-alliance corner.
+    strip(sx*72, -sy*69, sx*48, -sy*69, col);
+    tag('GARDEN line', sx*56, -sy*62, cs);
+  }
+  // the ALLIANCE AREA rectangle is OUTSIDE the wall -- not tape on tiles
+  const n=label('ALLIANCE AREA outlines are off-field (human player zone)','#8b95a3',30);
+  n.position.copy(V(0,-96,4)); gAlli.add(n);
+})();
+
+(function staging(){
+  const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.55});
+  const pM=M(0xe3b341), rM=M(0xd23b3b), bM=M(0x2f5fd0);
+  const pG=new THREE.SphereGeometry(P.pollen/2,16,12), nG=new THREE.SphereGeometry(P.nectar/2,16,12);
+  const add=(g,m,x,y,z)=>{const s=new THREE.Mesh(g,m);s.position.copy(V(x,y,z));gStage.add(s);};
+  /* ---------- FLOWER (CAD figure) ----------
+     4 green rods caged between a black bottom ring and an orange top ring.
+     CONFIRMED: overall 21.5 in; retrieval opening 3.55 in; bottom ring 0.43 in
+     thick with 2.79 in ID (a 2.8 in POLLEN cannot pass, so the stack rests on
+     it); top ring opening 4.0 in dia; purple handle 1.25 in above the top ring.
+     Rod diameter and pitch circle are scaled off the figure.              */
+  const FL={ base:0.40, retrieval:3.55, ringTh:0.43, ringID:2.79, ringOD:4.70,
+             top:21.5, topTh:0.55, topOpen:4.0, hex:5.30,
+             rodD:0.85, rodR:2.15, handle:1.25 };
+  FL.z0 = FL.base + FL.retrieval + FL.ringTh;   // stack floor = top of bottom ring
+  FL.z1 = FL.top - FL.topTh;                    // underside of the orange ring
+  // The 4.0 in top opening is wider than a 2.8 in POLLEN, so the top ball rises
+  // into the ring itself (Fig 10-5 H). Capacity therefore runs to FL.top.
+  FL.cap = Math.floor((FL.top - FL.z0) / P.pollen);
+
+  const annulus=(od,id,th)=>{
+    const sh=new THREE.Shape(); sh.absarc(0,0,od/2,0,Math.PI*2,false);
+    const h=new THREE.Path();   h.absarc(0,0,id/2,0,Math.PI*2,true); sh.holes.push(h);
+    const g=new THREE.ExtrudeGeometry(sh,{depth:th,bevelEnabled:false});
+    g.rotateX(-Math.PI/2); return g;
+  };
+  const hexRing=(across,id,th)=>{
+    const r=across/2, sh=new THREE.Shape();
+    for(let i=0;i<6;i++){ const a=Math.PI/180*(60*i+30), x=r*Math.cos(a), y=r*Math.sin(a);
+      i?sh.lineTo(x,y):sh.moveTo(x,y); }
+    sh.closePath();
+    const h=new THREE.Path(); h.absarc(0,0,id/2,0,Math.PI*2,true); sh.holes.push(h);
+    const g=new THREE.ExtrudeGeometry(sh,{depth:th,bevelEnabled:false});
+    g.rotateX(-Math.PI/2); return g;
+  };
+  const FM=c=>new THREE.MeshStandardMaterial({color:c,roughness:.55,metalness:.15});
+
+  function makeFlower(fx,fy,yaw,nBalls){
+    const g=new THREE.Group(); g.position.copy(V(fx,fy,0)); g.rotation.y=yaw; gStage.add(g);
+    const addM=(geo,mat,y)=>{ const m=new THREE.Mesh(geo,mat); m.position.y=y; g.add(m); return m; };
+    addM(new THREE.BoxGeometry(8,FL.base,6.5), FM(0x8c949d), FL.base/2);      // floor plate
+    addM(annulus(FL.ringOD,FL.ringID,FL.base), FM(0x23262b), 0);              // base collar
+    for(let i=0;i<3;i++){                                                     // retrieval posts
+      const a=Math.PI/180*(90+i*120);
+      const p=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.28,FL.retrieval,10),FM(0xc2c8ce));
+      p.position.set(FL.rodR*Math.cos(a), FL.base+FL.retrieval/2, FL.rodR*Math.sin(a)); g.add(p);
+    }
+    addM(annulus(FL.ringOD,FL.ringID,FL.ringTh), FM(0x1e2126), FL.base+FL.retrieval);
+    for(let i=0;i<4;i++){                                                     // 4 green rods
+      const a=Math.PI/180*(45+i*90);
+      const r=new THREE.Mesh(new THREE.CylinderGeometry(FL.rodD/2,FL.rodD/2,FL.z1-FL.z0,12),
+                             FM(0x4aa83f));
+      r.position.set(FL.rodR*Math.cos(a), (FL.z0+FL.z1)/2, FL.rodR*Math.sin(a)); g.add(r);
+    }
+    addM(hexRing(FL.hex,FL.topOpen,FL.topTh), FM(0xdb9c3a), FL.z1);            // orange top ring
+    const hb=new THREE.Mesh(new THREE.TorusGeometry(1.5,0.18,8,20,Math.PI),FM(0x7c4fd6));
+    hb.rotation.y=Math.PI/2; hb.position.y=FL.top+FL.handle-1.5; g.add(hb);   // purple handle
+    for(let i=0;i<nBalls;i++){
+      const b=new THREE.Mesh(pG,pM);
+      b.position.y = FL.z0 + P.pollen/2 + i*P.pollen; g.add(b);
+    }
+    return g;
+  }
+  for(const [fx,fy,yaw] of [[-24, H-5, 0], [H-5, 24, -Math.PI/2],
+                            [ 24,-H+5, Math.PI], [-H+5,-24, Math.PI/2]]){
+    makeFlower(fx,fy,yaw,4);
+    const l=label(`FLOWER  4 / ${FL.cap} POLLEN`,'#7ee2a8',30);
+    l.position.copy(V(fx,fy,FL.top+6)); gStage.add(l);
+  }
+  // GARDEN: 4 POLLEN in a row along the wall, at the own-alliance corner,
+  // sitting at the outer end of the alliance-coloured tape line.
+  for(const sx of [-1,1]){ const sy=-sx;
+    for(let i=0;i<4;i++) add(pG,pM, sx*(H-1.5) - sx*i*2.9, sy*(H-3), P.pollen/2); }
+  // ROBOT pre-loads (8 POLLEN per alliance) are carried inside the robot, not
+  // staged on the TILES, so nothing is drawn in the taped box -- only the tape.
+  for(const sx of [-1,1]){ const sy=-sx;
+    const l=label('pre-load box — 8 POLLEN start in the ROBOT',
+                  sx<0?'#ff8d90':'#8fb4ff',26);
+    l.position.copy(V(sx*(H-16), sy*38, 8)); gStage.add(l);
+  }
+  const acct=label('POLLEN 40 = 4 FLOWER×4  +  2 GARDEN×4  +  2 ROBOT×8 (carried)','#e3b341',28);
+  acct.position.copy(V(0,-H-10,4)); gStage.add(acct);
+  const acc2=label('NECTAR 8/alliance = 3 in the up-CELL  +  5 in the ALLIANCE AREA','#ff8d90',28);
+  acc2.position.copy(V(0,-H-18,4)); gStage.add(acc2);
+  for(const [sx,m] of [[-1,rM],[1,bM]]){
+    const tr=new THREE.Mesh(new THREE.BoxGeometry(14,2,18),new THREE.MeshStandardMaterial({color:0x1b1f25}));
+    tr.position.copy(V(sx*(H+7),0,1)); gStage.add(tr);
+    for(const [a,b] of [[0,0],[-4,-4],[4,-4],[-4,4],[4,4]]) add(nG,m,sx*(H+7)+a,b,3.8);
+  }
+  add(pG,pM,-H-16,-H-10,P.pollen/2);
+  const l1=label('POLLEN 2.8″','#e3b341',32); l1.position.copy(V(-H-16,-H-10,9)); gStage.add(l1);
+  add(nG,rM,-H-16,-H-24,P.nectar/2);
+  const l2=label('NECTAR 3.6″','#ff8d90',32); l2.position.copy(V(-H-16,-H-24,9)); gStage.add(l2);
+})();
+
+/* ═══════════════════════════ HIVE ═════════════════════════════════ */
+let GOALS=[], PAIRS=[];
+
+// Gabled "house" profile, per Fig 9-9: flat low edge, two straight sides,
+// peaked high edge.  u = outward+down in the opening plane, w = across.
+function insetPoly(poly, r){
+  const n=poly.length;
+  let cu=0, cw=0; for(const p of poly){cu+=p[0]; cw+=p[1];} cu/=n; cw/=n;
+  const L=[];
+  for(let i=0;i<n;i++){
+    const a=poly[i], b=poly[(i+1)%n];
+    const ex=b[0]-a[0], ey=b[1]-a[1], len=Math.hypot(ex,ey);
+    let nx=-ey/len, ny=ex/len;
+    if((cu-a[0])*nx+(cw-a[1])*ny<0){ nx=-nx; ny=-ny; }
+    L.push({px:a[0]+nx*r, py:a[1]+ny*r, dx:ex/len, dy:ey/len});
+  }
+  const out=[];
+  for(let i=0;i<n;i++){
+    const A=L[(i-1+n)%n], B=L[i];
+    const det = B.dx*A.dy - A.dx*B.dy;
+    if(Math.abs(det)<1e-9){ out.push([B.px,B.py]); continue; }
+    const t = (B.dx*(B.py-A.py) - B.dy*(B.px-A.px)) / det;
+    out.push([A.px+A.dx*t, A.py+A.dy*t]);
+  }
+  return out;
+}
+
+// Fig 9-11 outline: 20 in across, 14 in tall, vertical sides to 7.61 in, then a peak.
+// u runs outward+down in the opening plane (u=+a is the flat low edge, u=-a the peak).
+const aperturePoly = ()=>{
+  const a=APER_LEN/2, b=P.aperWid/2, sh=a-P.aperShoulder;   // -0.61 in at nominal
+  return [[a,b],[a,-b],[sh,-b],[-a,0],[sh,b]]; };
+
+function buildHive(){
+  APER_LEN = P.aperH;
+  if(P.squareArm){            // keep the CELL square to its support arm
+    P.aperOff = (upCz - P.symZ) / Math.tan(Math.PI/2 - P.tilt);
+    const a=document.getElementById('sOff'), b=document.getElementById('nOff');
+    if(a){ a.value=P.aperOff.toFixed(2); b.value=P.aperOff.toFixed(2); }
+  }
+  gHive.clear(); gDim.clear(); GOALS=[]; PAIRS=[];
+  const steel = new THREE.MeshStandardMaterial({color:0x9aa4b0,roughness:.35,metalness:.7});
+  // axis mapping: beams run along `bA`, masts separated along `sA`
+  const sA = P.rotated ? [0,1] : [1,0];      // separation axis (field XY)
+  const bA = P.rotated ? [1,0] : [0,1];      // beam axis
+  const fw = P.rotated ? P.frameD : P.frameW;   // frame extent along sA
+  const fd = P.rotated ? P.frameW : P.frameD;   // frame extent along bA
+
+  /* ---- A-FRAME (Fig 9-8): base fw × fd, ridge along sA at pivotZ ---- */
+  const gF=new THREE.Group(); gHive.add(gF);
+  const cor=(i,j)=>V(sA[0]*i*fw/2 + bA[0]*j*fd/2, sA[1]*i*fw/2 + bA[1]*j*fd/2, 1.1);
+  const apex=i=>V(sA[0]*i*P.mastSep/2, sA[1]*i*P.mastSep/2, P.pivotZ);
+  for(const [a,b] of [[[-1,-1],[1,-1]],[[1,-1],[1,1]],[[1,1],[-1,1]],[[-1,1],[-1,-1]]])
+    gF.add(tube([cor(...a),cor(...b)],1.1,0x7d8794));
+  for(const i of [-1,1]) for(const j of [-1,1]) gF.add(tube([cor(i,j),apex(i)],1.0,0xa8b2bd));
+  gF.add(tube([apex(-1),apex(1)],1.2,0x8e99a5));                 // pivot ridge bar = 25.5 in
+  // BIOBUZZ banner: hangs on the ridge, long axis along it, facing the side walls
+  const BW=P.mastSep, BH=BW*250/1024, edge=new THREE.MeshStandardMaterial({color:0xe9cb2c,roughness:.85});
+  const face=new THREE.MeshStandardMaterial({map:biobuzzTexture(),roughness:.8});
+  const ban=new THREE.Mesh(new THREE.BoxGeometry(BW,BH,0.5),
+    [edge,edge,edge,edge,face,face]);
+  ban.position.copy(V(0,0,P.pivotZ-BH/2-0.6));
+  ban.rotation.y = P.rotated?Math.PI/2:0; gF.add(ban);
+  for(const i of [-1,1])                                          // hangers to the ridge
+    gF.add(tube([V(i*BW*0.4,0,P.pivotZ), V(i*BW*0.4,0,P.pivotZ-BH-0.6)],0.3,0x8e99a5));
+  // mid-height cross brace between the two A-frames (Fig 9-8).
+  // Walk a fraction t down each leg from its apex to the base corner.
+  const zA=P.pivotZ*0.45, t=(P.pivotZ-zA)/(P.pivotZ-1.1);
+  for(const j of [-1,1]){
+    const px=i=>{
+      const sepC = i*P.mastSep/2 + t*(i*fw/2 - i*P.mastSep/2);
+      const bmC  = t*(j*fd/2);
+      return V(sA[0]*sepC + bA[0]*bmC, sA[1]*sepC + bA[1]*bmC, zA);
+    };
+    gF.add(tube([px(-1),px(1)],0.8,0x9aa4b0));
+  }
+
+  /* ---- CELL pairs: rigid seesaw about the pivot ---- */
+  const highSign = P.swapped ? -1 : 1;
+  const defs=[
+    {n:'RED UP',  s:-1, f:+highSign, up:1, lo:P.upLow, hi:P.upHigh, cz:upCz, col:0xe5484d, cs:'#ff8d90'},
+    {n:'RED DOWN',s:-1, f:-highSign, up:0, lo:loLow,   hi:loHigh,   cz:loCz, col:0xe5484d, cs:'#ff8d90'},
+    {n:'BLUE UP',  s:1, f:-highSign, up:1, lo:P.upLow, hi:P.upHigh, cz:upCz, col:0x3e7bfa, cs:'#8fb4ff'},
+    {n:'BLUE DOWN',s:1, f:+highSign, up:0, lo:loLow,   hi:loHigh,   cz:loCz, col:0x3e7bfa, cs:'#8fb4ff'},
+  ];
+  const poly=aperturePoly();
+
+  for(const s of [-1,1]){                                  // one seesaw per alliance
+    const pv = V(sA[0]*s*P.mastSep/2, sA[1]*s*P.mastSep/2, P.pivotZ);
+    const pair=new THREE.Group(); pair.position.copy(pv); gHive.add(pair);
+    PAIRS.push({grp:pair, side:s});
+    const rel = (x,y,z)=> V(x,y,z).sub(pv);                 // field -> pair-local
+
+    /* beam through the symmetry center at the 30° cell tilt */
+    const mx = sA[0]*s*P.mastSep/2, my = sA[1]*s*P.mastSep/2;
+    const rad = Math.hypot(P.aperOff, upCz-P.symZ);
+    // which end of THIS beam carries the up-CELL: RED's is at +f, BLUE's at -f
+    const upF = (s<0 ? highSign : -highSign);
+    const bHalfY = BEAM_HALF*P.aperOff/rad;
+    const bHalfZ = BEAM_HALF*(upCz-P.symZ)/rad * upF;   // high end follows the up-CELL
+    const attach = f => rel(mx + bA[0]*f*bHalfY, my + bA[1]*f*bHalfY, P.symZ + f*bHalfZ);
+    const gB=new THREE.Group(); gB.name='beam'; pair.add(gB);
+    gB.add(tube([attach(-1),attach(1)],1.0,0xb4bec9));      // one straight pole
+    gB.add(new THREE.Mesh(new THREE.SphereGeometry(1.9,16,12),
+      new THREE.MeshStandardMaterial({color:0xe3b341,metalness:.8,roughness:.3})));  // pivot
+    for(const f of [-1,1]) gB.add(tube([new THREE.Vector3(0,0,0),
+      attach(f).clone().multiplyScalar(.42)],0.55,0x6f7883));                        // dampers
+
+    for(const d of defs.filter(d=>d.s===s)){
+      const C=new THREE.Vector3(mx + bA[0]*d.f*P.aperOff, my + bA[1]*d.f*P.aperOff, d.cz);
+      // The down-CELL is the exact 180 deg rotation of the up-CELL about the
+      // pivot axis, so its z components flip: its mouth faces outward and DOWN
+      // (it has just dumped). fz carries that sign.
+      // One rigid pair on one straight pole. Each CELL is square to the pole, so
+      // the low CELL is the 180 deg rotation of the high one about the pivot and
+      // its mouth faces the opposite direction: outward on the far side, and DOWN.
+      const fz = d.up ? 1 : -1;
+      // ru spins the low CELL 180 deg about its own pole axis, so its gable peak
+      // points up-and-outward instead of down-and-inward. The mouth direction is
+      // untouched (still opposite the top CELL) and the 25.5-37.6 rim is unchanged.
+      const ru = d.up ? 1 : -1;
+      const uh=new THREE.Vector3(bA[0]*d.f*Math.cos(P.tilt)*ru,
+                                 bA[1]*d.f*Math.cos(P.tilt)*ru, -fz*Math.sin(P.tilt)*ru);
+      const wh=new THREE.Vector3(sA[0],sA[1],0);
+      const nn=new THREE.Vector3(bA[0]*d.f*Math.sin(P.tilt), bA[1]*d.f*Math.sin(P.tilt),  fz*Math.cos(P.tilt));
+      const pt=(u,w,o=0)=>rel(C.x+u*uh.x+w*wh.x+o*nn.x, C.y+u*uh.y+w*wh.y+o*nn.y, C.z+u*uh.z+w*wh.z+o*nn.z);
+
+      const dep=P.cellExt;
+      const rim  = poly.map(([u,w])=>pt(u,w));
+      const back = poly.map(([u,w])=>pt(u,w,-dep));
+      const barMat=new THREE.MeshStandardMaterial({color:d.col,roughness:.4,metalness:.3});
+      const bar=(a,b,r)=>{ const m=new THREE.Mesh(
+          new THREE.CylinderGeometry(r,r,a.distanceTo(b),10),barMat);
+        m.position.copy(a.clone().add(b).multiplyScalar(.5));
+        m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), b.clone().sub(a).normalize());
+        return m; };
+      const cg=new THREE.Group(); cg.name='cellgrp'; cg.userData.goal=d.n; pair.add(cg);
+      const fr=new THREE.Group(); fr.name='rimframe'; cg.add(fr);
+      const N=rim.length;
+      for(let i=0;i<N;i++){                       // thick frame around the OPENING
+        fr.add(bar(rim[i],rim[(i+1)%N],0.8));
+        const k=new THREE.Mesh(new THREE.SphereGeometry(0.9,12,10),barMat);
+        k.position.copy(rim[i]); fr.add(k);
+        fr.add(bar(back[i],back[(i+1)%N],0.42));  // thin frame at the closed back
+        fr.add(bar(rim[i],back[i],0.42));         // longerons
+      }
+      const vtx=[],idx=[]; rim.concat(back).forEach(p=>vtx.push(p.x,p.y,p.z));
+      for(let i=0;i<N;i++){const j=(i+1)%N; idx.push(i,j,N+i, j,N+j,N+i);}
+      for(let i=1;i<N-1;i++) idx.push(N,N+i,N+i+1);       // closed back panel
+      const bg=new THREE.BufferGeometry();
+      bg.setAttribute('position',new THREE.Float32BufferAttribute(vtx,3));
+      bg.setIndex(idx); bg.computeVertexNormals();
+      const body=new THREE.Mesh(bg,new THREE.MeshStandardMaterial({color:0xdfe6ee,
+        transparent:true,opacity:.34,side:THREE.DoubleSide,roughness:.2,metalness:.05}));
+      body.name='basket'; cg.add(body);
+      // short stub from the pole to this CELL's back face (they are collinear)
+      cg.add(tube([attach(d.f), pt(0,0,-dep)],1.0,0xb4bec9));
+
+      /* ---- TARGET SURFACE highlight (the plane you shoot through) ---- */
+      const hg=new THREE.Group(); hg.name='tgtsurf'; hg.userData.goal=d.n;
+      hg.visible=false; cg.add(hg);
+      const fv=[], fi=[];
+      rim.forEach(p=>fv.push(p.x,p.y,p.z));
+      for(let i=1;i<N-1;i++) fi.push(0,i,i+1);
+      const fg=new THREE.BufferGeometry();
+      fg.setAttribute('position',new THREE.Float32BufferAttribute(fv,3));
+      fg.setIndex(fi); fg.computeVertexNormals();
+      hg.add(new THREE.Mesh(fg,new THREE.MeshBasicMaterial({color:0x00e5ff,
+        transparent:true, opacity:.42, side:THREE.DoubleSide, depthWrite:false})));
+      for(let i=0;i<N;i++) hg.add(bar(rim[i],rim[(i+1)%N],1.05));
+      // effective target after POLLEN radius
+      const ins=insetPoly(poly,1.4).map(([u,w])=>pt(u,w,0.25));
+      hg.add(polyLine(ins,0xfff275));
+      hg.add(new THREE.ArrowHelper(V(nn.x,nn.y,nn.z).normalize(), pt(0,0,0),
+                                   30, 0x00e5ff, 8, 5));
+      const TL=label('◄ TARGET SURFACE  '+d.n,'#7df9ff',42);
+      TL.position.copy(pt(0,0,17)); hg.add(TL);
+
+      if(d.up){                         // 3 NECTAR staged in the raised CELL
+        const ng=new THREE.SphereGeometry(P.nectar/2,16,12);
+        const nm=new THREE.MeshStandardMaterial({color:d.s<0?0xd23b3b:0x2f5fd0,roughness:.55});
+        for(let i=0;i<3;i++){
+          const b=new THREE.Mesh(ng,nm);
+          b.position.copy(pt(APER_LEN/2-P.nectar/2-0.4, (i-1)*(P.nectar+0.3), -P.nectar/2-0.6));
+          cg.add(b);
+        }
+      }
+      const ar=new THREE.ArrowHelper(V(nn.x,nn.y,nn.z).normalize(),pt(0,0,0),26,d.col,7,4.5);
+      ar.name='normal'; pair.add(ar);
+      const L=label(`${d.n}  ${d.lo.toFixed(1)}–${d.hi.toFixed(1)}″`,d.cs,36);
+      L.position.copy(pt(-APER_LEN/2-3,0,10)); L.name='glabel'; pair.add(L);
+
+      GOALS.push({...d, name:d.n, C, n:nn, uh, wh, pair, rim,
+                  faceDir:[bA[0]*d.f, bA[1]*d.f]});
+    }
+  }
+
+  /* ---- dimension ladder ---- */
+  const dx=-H+4, dy=-H+4;
+  gDim.add(polyLine([V(dx,dy,0),V(dx,dy,P.upHigh+5)],0x6e7681,false));
+  for(const [z,t,c] of [[25.5,'25.5″ bottom of HIVE','#3fb950'],
+                        [43.95,'43.95″ PIVOT','#3fb950'],
+                        [53.5,'53.5″ opening bottom','#3fb950'],
+                        [65.6,'65.6″ opening top','#3fb950']]){
+    gDim.add(polyLine([V(dx,dy,z),V(dx+11,dy+11,z)],0x6e7681,false));
+    const L=label(t,c,34); L.position.copy(V(dx+32,dy+32,z)); gDim.add(L);
+  }
+  const sz=P.upHigh+13, sA2=P.rotated?[0,1]:[1,0];
+  gDim.add(polyLine([V(sA2[0]*-P.mastSep/2,sA2[1]*-P.mastSep/2,sz),
+                     V(sA2[0]* P.mastSep/2,sA2[1]* P.mastSep/2,sz)],0xe3b341,false));
+  const cl=label('25.5″ HIVE center-to-center','#e3b341',34); cl.position.copy(V(0,0,sz+8)); gDim.add(cl);
+  const fl=label(`frame ${P.frameW}″ × ${P.frameD}″ · pivot ${P.pivotZ}″`,'#9aa4b0',32);
+  fl.position.copy(V(0,-P.frameD/2-16,4)); gDim.add(fl);
+}
+
+/* ═════════════════════════ TILT + UI ══════════════════════════════ */
+// Rebuilt on every tilt: the fan shows the floor a CELL currently faces, and
+// the seesaw moves both its mouth and its facing direction.
+function rebuildFans(){
+  purge(gFan);
+  for(const g of GOALS){
+    const w = g.world || V(g.C.x,g.C.y,g.C.z);
+    const cx = w.x, cy = -w.z;
+    const nn = new THREE.Vector3(g.n.x, g.n.z, -g.n.y)   // field -> three
+      .applyEuler(g.pair.rotation);
+    let fx = nn.x, fy = -nn.z;                            // back to field
+    const L = Math.hypot(fx,fy);
+    if(L < 1e-6) continue;
+    fx/=L; fy/=L;
+    const pts=[V(cx,cy,.5)];
+    for(let a=-70;a<=70;a+=7){
+      const r=THREE.MathUtils.degToRad(a);
+      const dx=fx*Math.cos(r)-fy*Math.sin(r), dy=fy*Math.cos(r)+fx*Math.sin(r);
+      let t=1e9;
+      if(dx>1e-6)t=Math.min(t,(H-cx)/dx); if(dx<-1e-6)t=Math.min(t,(-H-cx)/dx);
+      if(dy>1e-6)t=Math.min(t,(H-cy)/dy); if(dy<-1e-6)t=Math.min(t,(-H-cy)/dy);
+      if(t<0||t>1e8) continue;
+      pts.push(V(cx+dx*t, cy+dy*t, .5));
+    }
+    if(pts.length<3) continue;
+    const f=polyLine(pts,g.col);
+    f.material.transparent=true; f.material.opacity=.5; gFan.add(f);
+  }
+}
+
+function applyTilt(){
+  const phi = THREE.MathUtils.degToRad(P.dTilt);
+  // +phi raises the +beamAxis side; RED up-CELL is on +f, so flip per alliance
+  for(const p of PAIRS) p.grp.rotation.x = phi * (p.side<0 ? 1 : -1) * (P.swapped?-1:1);
+  // live world coords of each aperture center
+  for(const g of GOALS){
+    const local = V(g.C.x,g.C.y,g.C.z).sub(g.pair.position);
+    g.world = local.clone().applyEuler(g.pair.rotation).add(g.pair.position);
+  }
+  rebuildFans();
+  refreshCoords();
+}
+function refreshCoords(){
+  document.getElementById('coords').innerHTML = GOALS.map(g=>{
+    const w=g.world||V(g.C.x,g.C.y,g.C.z);
+    const fx=w.x, fy=-w.z, fz=w.y;          // three -> field
+    let zlo=1e9, zhi=-1e9;
+    for(const p of g.rim){ const q=p.clone().applyEuler(g.pair.rotation).add(g.pair.position);
+      zlo=Math.min(zlo,q.y); zhi=Math.max(zhi,q.y); }
+    return `<tr><td><span class="sw" style="background:${g.col===0xe5484d?'#e5484d':'#3e7bfa'}"></span>${g.name}</td>
+      <td class="v">(${fx.toFixed(2)}, ${fy.toFixed(2)}, ${fz.toFixed(2)})<br>
+      <span style="color:#8b95a3">rim z ${zlo.toFixed(1)}–${zhi.toFixed(1)}″</span></td></tr>`;
+  }).join('');
+  document.getElementById('axTxt').textContent = P.rotated?'X':'Y';
+  document.getElementById('highTxt').textContent = (P.swapped?'−':'+')+(P.rotated?'X':'Y');
+}
+const rebuild=()=>{ buildHive(); applyLayers(); applyTilt(); applyTarget(); };
+
+function applyLayers(){
+  const on=id=>document.getElementById(id).checked;
+  gDim.visible=on('cDim'); gStage.visible=on('cStage');
+  gWall.visible=on('cWall'); gAlli.visible=on('cAlli'); gTape.visible=on('cTape');
+  gFan.visible=on('cFan');
+  gHive.traverse(o=>{
+    if(o.name==='normal') o.visible=on('cNorm');
+    if(o.name==='glabel') o.visible=on('cLabel');
+    if(o.name==='beam')   o.visible=on('cBeam');
+    if(o.name==='basket') o.material.opacity = on('cBody')?.85:.16;
+  });
+}
+
+const VIEWS={ iso:{p:[215,175,245],t:[0,34,0]}, top:{p:[0,340,.1],t:[0,0,0]},
+  fig3L:{p:[-300,52,0],t:[0,45,0]}, fig3R:{p:[0,52,-300],t:[0,45,0]},
+  red:{p:[-310,80,0],t:[0,40,0]}, hive:{p:[72,74,92],t:[0,46,0]},
+  frame:{p:[62,58,78],t:[0,30,0]},
+  zone:{p:[18,168,-196],t:[-12,12,-34]},
+  tgtface:{p:[-13,104,86],t:[-13,58,-18]},
+  tgtedge:{p:[-150,62,-18],t:[-13,58,-18]} };
+const goView=k=>{const v=VIEWS[k]; cam.position.set(...v.p); controls.target.set(...v.t); controls.update();};
+document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>goView(b.dataset.v));
+['cDim','cNorm','cFan','cLabel','cBeam','cStage','cWall','cAlli','cTape','cBody']
+  .forEach(id=>document.getElementById(id).onchange=applyLayers);
+
+function bind(sl,nu,key,live){
+  const s=document.getElementById(sl), n=document.getElementById(nu);
+  const set=v=>{P[key]=+v; s.value=v; n.value=v; live?applyTilt():rebuild();};
+  s.oninput=()=>set(s.value); n.onchange=()=>set(n.value);
+}
+bind('sOff','nOff','aperOff'); bind('sWid','nWid','aperWid'); bind('sTilt','nTilt','dTilt',true);
+{ const s=document.getElementById('sPln'), n=document.getElementById('nPln');
+  const set=v=>{P.tilt=(+v)*Math.PI/180; s.value=v; n.value=v; rebuild();};
+  s.oninput=()=>set(s.value); n.onchange=()=>set(n.value); }
+document.getElementById('cSquare').onchange=e=>{P.squareArm=e.target.checked; rebuild();};
+document.getElementById('bRot').onclick=e=>{P.rotated=!P.rotated;e.target.classList.toggle('on',P.rotated);rebuild();};
+document.getElementById('bSwap').onclick=e=>{P.swapped=!P.swapped;e.target.classList.toggle('on',P.swapped);rebuild();};
+document.getElementById('bMode').onclick=e=>{
+  const outboard = P.tilt > Math.PI/4;         // currently outboard -> go to top-bowl
+  P.tilt = (outboard?30:60)*Math.PI/180;
+  P.aperOff = outboard?13.5:18.0;
+  e.target.textContent = outboard?'Opening: TOP BOWL':'Opening: OUTBOARD FACE';
+  e.target.classList.toggle('on',!outboard);
+  document.getElementById('sPln').value=document.getElementById('nPln').value=outboard?30:60;
+  document.getElementById('sOff').value=document.getElementById('nOff').value=P.aperOff;
+  rebuild();
+};
+document.getElementById('bReset').onclick=()=>{P.dTilt=0;
+  document.getElementById('sTilt').value=0; document.getElementById('nTilt').value=0; applyTilt();};
+
+const panel=document.getElementById('panel'), tg=document.getElementById('toggle');
+tg.onclick=()=>{const h=panel.classList.toggle('hidden');
+  tg.classList.toggle('closed',h); tg.textContent=h?'▶ panel':'◀ panel'; resize();};
+function resize(){cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);}
+addEventListener('resize',resize);
+
+/* ════════════════ SHOT PHYSICS  (mirrors shot_analysis.py) ═══════════════ */
+const S_MAX = 160;                                     // in, horizontal samples
+const BALLS = {POLLEN:{d:2.8,m:0.026,cd:0.55},   // 26 g measured
+               NECTAR:{d:3.6,m:0.042,cd:0.55}};  // 42 g measured
+const SHOT = {h0:14, vmax:12, apex:84, fine:false, nectar:false, tgt:'RED UP', metric:'speed',
+              sv:3.0, sy:3.0, sh:1.5,   // 1-sigma error budget for ALL mode
+              mode:'var', hood:70};
+
+function trajectory(b,v0,th,h0){
+  const dt=0.0015, MIN=0.0254;
+  const k = 0.5*1.225*b.cd*Math.PI*Math.pow(b.d*MIN/2,2)/b.m;
+  let s=0, z=h0*MIN, vs=v0*Math.cos(th), vz=v0*Math.sin(th), ps=0, pz=z;
+  const N=S_MAX+1, Z=new Float32Array(N), VS=new Float32Array(N),
+        VZ=new Float32Array(N), T=new Float32Array(N);
+  let gi=0, apex=h0, last=N, tt=0, pt=0;
+  while(gi<N){
+    const tgt=gi*MIN;
+    while(s<tgt){
+      const sp=Math.hypot(vs,vz);
+      vs += -k*sp*vs*dt;  vz += (-9.81-k*sp*vz)*dt;
+      ps=s; pz=z; pt=tt; s+=vs*dt; z+=vz*dt; tt+=dt;
+      if(z<-0.3) break;
+    }
+    if(z<-0.3){ last=gi; break; }
+    const f=(s===ps)?0:(tgt-ps)/(s-ps);
+    const zi=(pz+f*(z-pz))/MIN;
+    Z[gi]=zi; VS[gi]=vs; VZ[gi]=vz; T[gi]=pt+f*(tt-pt);
+    if(zi>apex) apex=zi;
+    gi++;
+  }
+  return {Z,VS,VZ,T,apex,n:last};
+}
+
+const ball=()=>BALLS[SHOT.nectar?'NECTAR':'POLLEN'];
+// The cache key must cover every input the trajectories depend on -- mass and
+// Cd were missing, so editing them could have served a stale table.
+const tabKey=()=>{ const b=ball();
+  return `${SHOT.h0}|${SHOT.vmax}|${SHOT.nectar}|${b.m}|${b.cd}`; };
+const speedRow=(b,th)=>{ const rows=[];
+  for(let v=3.0; v<=SHOT.vmax+1e-9; v+=0.25) rows.push({v, tr:trajectory(b,v,th,SHOT.h0)});
+  return rows; };
+
+let TABLE=null, TABLE_KEY='';
+function buildTable(){
+  const key=tabKey();
+  if(TABLE_KEY===key && TABLE) return TABLE;
+  const b=ball();
+  TABLE=[];
+  for(let a=25;a<=80;a+=5) TABLE.push({th:a*Math.PI/180, hood:a, rows:speedRow(b,a*Math.PI/180)});
+  TABLE_KEY=key; return TABLE;
+}
+// Fixed-hood mode used to rebuild its whole speed row inside solveAt, i.e.
+// once per tile -- ~24000 integrations per recompute instead of 41.
+let FTAB=null, FKEY='';
+function fixedTable(){
+  const key=`${tabKey()}|${SHOT.hood}`;
+  if(FKEY===key && FTAB) return FTAB;
+  const th=SHOT.hood*Math.PI/180;
+  FTAB=[{th, hood:SHOT.hood, rows:speedRow(ball(),th)}];
+  FKEY=key; return FTAB;
+}
+
+function cellAABB(g){
+  const pts=[];
+  for(const u of [-APER_LEN/2, APER_LEN/2])
+    for(const w of [-P.aperWid/2, P.aperWid/2])
+      for(const o of [0, -P.cellExt])
+        pts.push([g.C.x+u*g.uh.x+w*g.wh.x+o*g.n.x,
+                  g.C.y+u*g.uh.y+w*g.wh.y+o*g.n.y,
+                  g.C.z+u*g.uh.z+w*g.wh.z+o*g.n.z]);
+  const mm=i=>[Math.min(...pts.map(p=>p[i])), Math.max(...pts.map(p=>p[i]))];
+  return [mm(0),mm(1),mm(2)];
+}
+const BANNER_BOX=[[-P.mastSep/2-4,P.mastSep/2+4],[-4,4],[40,52]];
+function blockersFor(t){ return blockersExcept([t]); }
+// The flipped-state target is a synthetic goal that is NOT in GOALS, so it
+// could not be excluded by identity -- the real CELL sitting in the same place
+// was blocking every shot at it.
+function blockersExcept(skip){
+  const out=[BANNER_BOX];
+  for(const g of GOALS) if(!skip.includes(g)) out.push(cellAABB(g));
+  return out;
+}
+const inBox=(b,x,y,z)=> x>=b[0][0]&&x<=b[0][1]&&y>=b[1][0]&&y<=b[1][1]&&z>=b[2][0]&&z<=b[2][1];
+
+// Convex half-plane test on the real gabled opening, with a ball-radius inset.
+function insideAperture(u,w,margin){
+  const poly=aperturePoly(), n=poly.length;
+  let cu=0,cw=0; for(const p of poly){cu+=p[0];cw+=p[1];} cu/=n; cw/=n;
+  for(let i=0;i<n;i++){
+    const a=poly[i], b=poly[(i+1)%n];
+    const ex=b[0]-a[0], ey=b[1]-a[1], L=Math.hypot(ex,ey);
+    if(L<1e-9) continue;
+    let nx=-ey/L, ny=ex/L;
+    if((cu-a[0])*nx+(cw-a[1])*ny<0){ nx=-nx; ny=-ny; }
+    if((u-a[0])*nx+(w-a[1])*ny < margin) return false;
+  }
+  return true;
+}
+
+function tryShot(tr,g,P0,aim,boxes){
+  const n=g.n, BR=(SHOT.nectar?3.6:2.8)/2;
+  // Apex must be measured only up to the mouth: a ball that goes IN never
+  // reaches the later apex of its unobstructed flight. Checking tr.apex here
+  // wrongly rejected flat fast shots that enter while still rising.
+  let zmax=0;
+  const A=n.x*(P0[0]-g.C.x)+n.y*(P0[1]-g.C.y)-n.z*g.C.z, B=n.x*aim[0]+n.y*aim[1];
+  let pf=null; const lim=Math.min(tr.n,S_MAX+1);
+  for(let i=0;i<lim;i++){
+    const z=tr.Z[i], f=A+B*i+n.z*z;
+    if(z>zmax) zmax=z;
+    if(pf!==null && pf>0 && f<=0){
+      if(zmax>SHOT.apex) return null;
+      const t=pf/(pf-f), si=(i-1)+t;
+      const zi=tr.Z[i-1]+t*(z-tr.Z[i-1]);
+      const vs=tr.VS[i-1]+t*(tr.VS[i]-tr.VS[i-1]);
+      const vz=tr.VZ[i-1]+t*(tr.VZ[i]-tr.VZ[i-1]);
+      const px=P0[0]+si*aim[0], py=P0[1]+si*aim[1];
+      const dx=px-g.C.x, dy=py-g.C.y, dz=zi-g.C.z;
+      const u=dx*g.uh.x+dy*g.uh.y+dz*g.uh.z, w=dx*g.wh.x+dy*g.wh.y;
+      if(!insideAperture(u,w,BR)) return null;        // clears the frame on the way in
+      const vx=vs*aim[0], vy=vs*aim[1];
+      const sp=Math.hypot(vx,vy,vz), vn=vx*n.x+vy*n.y+vz*n.z;
+      if(vn>=0) return null;
+      const ang=Math.asin(Math.min(1,-vn/sp))*180/Math.PI;
+      if(ang<18) return null;
+      // must actually end up INSIDE the box: track one ball-diameter of
+      // penetration along -n and require it still clears the frame.
+      const vu=vx*g.uh.x+vy*g.uh.y+vz*g.uh.z, vw=vx*g.wh.x+vy*g.wh.y;
+      const tpen=(2*BR)/(-vn);
+      if(!insideAperture(u+vu*tpen, w+vw*tpen, BR*0.5)) return null;
+      if(2*BR > P.cellExt) return null;
+      return {u,w,ang,si,sp,zi};
+    }
+    if(boxes && (i%3===0)){
+      const px=P0[0]+i*aim[0], py=P0[1]+i*aim[1];
+      for(const bx of boxes) if(inBox(bx,px,py,z)) return null;
+    }
+    pf=f;
+  }
+  return null;
+}
+
+function solveAt(g,P0,boxes){
+  const dx=g.C.x-P0[0], dy=g.C.y-P0[1], R=Math.hypot(dx,dy);
+  if(R<1e-6) return null;
+  const aim=[dx/R,dy/R]; let best=null;
+  const tbl = SHOT.mode==='fix' ? fixedTable() : buildTable();
+  for(const {th,hood,rows} of tbl){
+    let run=0, rs=0, bestrun=0, bstart=0;
+    for(let i=0;i<rows.length;i++){
+      if(tryShot(rows[i].tr,g,P0,aim,boxes)){ if(run===0) rs=i; run++;
+        if(run>bestrun){bestrun=run; bstart=rs;} }
+      else run=0;
+    }
+    if(!bestrun) continue;
+    const mid=Math.round(bstart+(bestrun-1)/2);
+    // Report the true midpoint of the scoring window. For an even-length run
+    // the nearest table sample sits half a step off centre, which made the
+    // quoted speed land on the edge of its own window.
+    const vlo=rows[bstart].v, vhi=rows[bstart+bestrun-1].v, vc=(vlo+vhi)/2;
+    const tol=100*0.5*(bestrun*0.25)/vc;
+    if(!best || tol>best.tol){
+      const r=tryShot(rows[mid].tr,g,P0,aim,boxes);
+      best={tol,v:vc,vSample:rows[mid].v,hood,R,entry:r.ang,si:r.si,aim,th,
+            nStep:bestrun, vlo, vhi, apex:rows[mid].tr.apex,
+            tof:rows[mid].tr.T[Math.min(Math.round(r.si),S_MAX)]};
+    }
+  }
+  return best;
+}
+
+/* ═══════════════════════ ZONE OVERLAY + PROBE ══════════���═════════════ */
+let zoneMesh=null, probeGrp=new THREE.Group(), bestGrp=new THREE.Group();
+gField.add(probeGrp); gField.add(bestGrp);
+const RAMP=[[46,204,113],[120,210,80],[200,210,60],[240,180,50],[230,120,50],[200,60,50]];
+const METRICS={
+  speed:{lbl:'launch-speed tolerance', unit:'%', cuts:[10,8,6,4.5,2],
+         words:['wide','good','workable','marginal','tight','no good']},
+  yaw:  {lbl:'yaw (X) angle tolerance', unit:'\u00b0', cuts:[12,8,5,3,1.5],
+         words:['very forgiving','good','workable','marginal','tight','no good']},
+  hood: {lbl:'hood (Y) angle tolerance', unit:'\u00b0', cuts:[6,4.5,3,2,1],
+         words:['very forgiving','good','workable','marginal','tight','no good']},
+  all:  {lbl:'estimated make rate (speed + yaw + hood)', unit:'%', cuts:[95,85,70,50,25],
+         words:['near certain','strong','usable','coin-flip','poor','no good']},
+};
+
+// Abramowitz & Stegun 7.1.26
+function erf(x){
+  const s=Math.sign(x); x=Math.abs(x);
+  const t=1/(1+0.3275911*x);
+  const y=1-((((1.061405429*t-1.453152027)*t+1.421413741)*t-0.284496736)*t+0.254829592)
+            *t*Math.exp(-x*x);
+  return s*y;
+}
+// Each tolerance is a hard half-window; each error source an independent
+// zero-mean Gaussian.  P(inside) = erf(tol / (sigma*sqrt2)).
+const pAxis=(tol,sig)=> sig<=0 ? 1 : erf(tol/(sig*Math.SQRT2));
+function combinedAt(g,P0,best,boxes){
+  const pv=pAxis(best.tol, SHOT.sv);
+  const py=pAxis(yawTol(g,P0,best,boxes),  SHOT.sy);
+  const ph=pAxis(hoodTol(g,P0,best,boxes), SHOT.sh);
+  return {p:100*pv*py*ph, pv:100*pv, py:100*py, ph:100*ph};
+}
+const bandOf=(m,v)=>{ const c=METRICS[m].cuts;
+  for(let i=0;i<c.length;i++) if(v>=c[i]) return i;
+  return 5; };
+
+// Yaw: rotate the aim about vertical, holding the optimum hood and speed.
+function yawTol(g,P0,best,boxes){
+  const b=BALLS[SHOT.nectar?'NECTAR':'POLLEN'];
+  const tr=trajectory(b,best.v,best.th,SHOT.h0);
+  const base=Math.atan2(best.aim[1],best.aim[0]);
+  let sum=0;
+  for(const dir of [-1,1]){
+    let k=0;
+    while(k<25){ const t=k+0.25, a=base+dir*t*Math.PI/180;
+      if(!tryShot(tr,g,P0,[Math.cos(a),Math.sin(a)],boxes)) break; k=t; }
+    sum+=k;
+  }
+  return sum/2;
+}
+// Hood: vary launch elevation, holding the optimum speed and aim.
+function hoodTol(g,P0,best,boxes){
+  const b=BALLS[SHOT.nectar?'NECTAR':'POLLEN'];
+  let sum=0;
+  for(const dir of [-1,1]){
+    let k=0;
+    while(k<25){ const t=k+0.5, th=best.th+dir*t*Math.PI/180;
+      if(th<=0.05||th>=1.52) break;
+      if(!tryShot(trajectory(b,best.v,th,SHOT.h0),g,P0,best.aim,boxes)) break; k=t; }
+    sum+=k;
+  }
+  return sum/2;
+}
+// u at the mouth plane for any speed, ignoring whether it is inside the outline
+function crossU(tr,g,P0,aim){
+  const n=g.n;
+  const A=n.x*(P0[0]-g.C.x)+n.y*(P0[1]-g.C.y)-n.z*g.C.z, B=n.x*aim[0]+n.y*aim[1];
+  let pf=null; const lim=Math.min(tr.n,S_MAX+1);
+  for(let i=0;i<lim;i++){
+    const z=tr.Z[i], f=A+B*i+n.z*z;
+    if(pf!==null && pf>0 && f<=0){
+      const t=pf/(pf-f), si=(i-1)+t, zi=tr.Z[i-1]+t*(z-tr.Z[i-1]);
+      const dx=P0[0]+si*aim[0]-g.C.x, dy=P0[1]+si*aim[1]-g.C.y, dz=zi-g.C.z;
+      return dx*g.uh.x+dy*g.uh.y+dz*g.uh.z;
+    }
+    pf=f;
+  }
+  return null;
+}
+function reqSpeed(g,P0,hoodDeg,cd){
+  const src=BALLS[SHOT.nectar?'NECTAR':'POLLEN'];
+  const b={d:src.d, m:src.m, cd};
+  const th=hoodDeg*Math.PI/180;
+  const dx=g.C.x-P0[0], dy=g.C.y-P0[1], R=Math.hypot(dx,dy);
+  if(R<1e-6) return null;
+  const aim=[dx/R,dy/R];
+  const u=v=>{ const x=crossU(trajectory(b,v,th,SHOT.h0),g,P0,aim); return x===null?999:x; };
+  if(u(3)<0 || u(16)>0) return null;
+  let lo=3, hi=16;
+  for(let i=0;i<40;i++){ const m=(lo+hi)/2; if(u(m)>0) lo=m; else hi=m; }
+  return (lo+hi)/2;
+}
+function updateCalSens(){
+  const el=document.getElementById('calSens');
+  const g=GOALS.find(o=>o.name==='RED UP'); if(!g||!el) return;
+  const R=60, nh=Math.hypot(g.n.x,g.n.y);
+  const P0=[g.C.x + R*g.n.x/nh, g.C.y + R*g.n.y/nh];   // 60 in straight out
+  const v=[0.35,0.55,0.85].map(c=>reqSpeed(g,P0,60,c));
+  const src=BALLS[SHOT.nectar?'NECTAR':'POLLEN'];
+  const k=0.5*1.225*src.cd*Math.PI*Math.pow(src.d*0.0254/2,2)/src.m;
+  let txt=`k = <b>${k.toFixed(4)}</b> /m · v<sub>term</sub> = `+
+          `<b>${Math.sqrt(9.81/k).toFixed(1)}</b> m/s`;
+  if(v[0]&&v[1]&&v[2]){
+    const spread=100*(v[2]-v[0])/v[1];
+    txt += `<br>at 60″ / 60° hood, exit speed needed:<br>`+
+      `C<sub>d</sub> 0.35 → ${v[0].toFixed(2)} · 0.55 → ${v[1].toFixed(2)} · `+
+      `0.85 → ${v[2].toFixed(2)} m/s<br>`+
+      `spread <b>${spread.toFixed(1)}%</b> — against a speed tolerance of ±4–6%`;
+  }
+  el.innerHTML=txt;
+}
+
+function metricAt(g,P0,best,boxes){
+  return SHOT.metric==='yaw'  ? yawTol(g,P0,best,boxes)
+       : SHOT.metric==='hood' ? hoodTol(g,P0,best,boxes)
+       : SHOT.metric==='all'  ? combinedAt(g,P0,best,boxes).p
+       : best.tol;
+}
+function drawLegend(){
+  const m=METRICS[SHOT.metric], c=m.cuts;
+  const rng=i=> i===0 ? `\u2265 ${c[0]}${m.unit}`
+            : i<c.length ? `${c[i]} \u2013 ${c[i-1]}${m.unit}`
+            : `< ${c[c.length-1]}${m.unit}`;
+  let h='';
+  for(let i=0;i<6;i++) h+=`<div class="lr"><span class="sq" style="background:rgb(${
+    RAMP[i].join(',')})"></span>${rng(i)}<span class="dim">${m.words[i]}</span></div>`;
+  h+=`<div class="lr"><span class="sq" style="background:#7a4fd0"></span>both flip states</div>`;
+  h+=`<div class="lr"><span class="sq" style="background:rgba(255,255,255,.05)"></span>no shot</div>`;
+  document.getElementById('lgRows').innerHTML=h;
+  document.querySelector('#legend .cap').textContent='colour = '+m.lbl;
+}
+
+function computeZone(){
+  const st=document.getElementById('zStat');
+  st.textContent='computing…';
+  document.getElementById('lgFoot').textContent='computing…';
+  setTimeout(()=>{
+    const t0=performance.now();
+    const step=SHOT.fine?3:6, N=Math.round(P.field/step);
+    const dual = SHOT.tgt==='DUAL';
+    const gA = dual ? GOALS.find(g=>g.name==='RED UP') : GOALS.find(g=>g.name===SHOT.tgt);
+    if(!gA){ st.textContent='target not found'; return; }
+    const bxA=blockersFor(gA);
+    const gDown=GOALS.find(o=>o.name==='RED DOWN');
+    const bxB=dual?blockersExcept([gA,gDown]):bxA;
+    // for DUAL we want RED's up-CELL in BOTH flip states: same height, mirrored face
+    const gB2 = dual ? {C:new THREE.Vector3(gA.C.x,-gA.C.y,gA.C.z),
+                        n:new THREE.Vector3(gA.n.x,-gA.n.y,gA.n.z),
+                        uh:new THREE.Vector3(gA.uh.x,-gA.uh.y,gA.uh.z),
+                        wh:gA.wh} : null;
+    const cv=document.createElement('canvas'); cv.width=cv.height=N;
+    const ctx=cv.getContext('2d'); ctx.clearRect(0,0,N,N);
+    let nf=0, best=null;
+    for(let j=0;j<N;j++) for(let i=0;i<N;i++){
+      const x=-P.field/2+step/2+i*step, y=P.field/2-step/2-j*step;
+      if(Math.abs(x)<P.frameW/2+9 && Math.abs(y)<P.frameD/2+9) continue;
+      if(Math.abs(x)>P.field/2-9 || Math.abs(y)>P.field/2-9) continue;
+      let col=null, tol=0, q=null, comb=null;
+      if(dual){
+        const a=solveAt(gA,[x,y],bxA), b=solveAt(gB2,[x,y],bxB);
+        if(a&&b){                      // scores in both flip states
+          tol=Math.min(metricAt(gA,[x,y],a,bxA), metricAt(gB2,[x,y],b,bxB));
+          col=[122,79,208]; q=a;
+        } else if(a||b){               // one state only -- colour by the metric
+          q = a||b;
+          const gg = a?gA:gB2, bb = a?bxA:bxB;
+          tol=metricAt(gg,[x,y],q,bb); col=RAMP[bandOf(SHOT.metric,tol)];
+        }
+      } else {
+        q=solveAt(gA,[x,y],bxA);
+        if(q){
+          if(SHOT.metric==='all'){ comb=combinedAt(gA,[x,y],q,bxA); tol=comb.p; }
+          else tol=metricAt(gA,[x,y],q,bxA);
+          col=RAMP[bandOf(SHOT.metric,tol)];
+        }
+      }
+      if(!col) continue;
+      nf++;
+      if(!best||tol>best.t){
+        let bind='';
+        if(comb){ const m=Math.min(comb.pv,comb.py,comb.ph);
+          bind = m===comb.py?' · yaw-limited' : m===comb.pv?' · speed-limited'
+                                              : ' · hood-limited'; }
+        best={t:tol,x,y,bind,R:q?q.R:Math.hypot(gA.C.x-x,gA.C.y-y),
+              hood:q?q.hood:0, v:q?q.v:0}; }
+      ctx.fillStyle=`rgba(${col[0]},${col[1]},${col[2]},${dual?0.8:0.72})`;
+      ctx.fillRect(i,j,1,1);
+    }
+    const tex=new THREE.CanvasTexture(cv);
+    tex.magFilter=THREE.LinearFilter; tex.minFilter=THREE.LinearFilter;
+    if(zoneMesh){ gField.remove(zoneMesh);
+      zoneMesh.geometry.dispose();
+      if(zoneMesh.material.map) zoneMesh.material.map.dispose();
+      zoneMesh.material.dispose(); }
+    zoneMesh=new THREE.Mesh(new THREE.PlaneGeometry(P.field,P.field),
+      new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false}));
+    zoneMesh.rotation.x=-Math.PI/2; zoneMesh.position.y=0.7; gField.add(zoneMesh);
+    // mark the optimum and the good-range annulus around the mouth
+    purge(bestGrp);
+    if(best){
+      const pil=new THREE.Mesh(new THREE.CylinderGeometry(1.6,1.6,SHOT.h0,14),
+        new THREE.MeshStandardMaterial({color:0x00e5ff,emissive:0x0a3a44}));
+      pil.position.copy(V(best.x,best.y,SHOT.h0/2)); bestGrp.add(pil);
+      const rg=new THREE.Mesh(new THREE.RingGeometry(8,10.5,36),
+        new THREE.MeshBasicMaterial({color:0x00e5ff,side:THREE.DoubleSide}));
+      rg.rotation.x=-Math.PI/2; rg.position.copy(V(best.x,best.y,1.0)); bestGrp.add(rg);
+      const bl=label(`BEST  ${best.R.toFixed(0)}″ · hood ${best.hood}° · `+
+                     `${best.v.toFixed(2)} m/s · ±${best.t.toFixed(1)}%`,'#7df9ff',38);
+      bl.position.copy(V(best.x,best.y,SHOT.h0+13)); bestGrp.add(bl);
+      // ring of constant range through the best spot, centred on the mouth
+      const ringPts=[];
+      for(let a=0;a<=360;a+=4){ const r=a*Math.PI/180;
+        ringPts.push(V(gA.C.x+best.R*Math.cos(r), gA.C.y+best.R*Math.sin(r), 1.2)); }
+      const rl=new THREE.Line(new THREE.BufferGeometry().setFromPoints(ringPts),
+        new THREE.LineDashedMaterial({color:0x00e5ff,dashSize:4,gapSize:3}));
+      rl.computeLineDistances(); bestGrp.add(rl);
+    }
+    const ms=Math.round(performance.now()-t0);
+    const U=METRICS[SHOT.metric].unit;
+    const msg=`<b>${nf}</b> of ${N*N} tiles score` +
+      (best?(SHOT.metric==='all'
+              ? ` · best <b>${best.t.toFixed(0)}%</b> at X=${best.x.toFixed(0)} Y=${best.y.toFixed(0)}${best.bind||''}`
+              : ` · best <b>±${best.t.toFixed(1)}${U}</b> at X=${best.x.toFixed(0)} Y=${best.y.toFixed(0)}`):'')+
+      `<br>${METRICS[SHOT.metric].lbl}`+
+      `<br>${SHOT.mode==='fix'?`fixed hood <b>${SHOT.hood}°</b>`:'best hood per tile'}`+
+      ` · exit <b>${SHOT.h0}″</b> · ≤<b>${SHOT.vmax}</b> m/s`+
+      `<br><span style="color:#5c6570">${ms} ms · ${step}″ grid</span>`;
+    document.getElementById('lgFoot').innerHTML=msg;
+    document.getElementById('lgTitle').textContent =
+      'Shooting zone — ' + (dual?'RED, both flip states':SHOT.tgt);
+    // a down-CELL mouth faces below horizontal: a ball that enters falls back out
+    const dn = !dual && gA.n.z < 0;
+    document.getElementById('lgFoot').innerHTML = dn
+      ? `<span style="color:#e5484d"><b>${SHOT.tgt} faces DOWNWARD</b> in this
+         configuration — a ball cannot be retained.</span><br>` + msg
+      : msg;
+    st.innerHTML=msg;
+  },30);
+}
+
+function probe(x,y){
+  purge(probeGrp);
+  const dual = SHOT.tgt==='DUAL';
+  const g = dual ? GOALS.find(o=>o.name==='RED UP') : GOALS.find(o=>o.name===SHOT.tgt);
+  if(!g) return;
+  const r=solveAt(g,[x,y],blockersFor(g));
+  const post=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.2,SHOT.h0,12),
+    new THREE.MeshStandardMaterial({color:r?0x2ecc71:0xc83c32}));
+  post.position.copy(V(x,y,SHOT.h0/2)); probeGrp.add(post);
+  const base=new THREE.Mesh(new THREE.RingGeometry(7,9,32),
+    new THREE.MeshBasicMaterial({color:r?0x2ecc71:0xc83c32,side:THREE.DoubleSide}));
+  base.rotation.x=-Math.PI/2; base.position.copy(V(x,y,0.9)); probeGrp.add(base);
+  if(!r){
+    const L=label('no shot from here','#ff8d90',34);
+    L.position.copy(V(x,y,SHOT.h0+9)); probeGrp.add(L);
+    document.getElementById('pTbl').innerHTML =
+      `<tr><td colspan="3" style="color:#e5484d;padding:6px 0">No trajectory from `+
+      `X=${x.toFixed(0)} Y=${y.toFixed(0)} enters the mouth within your speed cap `+
+      `and apex limit.</td></tr>`;
+    document.getElementById('probe').classList.add('on');
+    return;
+  }
+  const b=BALLS[SHOT.nectar?'NECTAR':'POLLEN'];
+  const tr=trajectory(b,r.v,r.th,SHOT.h0);
+  const pts=[];
+  for(let i=0;i<=Math.ceil(r.si);i++){
+    const si=Math.min(i,r.si);
+    pts.push(V(x+si*r.aim[0], y+si*r.aim[1], tr.Z[Math.min(i,tr.n-1)]));
+  }
+  const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),
+    new THREE.LineBasicMaterial({color:0xffd166}));
+  probeGrp.add(line);
+  for(let i=0;i<pts.length;i+=6){
+    const m=new THREE.Mesh(new THREE.SphereGeometry(1.4,10,8),
+      new THREE.MeshStandardMaterial({color:0xe3b341}));
+    m.position.copy(pts[i]); probeGrp.add(m);
+  }
+  const hdg=(Math.atan2(r.aim[1],r.aim[0])*180/Math.PI+360)%360;
+  const nStep=r.nStep, width=nStep*0.25;
+  // how square the shot is to the mouth: 0 deg = straight down the normal
+  const nh=Math.hypot(g.n.x,g.n.y);
+  const offAx=Math.acos(Math.max(-1,Math.min(1,
+        (-r.aim[0]*g.n.x - r.aim[1]*g.n.y)/nh)))*180/Math.PI;
+  const bxp=blockersFor(g);
+  const yT=yawTol(g,[x,y],r,bxp);
+  const hT=hoodTol(g,[x,y],r,bxp);
+  const cb=combinedAt(g,[x,y],r,bxp);
+  const row=(k,v,d,cls)=>`<tr><td class="k">${k}</td>`+
+      `<td class="v ${cls||''}">${v}</td><td class="d">${d}</td></tr>`;
+  const sec=t=>`<tr><td class="sec" colspan="3">${t}</td></tr>`;
+  document.getElementById('pTbl').innerHTML =
+    sec('where to stand')+
+    row('range', `${r.R.toFixed(1)}″`, 'launch point → mouth centre, horizontal')+
+    row('bearing', `${hdg.toFixed(0)}°`, 'heading to face. 0°=+X (BLUE wall), CCW')+
+    row('off-axis', `${offAx.toFixed(0)}°`, '0° = squared up to the mouth')+
+    sec('what to command')+
+    row('hood', `${r.hood}°`, 'launch elevation above horizontal')+
+    row('exit speed', `${r.v.toFixed(2)} m/s`, 'ball speed leaving the shooter')+
+    row('speed window', `${r.vlo.toFixed(2)}–${r.vhi.toFixed(2)}`, `${nStep} steps that all score`)+
+    sec('how much error you can absorb')+
+    row('speed tol', `±${r.tol.toFixed(1)}%`, `±${(width/2).toFixed(2)} m/s`)+
+    row('yaw tol', `±${yT.toFixed(1)}°`, 'heading error still scoring')+
+    row('hood tol', `±${hT.toFixed(1)}°`, 'elevation error still scoring')+
+    row('make rate', `${cb.p.toFixed(0)}%`,
+        `speed ${cb.pv.toFixed(0)} × yaw ${cb.py.toFixed(0)} × hood ${cb.ph.toFixed(0)}`,
+        cb.p<50?'bad':'')+
+    sec('what the ball does')+
+    row('entry angle', `${r.entry.toFixed(0)}°`, '90° = dead perpendicular to the opening')+
+    row('apex', `${r.apex.toFixed(0)}″`, `highest point (cap ${SHOT.apex}″)`)+
+    row('flight time', `${r.tof.toFixed(2)} s`, 'launch to crossing the mouth');
+  document.getElementById('probe').classList.add('on');
+  document.getElementById('zStat').innerHTML=
+    `<b style="color:#ffd166">probe</b> X=${x.toFixed(0)} Y=${y.toFixed(0)} · `+
+    `range ${r.R.toFixed(1)}″ · yaw ${hdg.toFixed(0)}°<br>`+
+    `hood <b>${r.hood}°</b> · scoring speeds <b>${r.vlo.toFixed(2)}–${r.vhi.toFixed(2)}</b> m/s `+
+    `(${nStep} steps)<br>`+
+    `→ speed <b>±${r.tol.toFixed(1)}%</b> (±${(width/2).toFixed(2)} m/s) · `+
+    `yaw <b>±${yT.toFixed(1)}°</b> · hood <b>±${hT.toFixed(1)}°</b> · `+
+    `entry ${r.entry.toFixed(0)}°`+
+    `<br>make rate <b>${cb.p.toFixed(0)}%</b> = speed ${cb.pv.toFixed(0)}% × `+
+    `yaw ${cb.py.toFixed(0)}% × hood ${cb.ph.toFixed(0)}%`;
+  const L=label(`${r.R.toFixed(0)}″  ·  ${r.hood}°  ·  ${r.v.toFixed(2)} m/s  ·  `+
+                `${cb.p.toFixed(0)}% make`, '#ffd166',34);
+  L.position.copy(V(x,y,SHOT.h0+11)); probeGrp.add(L);
+}
+
+function applyTarget(){
+  const want=document.getElementById('tSel').value;
+  const solo=document.getElementById('tSolo').checked;
+  gHive.traverse(o=>{
+    if(o.name==='tgtsurf') o.visible=(o.userData.goal===want);
+    if(o.name==='cellgrp') o.visible=!(solo && want && o.userData.goal!==want);
+  });
+  const g=GOALS.find(o=>o.name===want);
+  const info=document.getElementById('tInfo');
+  if(!g){ info.textContent='none selected'; return; }
+  let zlo=1e9, zhi=-1e9;
+  for(const p of g.rim){ const q=p.clone().applyEuler(g.pair.rotation).add(g.pair.position);
+    zlo=Math.min(zlo,q.y); zhi=Math.max(zhi,q.y); }
+  const area=(APER_LEN*P.aperWid)*0.875/144;   // gable pentagon ~= 87.5% of the bounding box
+  info.innerHTML =
+    `<b style="color:#7df9ff">${g.name}</b> opening<br>`+
+    `rim heights &nbsp;<b>${zlo.toFixed(1)} – ${zhi.toFixed(1)}″</b><br>`+
+    `plane tilt &nbsp;<b>${Math.round(P.tilt*180/Math.PI)}° from horizontal</b><br>`+
+    `normal &nbsp;<b>${(90-P.tilt*180/Math.PI).toFixed(0)}° above horizontal, outward</b><br>`+
+    `size &nbsp;<b>${P.aperWid.toFixed(1)}″ wide × ${APER_LEN.toFixed(1)}″ tall</b> `+
+    `(≈${area.toFixed(2)} ft²)<br>`+
+    `after POLLEN radius &nbsp;<b>${(APER_LEN-2.8).toFixed(2)}″ × ${(P.aperWid-2.8).toFixed(1)}″</b>`;
+}
+document.getElementById('tSel').onchange=applyTarget;
+document.getElementById('tSolo').onchange=applyTarget;
+
+const modal=document.getElementById('modal');
+document.getElementById('zHelp').onclick=()=>modal.classList.add('on');
+document.getElementById('lgHelp').onclick=()=>modal.classList.add('on');
+document.getElementById('mclose').onclick=()=>modal.classList.remove('on');
+modal.addEventListener('click',e=>{ if(e.target===modal) modal.classList.remove('on'); });
+addEventListener('keydown',e=>{ if(e.key==='Escape') modal.classList.remove('on'); });
+
+const ray=new THREE.Raycaster(), ndc=new THREE.Vector2();
+let downXY=null;
+renderer.domElement.addEventListener('pointerdown',e=>{downXY=[e.clientX,e.clientY];});
+renderer.domElement.addEventListener('pointerup',e=>{
+  if(!downXY) return;
+  if(Math.hypot(e.clientX-downXY[0], e.clientY-downXY[1])>4) return;   // was a drag
+  const rc=renderer.domElement.getBoundingClientRect();
+  ndc.x=((e.clientX-rc.left)/rc.width)*2-1;
+  ndc.y=-((e.clientY-rc.top)/rc.height)*2+1;
+  ray.setFromCamera(ndc,cam);
+  const fp=gField.getObjectByName('floorplane');
+  const hit=ray.intersectObject(fp,false)[0];
+  if(hit) probe(hit.point.x, -hit.point.z);
+});
+
+function zbind(sl,nu,key){
+  const a=document.getElementById(sl), b=document.getElementById(nu);
+  const set=v=>{SHOT[key]=+v; a.value=v; b.value=v;};
+  a.oninput=()=>set(a.value); b.onchange=()=>set(b.value);
+}
+zbind('zH0','zH0n','h0'); zbind('zVm','zVmn','vmax'); zbind('zAp','zApn','apex');
+zbind('zHd','zHdn','hood');
+document.getElementById('zMode').onchange=e=>SHOT.mode=e.target.value;
+document.getElementById('zFine').onchange=e=>SHOT.fine=e.target.checked;
+document.getElementById('zTgt').onchange=e=>SHOT.tgt=e.target.value;
+for(const [id,fn] of [['bMp',v=>BALLS.POLLEN.m=v/1000],
+                      ['bMn',v=>BALLS.NECTAR.m=v/1000]]){
+  const el=document.getElementById(id);
+  el.onchange=()=>{ fn(+el.value); TABLE_KEY=''; updateCalSens(); computeZone(); };
+}
+{ const sl=document.getElementById('sCd'), nu=document.getElementById('bCd');
+  const setCd=v=>{ BALLS.POLLEN.cd=+v; BALLS.NECTAR.cd=+v;
+    sl.value=v; nu.value=(+v).toFixed(2); TABLE_KEY=''; updateCalSens(); };
+  sl.oninput=()=>setCd(sl.value);
+  sl.onchange=()=>{ setCd(sl.value); computeZone(); };
+  nu.onchange=()=>{ setCd(nu.value); computeZone(); }; }
+for(const [id,k] of [['eSv','sv'],['eSy','sy'],['eSh','sh']]){
+  const el=document.getElementById(id);
+  el.onchange=()=>{ SHOT[k]=+el.value; if(SHOT.metric==='all') computeZone(); };
+}
+
+{ const MB={speed:document.getElementById('mS'), yaw:document.getElementById('mX'),
+             hood:document.getElementById('mY'), all:document.getElementById('mA')};
+  const setMetric=m=>{ SHOT.metric=m;
+    for(const k in MB) MB[k].classList.toggle('on', k===m);
+    drawLegend(); computeZone(); };
+  for(const k in MB) MB[k].onclick=()=>setMetric(k); }
+
+{ const P_=document.getElementById('swP'), N_=document.getElementById('swN');
+  const setBall=n=>{ SHOT.nectar=n; TABLE_KEY='';
+    P_.classList.toggle('on',!n); N_.classList.toggle('on',n);
+    TABLE_KEY=''; computeZone(); };
+  P_.onclick=()=>setBall(false); N_.onclick=()=>setBall(true); }
+document.getElementById('zRun').onclick=()=>{TABLE_KEY=''; computeZone();};
+document.getElementById('pClose').onclick=()=>{
+  purge(probeGrp); document.getElementById('probe').classList.remove('on'); };
+document.getElementById('zClear').onclick=()=>{
+  if(zoneMesh){ gField.remove(zoneMesh); zoneMesh.geometry.dispose();
+    if(zoneMesh.material.map) zoneMesh.material.map.dispose();
+    zoneMesh.material.dispose(); zoneMesh=null; }
+  purge(probeGrp); purge(bestGrp);
+  document.getElementById('probe').classList.remove('on');
+  document.getElementById('zStat').textContent='cleared.';
+};
+
+/* auto-refresh the zone whenever anything it depends on changes */
+let zoneTimer=null;
+function zoneDirty(){
+  if(!zoneMesh && document.getElementById('zStat').textContent==='cleared.') return;
+  clearTimeout(zoneTimer);
+  document.getElementById('zStat').textContent='recomputing…';
+  zoneTimer=setTimeout(()=>{TABLE_KEY=''; computeZone();}, 420);
+}
+for(const id of ['zH0','zH0n','zVm','zVmn','zAp','zApn','zHd','zHdn'])
+  document.getElementById(id).addEventListener('input', zoneDirty);
+for(const id of ['zMode','zTgt','zFine','sOff','nOff','sWid','nWid','sPln','nPln'])
+  document.getElementById(id).addEventListener('change', zoneDirty);
+
+rebuild(); goView('zone'); resize();
+applyTarget(); drawLegend(); updateCalSens();
+setTimeout(computeZone, 260);   // show the zone straight away
+(function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,cam);})();
+</script>
+</body>
+</html>
