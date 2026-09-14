@@ -713,16 +713,8 @@
         font-size: 1.5rem;
     }
     
-    .media-overlay {
-        font-size: 1.25rem;
-    }
-    
-    .media-source {
-        font-size: 0.75rem;
-    }
-    
-    .media-link:hover {
-        transform: translateY(-3px);
+    .media-link {
+        display: block;
     }
     
     .sponsor-placeholder {
@@ -1124,9 +1116,8 @@
         line-height: 1.5;
     }
     
-    .media-source {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.6rem;
+    .media-link {
+        display: block;
     }
     
     /* Photos Section Very Small Screens */
@@ -1168,11 +1159,6 @@
     .media-description {
         font-size: 0.85rem;
         line-height: 1.4;
-    }
-    
-    .media-source {
-        font-size: 0.7rem;
-        padding: 0.2rem 0.5rem;
     }
     
     /* Navigation positioning handled in main mobile breakpoint */
@@ -1514,3 +1500,88 @@
         }
     }
 }
+
+/* ========================================
+   ACHIEVEMENTS SECTION - RESPONSIVE
+   ======================================== */
+
+@media (max-width: 1200px) {
+    .achievements-highlights {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .achievements-highlights {
+        grid-template-columns: 1fr;
+    }
+
+    .biobuzz-news-card {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .biobuzz-news-icon {
+        margin: 0 auto;
+    }
+
+    .biobuzz-news-actions {
+        flex-direction: column;
+    }
+
+    .biobuzz-news-btn {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .achievements-timeline-card {
+        padding: var(--spacing-lg);
+    }
+
+    .achievements-timeline-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-md);
+    }
+
+    .achievements-recap-link {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .achievement-event {
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    .event-content {
+        flex: 1 1 auto;
+    }
+
+    .event-badge {
+        margin-left: 56px;
+        white-space: normal;
+    }
+}
+
+@media (max-width: 480px) {
+    .achievement-highlight {
+        padding: var(--spacing-lg);
+    }
+
+    .event-badge {
+        margin-left: 0;
+    }
+
+    .achievements-timeline::before {
+        left: 15px;
+    }
+
+    .event-marker {
+        width: 32px;
+        height: 32px;
+        font-size: var(--font-size-xs);
+    }
+}
+

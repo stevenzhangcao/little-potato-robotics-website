@@ -83,14 +83,14 @@ class FTCGlobalComments {
     ];
 
     // Add simulator-specific default comments
-    if (this.simulatorId === 'ftc-launch-simulator') {
+    if (this.simulatorId === 'biobuzz-field') {
       defaultComments.push(
         {
-          id: 'launch_1',
+          id: 'biobuzz_1',
           userName: 'Team 30592',
           userLocation: 'Fremont, CA',
           commentType: 'parameters',
-          userComment: 'Try these optimized settings: d0=40.64mm, d1=27mm, wheel friction=2.0, RPM=200. The higher friction and RPM give much better launch performance!',
+          userComment: 'Great for checking hood and yaw tolerance before practice. Set your error budget first, then read the make-rate colouring — it lines up well with what we see on the field!',
           timestamp: Date.now() - (2 * 60 * 60 * 1000), // 2 hours ago
           simulator: this.simulatorId,
           isDefault: true
