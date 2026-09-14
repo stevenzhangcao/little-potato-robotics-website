@@ -1,11 +1,11 @@
 <!--
-  BIOBUZZ Shooting Zone  —  FTC 2025-26 field & HIVE model with a ballistics solver
+  BIOBUZZ Shooting Zone  —  FTC 2026-27 field & HIVE model with a ballistics solver
 
   Single self-contained page. No server, no build step. Open it directly or
   serve it from GitHub Pages. Only external dependency is three.js from unpkg,
   so the first load needs a network connection.
 
-  Team: <your team number here>
+  Team: Little Potato Robotics (FTC 30592)
   Licence: MIT (see LICENSE)
 
   WHAT IT DOES
@@ -20,8 +20,9 @@
   READ THIS BEFORE TRUSTING A NUMBER
     Dimensions are tagged FIG (from the manual), DER (derived from those) or
     EST (estimated). The one remaining EST is the drag coefficient Cd, and it
-    is worth roughly half your speed-error budget at long range. Measure it:
-    fit_drag.py in this repo fits Cd from a filmed shot.
+    is worth roughly half your speed-error budget at long range. Measure it by
+    filming a shot and fitting the trajectory — see "How to get the right
+    number" in the panel.
 
     Scoring rules are NOT modelled. The tool tells you where you CAN score,
     not what scoring is worth.
@@ -215,7 +216,7 @@
   <h1>BIOBUZZ — SHOOTING ZONE</h1>
   <p class="sub">Where a POLLEN can be launched into the RED up-CELL.
      Geometry controls are further down.</p>
-  <a class="home" href="https://littlepotatorobotics.com" target="_blank" rel="noopener noreferrer">
+  <a class="home" href="https://littlepotatorobotics.org" target="_blank" rel="noopener noreferrer">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M3 9.5 12 2l9 7.5"></path>
@@ -308,18 +309,19 @@
     <details class="howto"><summary>How to get the right number</summary><div>
       <b style="color:#c3ccd6">Film one shot and fit it.</b> Three unknowns
       (v<sub>0</sub>, launch angle, C<sub>d</sub>) against 30–60 tracked points.
-      A tool is included: <code>fit_drag.py</code> in this folder. Run it with no
-      arguments for a self-test and full instructions.
+      Work through the steps below, then type your fitted C<sub>d</sub> into the
+      box above.
       <ol style="padding-left:16px;margin:6px 0">
         <li>Shoot one ball across open space — <b>flat and fast</b>, not at your
             game hood angle.</li>
         <li>Film 60–240 fps, camera <b>square to the plane of flight</b>, no panning.</li>
         <li>Put a metre stick <b>in the plane of flight</b>. Wrong pixels-per-metre
             is the dominant error.</li>
-        <li>Track the ball centre in 15–40 frames; save <code>t,x,y</code> rows in
+        <li>Track the ball centre in 15–40 frames; record <code>t,x,y</code> rows in
             seconds and metres.</li>
-        <li><code>python3 fit_drag.py track.csv</code>, repeat ×3, average, type the
-            answer into the box above.</li>
+        <li>Fit v<sub>0</sub>, launch angle and C<sub>d</sub> to those points —
+            any least-squares solver works — then repeat the shot ×3 and average
+            the results.</li>
       </ol>
       <b style="color:#c3ccd6">Why flat and fast:</b> C<sub>d</sub> precision (1σ,
       3 mm tracking noise)
