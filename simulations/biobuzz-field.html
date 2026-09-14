@@ -46,6 +46,11 @@
   h2{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);
     margin:18px 0 7px;padding-bottom:4px;border-bottom:1px solid var(--line)}
   .sub{color:var(--dim);font-size:11px;margin:0 0 4px}
+  #panel a.home{display:inline-flex;align-items:center;gap:5px;margin:6px 0 10px;
+    font-size:11px;color:var(--est);text-decoration:none;background:#0d1117;
+    border:1px solid var(--line);border-radius:5px;padding:4px 9px;
+    transition:background .15s,color .15s,border-color .15s}
+  #panel a.home:hover{background:#171d25;color:var(--txt);border-color:var(--est)}
   table{width:100%;border-collapse:collapse;font-size:11.5px}
   td{padding:2.5px 0;vertical-align:top}
   td.v{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -210,6 +215,19 @@
   <h1>BIOBUZZ — SHOOTING ZONE</h1>
   <p class="sub">Where a POLLEN can be launched into the RED up-CELL.
      Geometry controls are further down.</p>
+  <a class="home" href="https://littlepotatorobotics.com" target="_blank" rel="noopener noreferrer">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 9.5 12 2l9 7.5"></path>
+      <path d="M5 10v11h14V10"></path>
+    </svg>
+    Back to Little Potato Robotics
+  </a>
+
+  <div class="note q"><b>Best viewed on a computer.</b> This 3D simulator needs a mouse
+    or trackpad and plenty of screen space. On a phone the field is cramped, the panel
+    covers most of the view, and orbit/zoom are hard to control — open it on a laptop or
+    desktop for the full experience.</div>
 
   <div class="note"><b>The HIVE is a weight-triggered flipper.</b> Each alliance's two
     CELLs ride one beam on a central pivot + damper. You shoot into the <i>high</i> CELL
