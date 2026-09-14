@@ -3026,10 +3026,23 @@ nav {
    ACHIEVEMENTS (inside Home introduction)
    ======================================== */
 
-/* BIOBUZZ News (inside Home introduction) */
+/* BIOBUZZ News (inside Home hero, below the intro buttons) */
 .about-biobuzz-news {
   max-width: 1000px;
-  margin: var(--spacing-3xl) auto 0;
+  margin: 0 auto var(--spacing-3xl);
+}
+
+/* Outside .about-content the title is centered with the hero copy */
+.hero > .container > .about-biobuzz-news .about-biobuzz-title {
+  text-align: center;
+}
+
+/* Keep the card copy left-aligned next to its icon on wider screens
+   (responsive.css re-centers the card on small screens). */
+@media (min-width: 769px) {
+  .hero > .container > .about-biobuzz-news .biobuzz-news-content {
+    text-align: left;
+  }
 }
 
 .about-biobuzz-title {
