@@ -203,7 +203,7 @@ function initAccessibility() {
     skipLink.textContent = 'Skip to main content';
     skipLink.style.cssText = `
         position: absolute;
-        top: -40px;
+        top: 6px;
         left: 6px;
         background: #1976D2;
         color: white;
@@ -211,15 +211,16 @@ function initAccessibility() {
         text-decoration: none;
         border-radius: 4px;
         z-index: 10001;
-        transition: top 0.3s;
+        transform: translateY(-200%);
+        transition: transform 0.3s;
     `;
 
     skipLink.addEventListener('focus', function() {
-        this.style.top = '6px';
+        this.style.transform = 'translateY(0)';
     });
 
     skipLink.addEventListener('blur', function() {
-        this.style.top = '-40px';
+        this.style.transform = 'translateY(-200%)';
     });
 
     document.body.insertBefore(skipLink, document.body.firstChild);
