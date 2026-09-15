@@ -8,6 +8,7 @@
   --primary-color: #4A90E2;
   --primary-dark: #357ABD;
   --primary-light: #6BA3E8;
+  --primary-darker: #2F6BA8; /* the lightest primary that holds AA contrast under white text */
   
   /* Secondary Colors */
   --secondary-color: #28a745;
@@ -339,15 +340,15 @@ nav {
 }
 
 .lang-btn.active {
-  background: var(--primary-color);
-  border-color: var(--primary-color);
+  background: var(--primary-darker);
+  border-color: var(--primary-darker);
   color: white;
   box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
 }
 
 .lang-btn.active:hover {
-  background: var(--primary-dark);
-  border-color: var(--primary-dark);
+  background: var(--primary-darker);
+  border-color: var(--primary-darker);
   transform: translateY(-1px);
 }
 
@@ -612,8 +613,8 @@ nav {
   }
   
   .lang-btn.active {
-    background: var(--primary-color);
-        border-color: var(--primary-color);
+    background: var(--primary-darker);
+        border-color: var(--primary-darker);
     color: white;
   }
   
@@ -2194,8 +2195,8 @@ nav {
   }
   
   .lang-btn.active {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
+    background: var(--primary-darker);
+    border-color: var(--primary-darker);
     color: white;
     box-shadow: 0 2px 6px rgba(74, 144, 226, 0.5);
   }
@@ -2203,8 +2204,8 @@ nav {
   .lang-btn.active:hover,
   .lang-btn.active:focus,
   .lang-btn.active:active {
-    background: var(--primary-dark);
-    border-color: var(--primary-dark);
+    background: var(--primary-darker);
+    border-color: var(--primary-darker);
     transform: translateY(-1px);
     box-shadow: 0 3px 8px rgba(74, 144, 226, 0.6);
   }
@@ -2225,8 +2226,8 @@ nav {
     }
     
     .lang-btn.active {
-      background: var(--primary-color);
-      border-color: var(--primary-color);
+      background: var(--primary-darker);
+      border-color: var(--primary-darker);
       color: white;
     }
   }
