@@ -2726,20 +2726,6 @@ nav {
   transform: translateY(-2px);
 }
 
-/* Dark mode styles for map container */
-[data-theme="dark"] .location-info {
-  background: var(--dark-bg-secondary);
-  border-color: var(--dark-border-color);
-}
-
-[data-theme="dark"] .location-info h5 {
-  color: var(--dark-text-primary);
-}
-
-[data-theme="dark"] .location-info p {
-  color: var(--dark-text-secondary);
-}
-
 /* Contact form note styling */
 .contact-note {
   background: linear-gradient(135deg, #e3f2fd, #bbdefb);
@@ -2753,14 +2739,6 @@ nav {
   font-weight: 500;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(25, 118, 210, 0.2);
-}
-
-[data-theme="dark"] .contact-note {
-  background: linear-gradient(135deg, #1e3a8a, #1e40af);
-  color: #ffffff;
-  border-left-color: #60a5fa;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(96, 165, 250, 0.3);
 }
 
 /* ========================================
@@ -2924,43 +2902,6 @@ nav {
   color: var(--text-secondary);
   line-height: 1.4;
   font-size: 0.9rem;
-}
-
-/* Dark mode styles for simulations */
-[data-theme="dark"] .simulations {
-  background: var(--dark-bg-secondary);
-}
-
-[data-theme="dark"] .simulations-hero-card {
-  background: var(--dark-bg-primary);
-  border-color: var(--dark-border-color);
-}
-
-[data-theme="dark"] .simulation-card {
-  background: var(--dark-bg-primary);
-  border-color: var(--dark-border-color);
-}
-
-[data-theme="dark"] .simulation-card.coming-soon {
-  background: linear-gradient(135deg, var(--dark-bg-primary), var(--dark-bg-secondary));
-}
-
-[data-theme="dark"] .educational-value {
-  background: var(--dark-bg-primary);
-  border-color: var(--dark-border-color);
-}
-
-[data-theme="dark"] .simulations-hero-content h3,
-[data-theme="dark"] .simulation-info h4,
-[data-theme="dark"] .educational-value h3,
-[data-theme="dark"] .benefit-content h4 {
-  color: var(--dark-text-primary);
-}
-
-[data-theme="dark"] .simulations-hero-content p,
-[data-theme="dark"] .simulation-description,
-[data-theme="dark"] .benefit-content p {
-  color: var(--dark-text-secondary);
 }
 
 /* ========================================
@@ -3448,99 +3389,6 @@ html {
   text-decoration: underline;
 }
 
-/* Dark mode styles for achievements */
-[data-theme="dark"] .achievement-highlight,
-[data-theme="dark"] .achievements-timeline-card {
-  background: var(--dark-bg-primary);
-  border-color: var(--dark-border-color);
-}
-
-[data-theme="dark"] .achievement-highlight-value,
-[data-theme="dark"] .achievements-timeline-card h3,
-[data-theme="dark"] .event-name {
-  color: var(--dark-text-primary);
-}
-
-[data-theme="dark"] .achievement-highlight-label,
-[data-theme="dark"] .achievements-timeline-sub,
-[data-theme="dark"] .event-meta,
-[data-theme="dark"] .achievements-source {
-  color: var(--dark-text-secondary);
-}
-
-[data-theme="dark"] .achievements-timeline::before {
-  background: var(--dark-border-color);
-}
-
-[data-theme="dark"] .event-marker {
-  background: var(--dark-bg-tertiary);
-  border-color: var(--dark-border-color);
-}
-
-[data-theme="dark"] .event-badge {
-  background: var(--dark-bg-tertiary);
-  color: var(--dark-text-secondary);
-}
-
-[data-theme="dark"] .event-badge.advance {
-  background: rgba(74, 144, 226, 0.25);
-  color: var(--primary-light);
-}
-
-[data-theme="dark"] .achievements-source {
-  border-top-color: var(--dark-border-color);
-}
-
 /* ========================================
    NAVIGATION HIGHLIGHTS
    ======================================== */
-
-/* Highlight simulations nav item (fallback) */
-.nav-link-highlighted {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-light)) !important;
-  color: white !important;
-  font-weight: 600;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
-}
-
-.nav-link-highlighted::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.nav-link-highlighted:hover::before {
-  left: 100%;
-}
-
-.nav-link-highlighted:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
-}
-
-/* Add a small icon to simulations nav */
-.nav-link-highlighted::after {
-  content: ' 🎮';
-  font-size: 0.9rem;
-}
-
-/* Dark mode styles for highlighted nav */
-[data-theme="dark"] .nav-link-highlighted {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-light)) !important;
-  color: white !important;
-  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.4);
-}
-
-[data-theme="dark"] .nav-link-highlighted:hover {
-  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.6);
-}
