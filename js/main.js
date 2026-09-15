@@ -3,10 +3,103 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all functionality
     initSmoothScrolling();
+    initHeaderOffset();
     initScrollEffects();
     initAccessibility();
     initializeLanguageSwitcher();
 });
+
+// Publish the height of the fixed chrome at the top of the page as
+// --header-offset. CSS uses it for scroll-padding-top, which is what native
+// hash navigation (a shared link like #biobuzz-news) relies on.
+//
+// Two things make this harder than reading .header's height:
+//   1. The logo text wraps at some widths (and once the web font loads), so the
+//      header can be far taller than any hard-coded guess.
+//   2. At <=768px the logo is hidden (header collapses to ~0) and the nav
+//      instead becomes position:fixed at the top, so the header alone reports a
+//      height that misses the 60px bar actually covering the top of the page.
+function initHeaderOffset() {
+    const header = document.querySelector('.header');
+    const nav = document.querySelector('nav');
+    if (!header) return;
+
+    const root = document.documentElement;
+    let userHasScrolled = false;
+
+    const readOffset = () =>
+        parseInt(getComputedStyle(root).getPropertyValue('--header-offset'), 10) || 0;
+
+    // Bottom edge of everything fixed/sticky anchored to the top of the page.
+    const measureTopChrome = () => {
+        let bottom = 0;
+        [header, nav].forEach(el => {
+            if (!el) return;
+            const cs = getComputedStyle(el);
+            if (cs.display === 'none' || cs.visibility === 'hidden') return;
+            if (cs.position !== 'fixed' && cs.position !== 'sticky') return;
+            const rect = el.getBoundingClientRect();
+            // Ignore off-screen or mid-page sticky elements.
+            if (rect.height > 0 && rect.bottom > 0 && rect.top < 100) {
+                bottom = Math.max(bottom, rect.bottom);
+            }
+        });
+        // Fall back to the header's own height for layouts where neither is
+        // fixed (e.g. a static header in print/alternate styles).
+        return Math.round(bottom || header.offsetHeight || 0);
+    };
+
+    const setOffset = () => {
+        const height = measureTopChrome();
+        root.style.setProperty('--header-offset', height + 'px');
+        return height;
+    };
+
+    // Re-align to the deep-linked section while the visitor still sits where
+    // the link dropped them; once they scroll, leave them alone.
+    // 'instant' is required: the stylesheet sets scroll-behavior: smooth, and
+    // behaviour 'auto' would honour it, leaving the page mid-animation and the
+    // section still tucked under the header.
+    const realignToHash = () => {
+        if (userHasScrolled || !window.location.hash) return;
+        let target = null;
+        try {
+            target = document.querySelector(window.location.hash);
+        } catch (err) {
+            return; // hash is not a valid selector
+        }
+        if (target) {
+            target.scrollIntoView({ behavior: 'instant', block: 'start' });
+        }
+    };
+
+    const refresh = () => {
+        const previous = readOffset();
+        const current = setOffset();
+        if (current !== previous) {
+            realignToHash();
+        }
+    };
+
+    ['wheel', 'touchstart', 'keydown'].forEach(event => {
+        window.addEventListener(event, () => { userHasScrolled = true; }, {
+            passive: true,
+            once: true
+        });
+    });
+
+    setOffset();
+    window.addEventListener('resize', refresh);
+    window.addEventListener('orientationchange', refresh);
+
+    // The logo text reflows once the web font loads, changing the height.
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+            setOffset();
+            realignToHash();
+        }).catch(() => {});
+    }
+}
 
 // Smooth Scrolling for Anchor Links
 function initSmoothScrolling() {
