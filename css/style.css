@@ -3032,6 +3032,16 @@ nav {
   margin: 0 auto var(--spacing-3xl);
 }
 
+/* The header is fixed and can be tall (the logo text wraps on narrow
+   viewports), so offset anchor landings by its real height. --header-offset is
+   set from JS and falls back to a small-header default.
+   Use scroll-padding-top on the scroll container ONLY — scroll-padding and a
+   target's scroll-margin are additive, so setting both double-counts the
+   header and overshoots the section. */
+html {
+  scroll-padding-top: calc(var(--header-offset, 88px) + 16px);
+}
+
 /* Outside .about-content the title is centered with the hero copy */
 .hero > .container > .about-biobuzz-news .about-biobuzz-title {
   text-align: center;
@@ -3089,9 +3099,103 @@ nav {
   margin: 0 0 var(--spacing-lg);
 }
 
+/* Feature bullets in the news card. Styled explicitly rather than leaning on
+   the browser default, which responsive.css re-centers at <=768px. */
+.biobuzz-news-list {
+  margin: 0 0 var(--spacing-lg);
+  padding-left: 1.25rem;
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.biobuzz-news-list li {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.biobuzz-news-list strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* Standout callout: the solver's angle sweep is the headline capability.
+   Text and the promo screenshot sit side by side, then stack on narrow screens. */
+.biobuzz-news-highlight {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin: 0 0 var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: rgba(74, 144, 226, 0.08);
+  border-left: 3px solid var(--primary-color);
+  border-radius: var(--radius-md);
+}
+
+.biobuzz-news-highlight-text {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.biobuzz-news-highlight-text i {
+  color: var(--primary-color);
+  font-size: var(--font-size-lg);
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+.biobuzz-news-highlight-text p {
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.biobuzz-news-highlight-media {
+  flex: 0 0 auto;
+  display: block;
+  width: 190px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.biobuzz-news-highlight-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.biobuzz-news-highlight-media:hover,
+.biobuzz-news-highlight-media:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.biobuzz-news-highlight-media:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .biobuzz-news-highlight {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .biobuzz-news-highlight-media {
+    width: 100%;
+  }
+}
+
 .biobuzz-news-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--spacing-md);
 }
 
@@ -3113,14 +3217,55 @@ nav {
   box-shadow: var(--shadow-md);
 }
 
-.biobuzz-news-btn.video {
-  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
-  color: #ffffff;
+.biobuzz-news-btn:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
+/* Secondary action: the video is a quieter outline so the simulator leads */
+.biobuzz-news-btn.video {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+}
+
+.biobuzz-news-btn.video i {
+  color: var(--accent-color);
+}
+
+.biobuzz-news-btn.video:hover,
+.biobuzz-news-btn.video:focus-visible {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
+}
+
+/* Primary action: the simulator is the headline call to action.
+   20px bold keeps white-on-gradient at 3.29:1, which clears WCAG AA (3:1)
+   for large text; smaller sizes would need 4.5:1 and fall short. */
 .biobuzz-news-btn.simulator {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
   color: #ffffff;
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 18px rgba(74, 144, 226, 0.45);
+  animation: biobuzz-cta-glow 2.6s ease-in-out infinite;
+}
+
+.biobuzz-news-btn.simulator:hover,
+.biobuzz-news-btn.simulator:focus-visible {
+  color: #ffffff;
+  box-shadow: 0 10px 26px rgba(74, 144, 226, 0.65);
+  transform: translateY(-2px);
+}
+
+/* Soft attention pulse; disabled by the global prefers-reduced-motion rule */
+@keyframes biobuzz-cta-glow {
+  0%, 100% { box-shadow: 0 6px 18px rgba(74, 144, 226, 0.45); }
+  50%      { box-shadow: 0 8px 26px rgba(74, 144, 226, 0.7); }
 }
 
 .about-achievements {

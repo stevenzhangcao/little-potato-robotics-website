@@ -176,23 +176,47 @@
                 </div>
 
                 <!-- BIOBUZZ News -->
-                <div class="about-biobuzz-news">
+                <div class="about-biobuzz-news" id="biobuzz-news">
                     <h3 class="about-biobuzz-title" data-en="BIOBUZZ News" data-zh="BIOBUZZ 新闻">BIOBUZZ News</h3>
                     <div class="biobuzz-news-card">
                         <div class="biobuzz-news-icon">
                             <i class="fas fa-newspaper"></i>
                         </div>
                         <div class="biobuzz-news-content">
-                            <h4 data-en="Our First Field Installed" data-zh="我们的首个场地已安装">Our First Field Installed</h4>
-                            <p data-en="We've installed our very first competition field — the official BIOBUZZ playing field for the 2026-27 season. It gives our team a full-size practice setup to design, test, and tune on for the new game. Watch the install, then explore the field in 3D with our interactive playfield simulator." data-zh="我们安装了我们的第一个比赛场地——2026-27赛季的官方BIOBUZZ比赛场地。它为我们的团队提供了全尺寸的训练设施，用于为新赛季设计、测试和调试。观看安装视频，然后用我们的互动场地模拟器在3D中探索场地。">We've installed our very first competition field — the official BIOBUZZ playing field for the 2026-27 season. It gives our team a full-size practice setup to design, test, and tune on for the new game. Watch the install, then explore the field in 3D with our interactive playfield simulator.</p>
-                            <div class="biobuzz-news-actions">
-                                <a href="https://youtube.com/shorts/ty0C-bczB2U" target="_blank" rel="noopener noreferrer" class="biobuzz-news-btn video">
-                                    <i class="fab fa-youtube"></i>
-                                    <span data-en="Watch Field Install" data-zh="观看场地安装">Watch Field Install</span>
+                            <h4 data-en="Bridging Simulation &amp; Physical Practice: The 2026–27 Setup" data-zh="连接模拟与实机练习：2026-27赛季配置">Bridging Simulation &amp; Physical Practice: The 2026–27 Setup</h4>
+                            <p data-en="Experience our new full-size setup alongside our custom 3D trajectory solver:" data-zh="体验我们的全新全尺寸场地，以及我们自研的3D轨迹求解器：">Experience our new full-size setup alongside our custom 3D trajectory solver:</p>
+                            <ul class="biobuzz-news-list">
+                                <li>
+                                    <strong data-en="Tolerance Modeling:" data-zh="容差建模：">Tolerance Modeling:</strong>
+                                    <span data-en="Evaluates launching reliability by stress-testing launch velocity, X-angle, and Y-angle variance." data-zh="通过对发射速度、X角与Y角的偏差进行压力测试，评估发射的可靠性。">Evaluates launching reliability by stress-testing launch velocity, X-angle, and Y-angle variance.</span>
+                                </li>
+                                <li>
+                                    <strong data-en="Zonal Heatmaps:" data-zh="区域热力图：">Zonal Heatmaps:</strong>
+                                    <span data-en="Identifies high-percentage scoring zones for both POLLEN and NECTAR elements under real-world motor and mechanical error." data-zh="在真实电机与机械误差条件下，识别POLLEN与NECTAR元素的高得分率区域。">Identifies high-percentage scoring zones for both POLLEN and NECTAR elements under real-world motor and mechanical error.</span>
+                                </li>
+                                <li>
+                                    <strong data-en="Tactical Redundancy:" data-zh="战术冗余：">Tactical Redundancy:</strong>
+                                    <span data-en="Pinpoints high-percentage, off-angle launch locations to maintain scoring flow when primary firing lanes are defended." data-zh="找出高得分率的偏角发射位置，以便在主要发射路线被防守时保持得分节奏。">Pinpoints high-percentage, off-angle launch locations to maintain scoring flow when primary firing lanes are defended.</span>
+                                </li>
+                            </ul>
+                            <div class="biobuzz-news-highlight">
+                                <div class="biobuzz-news-highlight-text">
+                                    <i class="fas fa-crosshairs" aria-hidden="true"></i>
+                                    <p data-en="Every tile is tested across hood angles of 25°–80°, so the heatmap surfaces launch angles you would never have tried otherwise." data-zh="每块方格都会在 25°–80° 的发射角范围内测试，因此热力图能揭示你原本不会尝试的发射角度。">Every tile is tested across hood angles of 25°–80°, so the heatmap surfaces launch angles you would never have tried otherwise.</p>
+                                </div>
+                                <a class="biobuzz-news-highlight-media" href="simulations/biobuzz-field.html" aria-label="Launch the BIOBUZZ playfield simulator">
+                                    <img src="images/launchsimulation.jpg" alt="3D trajectory solver showing high-percentage launch-angle zones across the BIOBUZZ field" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
                                 </a>
+                            </div>
+                            <p data-en="Jump into the interactive 3D simulator below to test launch positions, then watch our full field build!" data-zh="进入下方的互动3D模拟器测试发射位置，然后观看我们的完整场地搭建！">Jump into the interactive 3D simulator below to test launch positions, then watch our full field build!</p>
+                            <div class="biobuzz-news-actions">
                                 <a href="simulations/biobuzz-field.html" class="biobuzz-news-btn simulator">
                                     <i class="fas fa-cube"></i>
                                     <span data-en="Launch Playfield Simulator" data-zh="启动场地模拟器">Launch Playfield Simulator</span>
+                                </a>
+                                <a href="https://youtube.com/shorts/ty0C-bczB2U" target="_blank" rel="noopener noreferrer" class="biobuzz-news-btn video">
+                                    <i class="fab fa-youtube"></i>
+                                    <span data-en="Watch Field Install" data-zh="观看场地安装">Watch Field Install</span>
                                 </a>
                             </div>
                         </div>
@@ -379,7 +403,7 @@
                                 </li>
                                 <li class="achievement-event won">
                                     <div class="event-marker">
-                                        <i class="fas fa-ranking-star"></i>
+                                        <i class="fas fa-chart-column"></i>
                                     </div>
                                     <div class="event-content">
                                         <h4 class="event-name" data-en="NorCal State Championship — Final Ranking" data-zh="北加州州锦标赛 — 最终排名">NorCal State Championship — Final Ranking</h4>
@@ -496,7 +520,7 @@
                             </div>
                     <div class="robot-card">
                         <div class="robot-image-placeholder">
-                            <img src="images/robot3.jpg" alt="Golden Potatoes Robot" class="robot-image">
+                            <img src="images/gen2bot.jpg" alt="Golden Potatoes Robot" class="robot-image" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
                             <div class="robot-spec-icon">
                                 <i class="fas fa-rocket"></i>
                         </div>
@@ -528,9 +552,9 @@
                     </div>
                     <div class="robot-card">
                         <div class="robot-image-placeholder">
-                            <img src="images/robot4.jpg" alt="Lobster Potato Robot" class="robot-image" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
+                            <img src="images/gen3bot.jpg" alt="Lobster Potato Robot" class="robot-image" onerror="this.onerror=null;this.src='images/placeholder.jpg';">
                             <div class="robot-spec-icon">
-                                <i class="fas fa-shield-halved"></i>
+                                <i class="fas fa-shrimp"></i>
                         </div>
                         </div>
                         <div class="robot-info">
