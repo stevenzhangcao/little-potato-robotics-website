@@ -107,20 +107,42 @@ function initSmoothScrolling() {
 
     anchorLinks.forEach(link => {
         link.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+
+            // Ignore bare "#" and anything that is not a valid selector.
+            if (!targetId || targetId === '#') return;
+
+            let targetElement = null;
+            try {
+                targetElement = document.querySelector(targetId);
+            } catch (err) {
+                return;
+            }
+            if (!targetElement) return;
+
             e.preventDefault();
 
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
+            // Land using the same measured offset the stylesheet applies to
+            // native hash navigation, so clicking a link and opening a shared
+            // link agree. Falling back to the header height keeps this working
+            // if the variable is missing (e.g. JS ran before the header
+            // existed) and matches the old behaviour.
+            const root = document.documentElement;
+            const measured = parseInt(
+                getComputedStyle(root).getPropertyValue('--header-offset'), 10
+            );
+            const header = document.querySelector('.header');
+            const offset = Number.isFinite(measured)
+                ? measured
+                : (header ? header.offsetHeight : 0);
 
-            if (targetElement) {
-                const headerHeight = document.querySelector('.header').offsetHeight;
-                const targetPosition = targetElement.offsetTop - headerHeight - 20;
+            const targetPosition = targetElement.getBoundingClientRect().top
+                + window.pageYOffset - offset - 16;
 
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-            }
+            window.scrollTo({
+                top: Math.max(0, targetPosition),
+                behavior: 'smooth'
+            });
         });
     });
 }
@@ -234,7 +256,13 @@ function setLanguage(lang) {
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+    // Pages without a language switcher (chat.html, robot2-cad.html) have no
+    // matching button; guard so the missing button does not throw and abort
+    // the rest of initialization.
+    const activeBtn = document.querySelector(`[data-lang="${lang}"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+    }
 
     // Update all elements with data attributes
     document.querySelectorAll('[data-en][data-zh]').forEach(element => {
