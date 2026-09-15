@@ -44,15 +44,17 @@
   
   /* Typography */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Body sizes stay fixed so long-form text keeps a predictable reading size;
+     the display sizes scale with the viewport instead of jumping at breakpoints. */
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.875rem;
-  --font-size-4xl: 2.25rem;
-  --font-size-5xl: 3rem;
+  --font-size-lg: clamp(1.0625rem, 1rem + 0.35vw, 1.125rem);
+  --font-size-xl: clamp(1.125rem, 1.05rem + 0.45vw, 1.25rem);
+  --font-size-2xl: clamp(1.375rem, 1.15rem + 0.95vw, 1.5rem);
+  --font-size-3xl: clamp(1.75rem, 1.45rem + 1.25vw, 2rem);
+  --font-size-4xl: clamp(2rem, 1.6rem + 1.6vw, 2.25rem);
+  --font-size-5xl: clamp(2.125rem, 1.5rem + 2.4vw, 3rem);
   
   /* Spacing */
   --spacing-xs: 0.25rem;
