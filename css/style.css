@@ -2062,176 +2062,111 @@ nav {
     padding: 0 var(--spacing-md);
   }
   
-  /* Mobile Navigation - Remove logo and title, make nav scrollable */
-  .header {
-    position: sticky !important;
-    top: 0;
-    z-index: 1000;
-    width: 100%;
-    background: var(--bg-primary) !important;
-    border-bottom: 1px solid var(--border-color) !important;
-    box-shadow: var(--shadow-sm) !important;
-  }
-  
+  /* Mobile header - one fixed bar with an identity row (logo + language
+     switcher) and a full-width nav row beneath it. Previously the nav and the
+     language switcher were positioned independently of the header, which
+     collapsed the header to 17px and pushed the nav off-centre. */
   .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--spacing-xs) 0;
-    width: 100%;
+    flex-wrap: wrap;
+    row-gap: var(--spacing-xs);
+    padding: var(--spacing-sm) 0;
   }
-  
+
   .logo {
-    display: none; /* Hide logo and title on mobile */
-  }
-  
-  /* Show language switcher on mobile - absolutely positioned */
-  .language-switcher {
-    position: absolute !important;
-    top: var(--spacing-xs);
-    right: var(--spacing-xs);
-    display: flex !important;
-    z-index: 1001; /* Higher than header to stay on top */
-    visibility: visible !important;
-    opacity: 1 !important;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
-    border-radius: var(--radius-sm);
-    padding: 2px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    gap: 2px;
-  }
-  
-  /* Navigation takes full width on mobile */
-  nav {
-    flex: 1;
-    order: 2;
-    width: 100%;
-  }
-  
-  .nav-list {
     display: flex;
+    flex: 1 1 0;
+    min-width: 0;
     gap: var(--spacing-sm);
+  }
+
+  .logo-img {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+  }
+
+  .logo-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: var(--font-size-base);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .language-switcher {
+    position: static;
+    order: 2;
+    flex: 0 0 auto;
+    margin: 0 0 0 auto;
+    padding: 0;
+    background: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  .lang-btn {
+    min-width: 30px;
+    min-height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+  }
+
+  nav {
+    order: 3;
+    flex: 1 1 100%;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .nav-list {
+    padding: 0;
+    gap: var(--spacing-xs);
+    justify-content: flex-start;
     overflow-x: auto;
     overflow-y: hidden;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
-    white-space: nowrap;
-    width: 100%;
-    justify-content: flex-start;
-    scroll-behavior: smooth;
-}
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
 
   .nav-list::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
   }
-  
+
   .nav-item {
-    flex-shrink: 0; /* Prevent nav items from shrinking */
+    flex-shrink: 0;
   }
-  
-    .nav-link {
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: var(--radius-sm);
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    transition: all var(--transition-fast);
-        white-space: nowrap;
+    background: none;
+    backdrop-filter: none;
     font-size: var(--font-size-sm);
+    min-height: 40px;
     min-width: fit-content;
   }
-  
+
   .nav-link:hover,
   .nav-link:focus,
   .nav-link:active,
   .nav-link:visited {
-    background: var(--primary-color);
-    color: white !important;
-    transform: translateY(-1px);
+    background: var(--bg-secondary);
+    color: var(--primary-color);
+    transform: none;
   }
-  
-  /* Disable underline animation on mobile */
+
+  /* Disable the desktop underline animation on mobile */
   .nav-link::after {
     display: none;
   }
-  
-  /* Language Switcher Mobile */
-  .language-switcher {
-    margin-left: 0;
-    margin-right: var(--spacing-sm);
-    gap: var(--spacing-xs);
-    order: 1;
-    display: flex !important;
-    flex-shrink: 0;
-  }
-  
-  .lang-btn {
-    padding: 2px 6px;
-    font-size: 10px;
-    font-weight: 600;
-    min-width: 24px;
-    min-height: 24px;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: var(--radius-sm);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-    visibility: visible !important;
-    opacity: 1 !important;
-    color: white !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  }
-  
-  .lang-btn:hover,
-  .lang-btn:focus,
-  .lang-btn:active {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.6);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-  }
-  
-  .lang-btn.active {
-    background: var(--primary-darker);
-    border-color: var(--primary-darker);
-    color: white;
-    box-shadow: 0 2px 6px rgba(74, 144, 226, 0.5);
-  }
-  
-  .lang-btn.active:hover,
-  .lang-btn.active:focus,
-  .lang-btn.active:active {
-    background: var(--primary-darker);
-    border-color: var(--primary-darker);
-    transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(74, 144, 226, 0.6);
-  }
-  
-  /* Dark mode mobile language switcher */
-  @media (prefers-color-scheme: dark) {
-    .lang-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
-      color: var(--dark-text-primary);
-    }
-    
-    .lang-btn:hover,
-    .lang-btn:focus,
-    .lang-btn:active {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-    
-    .lang-btn.active {
-      background: var(--primary-darker);
-      border-color: var(--primary-darker);
-      color: white;
-    }
-  }
-  
   /* Mobile-specific section adjustments */
   .hero-title {
     font-size: var(--font-size-3xl);
