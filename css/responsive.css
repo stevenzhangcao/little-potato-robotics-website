@@ -1365,52 +1365,6 @@
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     }
     
-    /* Dark mode mobile navigation */
-    .nav {
-        background-color: var(--dark-bg-primary);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        border-bottom: 1px solid var(--dark-bg-tertiary);
-    }
-    
-    .nav-item {
-        border-bottom: none;
-    }
-    
-    .nav-link {
-        color: var(--dark-text-primary) !important;
-    }
-    
-    .nav-link:hover,
-    .nav-link:focus {
-        background-color: var(--dark-bg-secondary);
-        color: var(--primary-color) !important;
-        border-bottom-color: var(--primary-color);
-    }
-    
-    .dropdown-menu {
-        background-color: var(--dark-bg-secondary);
-    }
-    
-    .dropdown-menu a {
-        color: var(--dark-text-secondary) !important;
-        border-bottom: 1px solid #30363d;
-    }
-    
-    .dropdown-menu a:hover {
-        background-color: var(--dark-bg-tertiary);
-        color: var(--primary-color) !important;
-    }
-    
-    .mobile-menu-toggle span {
-        background-color: var(--dark-text-primary);
-    }
-    
-    /* Dark mode iPhone Safari specific fixes */
-    @supports (-webkit-touch-callout: none) {
-        .nav {
-            background-color: var(--dark-bg-primary);
-        }
-    }
     
     .robot-card,
     .program-card,
@@ -1497,6 +1451,36 @@
         
         p {
             -webkit-text-fill-color: var(--dark-text-secondary) !important;
+        }
+    }
+}
+
+/* Dark mode mobile navigation - only where the nav becomes a fixed bar (<768px) */
+@media (prefers-color-scheme: dark) and (max-width: 768px) {
+    .nav {
+        background-color: var(--dark-bg-primary);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        border-bottom: 1px solid var(--dark-bg-tertiary);
+    }
+
+    .nav-item {
+        border-bottom: none;
+    }
+
+    .nav-link {
+        color: var(--dark-text-primary) !important;
+    }
+
+    .nav-link:hover,
+    .nav-link:focus {
+        background-color: var(--dark-bg-secondary);
+        color: var(--primary-color) !important;
+        border-bottom-color: var(--primary-color);
+    }
+
+    @supports (-webkit-touch-callout: none) {
+        .nav {
+            background-color: var(--dark-bg-primary);
         }
     }
 }
