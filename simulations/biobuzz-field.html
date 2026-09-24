@@ -151,6 +151,17 @@
   #metsw button:hover{background:#171d25;color:#c3ccd6}
   #metsw button.on{background:#2f6fc0;color:#fff;font-weight:700}
   #metsw .sub2{display:block;font-size:8.5px;opacity:.8;font-weight:400;letter-spacing:0}
+  /* Available-zone threshold - the headline control at the top of the left legend */
+    #thrbox{margin:0 0 9px;padding:7px 8px 8px;border:1px solid #3a6ea5;border-radius:6px;
+      background:linear-gradient(180deg,rgba(47,111,192,.18),rgba(47,111,192,.05))}
+    #thrbox .th{display:flex;align-items:baseline;justify-content:space-between;gap:6px;
+      margin:0 0 5px}
+    #thrbox .th span{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+      color:#9ecbff;font-weight:700}
+    #thrbox .th b{font-size:11px;color:#d7dde5;font-variant-numeric:tabular-nums}
+    #thrbox input[type=range]{width:100%;margin:0;accent-color:#2f6fc0;cursor:pointer}
+    #thrbox .tn{font-size:9.5px;color:#8b95a3;line-height:1.45;margin-top:5px}
+    #thrbox .tn b{color:#c3ccd6}
   #probe{position:fixed;left:12px;bottom:64px;z-index:12;width:338px;display:none;
     background:rgba(13,17,23,.93);border:1px solid #2a313c;border-radius:8px;
     padding:10px 12px 11px;backdrop-filter:blur(6px)}
@@ -234,7 +245,13 @@
     <button id="mY">Y-ANGLE<span class="sub2">hood</span></button>
     <button id="mA">ALL<span class="sub2">make %</span></button>
   </div>
-  <div id="lgRows"></div>
+  <div id="thrbox">
+      <div class="th"><span>Available zone</span><b id="thrVal">off</b></div>
+      <input type="range" id="thr" min="0" max="14" step="0.5" value="0"
+             aria-label="Minimum tolerance for a tile to count as an available launch spot">
+      <div class="tn" id="thrNote">Drag to shade the tiles that miss the threshold.</div>
+    </div>
+    <div id="lgRows"></div>
   <div class="ft" id="lgFoot">computing…</div>
   <button id="lgHelp">? how this is computed</button>
 </div>
@@ -1240,7 +1257,7 @@ const BALLS = {POLLEN:{d:2.8,m:0.026,cd:0.55},   // 26 g measured
                NECTAR:{d:3.6,m:0.042,cd:0.55}};  // 42 g measured
 const SHOT = {h0:14, vmax:12, apex:84, fine:false, nectar:false, tgt:'RED UP', metric:'speed',
               sv:3.0, sy:3.0, sh:1.5,   // 1-sigma error budget for ALL mode
-              mode:'var', hood:70};
+              mode:'var', hood:70, thr:0};   // thr = minimum metric value that still counts as a launch spot
 
 function trajectory(b,v0,th,h0){
   const dt=0.0015, MIN=0.0254;
@@ -1411,13 +1428,13 @@ let zoneMesh=null, probeGrp=new THREE.Group(), bestGrp=new THREE.Group();
 gField.add(probeGrp); gField.add(bestGrp);
 const RAMP=[[46,204,113],[120,210,80],[200,210,60],[240,180,50],[230,120,50],[200,60,50]];
 const METRICS={
-  speed:{lbl:'launch-speed tolerance', unit:'%', cuts:[10,8,6,4.5,2],
+  speed:{lbl:'launch-speed tolerance', unit:'%', cuts:[10,8,6,4.5,2], thrMax:14, thrStep:0.5,
          words:['wide','good','workable','marginal','tight','no good']},
-  yaw:  {lbl:'yaw (X) angle tolerance', unit:'\u00b0', cuts:[12,8,5,3,1.5],
+  yaw:  {lbl:'yaw (X) angle tolerance', unit:'\u00b0', cuts:[12,8,5,3,1.5], thrMax:14, thrStep:0.5,
          words:['very forgiving','good','workable','marginal','tight','no good']},
-  hood: {lbl:'hood (Y) angle tolerance', unit:'\u00b0', cuts:[6,4.5,3,2,1],
+  hood: {lbl:'hood (Y) angle tolerance', unit:'\u00b0', cuts:[6,4.5,3,2,1], thrMax:8, thrStep:0.25,
          words:['very forgiving','good','workable','marginal','tight','no good']},
-  all:  {lbl:'estimated make rate (speed + yaw + hood)', unit:'%', cuts:[95,85,70,50,25],
+  all:  {lbl:'estimated make rate (speed + yaw + hood)', unit:'%', cuts:[95,85,70,50,25], thrMax:100, thrStep:5,
          words:['near certain','strong','usable','coin-flip','poor','no good']},
 };
 
@@ -1524,6 +1541,21 @@ function metricAt(g,P0,best,boxes){
        : SHOT.metric==='all'  ? combinedAt(g,P0,best,boxes).p
        : best.tol;
 }
+const fmtThr=()=>SHOT.metric==='all'
+  ? `${SHOT.thr}% make` : `\u00b1${SHOT.thr}${METRICS[SHOT.metric].unit}`;
+
+// Keeps the threshold control in step with the metric it filters. Each metric has
+// its own units and range, so the slider is retuned and reset when the metric changes.
+function updateThrUI(){
+  const m=METRICS[SHOT.metric], sl=document.getElementById('thr');
+  if(!sl) return;
+  sl.max=m.thrMax; sl.step=m.thrStep; sl.value=SHOT.thr;
+  document.getElementById('thrVal').textContent = SHOT.thr>0 ? fmtThr() : 'off';
+  document.getElementById('thrNote').innerHTML = SHOT.thr>0
+    ? `Grey tiles miss <b>${fmtThr()}</b>; the coloured band is the available zone.`
+    : 'Drag to shade the tiles that miss the threshold.';
+}
+
 function drawLegend(){
   const m=METRICS[SHOT.metric], c=m.cuts;
   const rng=i=> i===0 ? `\u2265 ${c[0]}${m.unit}`
@@ -1536,6 +1568,7 @@ function drawLegend(){
   h+=`<div class="lr"><span class="sq" style="background:rgba(255,255,255,.05)"></span>no shot</div>`;
   document.getElementById('lgRows').innerHTML=h;
   document.querySelector('#legend .cap').textContent='colour = '+m.lbl;
+  updateThrUI();
 }
 
 function computeZone(){
@@ -1558,7 +1591,7 @@ function computeZone(){
                         wh:gA.wh} : null;
     const cv=document.createElement('canvas'); cv.width=cv.height=N;
     const ctx=cv.getContext('2d'); ctx.clearRect(0,0,N,N);
-    let nf=0, best=null;
+    let nf=0, nq=0, best=null;
     for(let j=0;j<N;j++) for(let i=0;i<N;i++){
       const x=-P.field/2+step/2+i*step, y=P.field/2-step/2-j*step;
       if(Math.abs(x)<P.frameW/2+9 && Math.abs(y)<P.frameD/2+9) continue;
@@ -1591,7 +1624,13 @@ function computeZone(){
                                               : ' · hood-limited'; }
         best={t:tol,x,y,bind,R:q?q.R:Math.hypot(gA.C.x-x,gA.C.y-y),
               hood:q?q.hood:0, v:q?q.v:0}; }
-      ctx.fillStyle=`rgba(${col[0]},${col[1]},${col[2]},${dual?0.8:0.72})`;
+      if(SHOT.thr>0 && tol<SHOT.thr){   // on the map, but outside the available zone
+              ctx.fillStyle='rgba(92,101,112,0.26)';
+              ctx.fillRect(i,j,1,1);
+              continue;
+            }
+            nq++;
+            ctx.fillStyle=`rgba(${col[0]},${col[1]},${col[2]},${dual?0.8:0.72})`;
       ctx.fillRect(i,j,1,1);
     }
     const tex=new THREE.CanvasTexture(cv);
@@ -1632,7 +1671,8 @@ function computeZone(){
       `<br>${METRICS[SHOT.metric].lbl}`+
       `<br>${SHOT.mode==='fix'?`fixed hood <b>${SHOT.hood}°</b>`:'best hood per tile'}`+
       ` · exit <b>${SHOT.h0}″</b> · ≤<b>${SHOT.vmax}</b> m/s`+
-      `<br><span style="color:#5c6570">${ms} ms · ${step}″ grid</span>`;
+      (SHOT.thr>0?`<br><b style="color:#9ecbff">${nq}</b> tiles reach ${fmtThr()} — that band is the available zone`:'')+
+            `<br><span style="color:#5c6570">${ms} ms · ${step}″ grid</span>`;
     document.getElementById('lgFoot').innerHTML=msg;
     document.getElementById('lgTitle').textContent =
       'Shooting zone — ' + (dual?'RED, both flip states':SHOT.tgt);
@@ -1808,7 +1848,7 @@ for(const [id,k] of [['eSv','sv'],['eSy','sy'],['eSh','sh']]){
 
 { const MB={speed:document.getElementById('mS'), yaw:document.getElementById('mX'),
              hood:document.getElementById('mY'), all:document.getElementById('mA')};
-  const setMetric=m=>{ SHOT.metric=m;
+  const setMetric=m=>{ SHOT.metric=m; SHOT.thr=0;
     for(const k in MB) MB[k].classList.toggle('on', k===m);
     drawLegend(); computeZone(); };
   for(const k in MB) MB[k].onclick=()=>setMetric(k); }
@@ -1818,6 +1858,9 @@ for(const [id,k] of [['eSv','sv'],['eSy','sy'],['eSh','sh']]){
     P_.classList.toggle('on',!n); N_.classList.toggle('on',n);
     TABLE_KEY=''; computeZone(); };
   P_.onclick=()=>setBall(false); N_.onclick=()=>setBall(true); }
+{ const sl=document.getElementById('thr');
+  sl.oninput=()=>{ SHOT.thr=+sl.value; updateThrUI(); };
+  sl.onchange=()=>{ SHOT.thr=+sl.value; updateThrUI(); computeZone(); }; }
 document.getElementById('zRun').onclick=()=>{TABLE_KEY=''; computeZone();};
 document.getElementById('pClose').onclick=()=>{
   purge(probeGrp); document.getElementById('probe').classList.remove('on'); };
