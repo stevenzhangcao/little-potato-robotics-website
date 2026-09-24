@@ -293,8 +293,7 @@ nav {
 
 .nav-link:hover,
 .nav-link:focus,
-.nav-link:active,
-.nav-link:visited {
+.nav-link:active {
     color: var(--primary-color);
 }
 
@@ -597,8 +596,7 @@ nav {
   
   .nav-link:hover,
   .nav-link:focus,
-  .nav-link:active,
-  .nav-link:visited {
+  .nav-link:active {
     color: var(--primary-color) !important;
   }
   
@@ -2059,15 +2057,11 @@ nav {
    MOBILE RESPONSIVE DESIGN
    ======================================== */
 
-@media (max-width: 768px) {
-  .container {
-    padding: 0 var(--spacing-md);
-  }
-  
-  /* Mobile header - one fixed bar with an identity row (logo + language
-     switcher) and a full-width nav row beneath it. Previously the nav and the
-     language switcher were positioned independently of the header, which
-     collapsed the header to 17px and pushed the nav off-centre. */
+/* The single-row header only fits once the nav has room beside the logo. Below
+   that the logo was squeezed until its title stacked one word per line, so the
+   identity row and the nav row split instead. */
+@media (max-width: 1199px) {
+  /* Identity row: logo plus language switcher, truncating rather than wrapping. */
   .header-content {
     flex-wrap: wrap;
     row-gap: var(--spacing-xs);
@@ -2117,6 +2111,7 @@ nav {
     font-weight: 600;
   }
 
+  /* The nav gets its own full-width row so it never competes with the logo. */
   nav {
     order: 3;
     flex: 1 1 100%;
@@ -2158,18 +2153,24 @@ nav {
 
   .nav-link:hover,
   .nav-link:focus,
-  .nav-link:active,
-  .nav-link:visited {
+  .nav-link:active {
     background: var(--bg-secondary);
     color: var(--primary-color);
     transform: none;
   }
 
-  /* Disable the desktop underline animation on mobile */
+  /* The desktop underline does not suit the wrapped nav row. */
   .nav-link::after {
     display: none;
   }
-  /* Mobile-specific section adjustments */
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+  
+/* Mobile-specific section adjustments */
   .hero-title {
     font-size: var(--font-size-3xl);
   }
