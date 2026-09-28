@@ -121,7 +121,8 @@
   #toggle.closed{right:10px}
   #legend{position:fixed;left:12px;top:calc(var(--topbar) + 12px);z-index:12;width:214px;
     background:rgba(13,17,23,.9);border:1px solid #2a313c;border-radius:8px;
-    padding:10px 12px 11px;backdrop-filter:blur(6px)}
+    padding:10px 12px 11px;backdrop-filter:blur(6px);
+    max-height:calc(100vh - var(--topbar) - 26px);overflow-y:auto}
   #legend h4{margin:0 0 1px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
     color:#d7dde5}
   #legend .cap{font-size:10px;color:#8b95a3;margin:0 0 7px}
@@ -162,6 +163,28 @@
     #thrbox input[type=range]{width:100%;margin:0;accent-color:#2f6fc0;cursor:pointer}
     #thrbox .tn{font-size:9.5px;color:#8b95a3;line-height:1.45;margin-top:5px}
     #thrbox .tn b{color:#c3ccd6}
+  /* Shooter setup - pin the angle and exit height, then only the speed is tuned */
+      #lxbox{margin:0 0 9px;padding:7px 8px 8px;border:1px solid #6b5b2a;border-radius:6px;
+        background:linear-gradient(180deg,rgba(227,179,65,.14),rgba(227,179,65,.04))}
+      #lxbox .th{display:flex;align-items:baseline;justify-content:space-between;gap:6px;
+        margin:0 0 6px}
+      #lxbox .th span{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+        color:#e3b341;font-weight:700}
+      #lxbox .th b{font-size:10px;color:#c3ccd6}
+      #lxbox .lxm{display:flex;margin:0 0 7px;border:1px solid #2a313c;border-radius:5px;
+        overflow:hidden}
+      #lxbox .lxm button{margin:0;width:50%;border:0;border-radius:0;padding:5px 0;
+        font-size:9.5px;background:#0d1117;color:#7d8794;cursor:pointer}
+      #lxbox .lxm button:hover{background:#171d25;color:#c3ccd6}
+      #lxbox .lxm button.on{background:#a8811f;color:#fff;font-weight:700}
+      #lxbox .lxr{display:flex;align-items:baseline;justify-content:space-between;gap:6px;
+        margin:6px 0 2px;font-size:10px;color:#8b95a3}
+      #lxbox .lxr b{color:#d7dde5;font-variant-numeric:tabular-nums;font-size:10.5px}
+      #lxbox input[type=range]{width:100%;margin:0;accent-color:#e3b341;cursor:pointer}
+      #lxbox input[type=range]:disabled{opacity:.4;cursor:default}
+      #lxbox .tn{font-size:9.5px;color:#8b95a3;line-height:1.5;margin-top:8px;padding-top:7px;
+        border-top:1px solid #2a313c}
+      #lxbox .tn b{color:#d7dde5}
   #probe{position:fixed;left:12px;bottom:64px;z-index:12;width:338px;display:none;
     background:rgba(13,17,23,.93);border:1px solid #2a313c;border-radius:8px;
     padding:10px 12px 11px;backdrop-filter:blur(6px)}
@@ -244,7 +267,23 @@
     <button id="mY">Y-ANGLE<span class="sub2">hood</span></button>
     <button id="mA">ALL<span class="sub2">make %</span></button>
   </div>
-  <div id="thrbox">
+  <div id="lxbox">
+      <div class="th"><span>Shooter setup</span><b id="LXmode">best angle</b></div>
+      <div class="lxm">
+        <button id="LXmodeVar" class="on">Best angle per tile</button>
+        <button id="LXmodeFix">Fixed angle</button>
+      </div>
+      <div id="LXaRow">
+        <div class="lxr"><label for="LXa">Angle</label><b id="LXaVal">70\u00b0</b></div>
+        <input type="range" id="LXa" min="20" max="85" step="1" value="70">
+      </div>
+      <div class="lxr"><label for="LXh">Exit height</label><b id="LXhVal">14\u2033</b></div>
+      <input type="range" id="LXh" min="6" max="36" step="1" value="14">
+      <div class="lxr"><label for="LXv">Speed limit</label><b id="LXvVal">12 m/s</b></div>
+      <input type="range" id="LXv" min="5" max="16" step="0.5" value="12">
+      <div class="tn" id="LXcap">computing\u2026</div>
+    </div>
+    <div id="thrbox">
       <div class="th"><span>Available zone</span><b id="thrVal">off</b></div>
       <input type="range" id="thr" min="0" max="14" step="0.5" value="0"
              aria-label="Minimum tolerance for a tile to count as an available launch spot">
@@ -1555,6 +1594,27 @@ function updateThrUI(){
     : 'Drag to shade the tiles that miss the threshold.';
 }
 
+// The left shooter block and the geometry rows in the right panel drive the same
+// SHOT state, so both are refreshed from it after either one changes.
+function syncShooterUI(){
+  const put=(id,v)=>{const el=document.getElementById(id); if(el) el.value=v;};
+  put('zH0',SHOT.h0); put('zH0n',SHOT.h0);
+  put('zHd',SHOT.hood); put('zHdn',SHOT.hood);
+  put('zVm',SHOT.vmax); put('zVmn',SHOT.vmax);
+  put('zMode',SHOT.mode);
+  put('LXa',SHOT.hood); put('LXh',SHOT.h0); put('LXv',SHOT.vmax);
+  const fixed=SHOT.mode==='fix';
+  document.getElementById('LXaVal').textContent=SHOT.hood+'\u00b0';
+  document.getElementById('LXhVal').textContent=SHOT.h0+'\u2033';
+  document.getElementById('LXvVal').textContent=SHOT.vmax+' m/s';
+  document.getElementById('LXmode').textContent = fixed
+    ? 'fixed '+SHOT.hood+'\u00b0' : 'best angle';
+  document.getElementById('LXmodeVar').classList.toggle('on',!fixed);
+  document.getElementById('LXmodeFix').classList.toggle('on',fixed);
+  document.getElementById('LXa').disabled=!fixed;
+  document.getElementById('LXaRow').style.opacity = fixed ? '1' : '.45';
+}
+
 function drawLegend(){
   const m=METRICS[SHOT.metric], c=m.cuts;
   const rng=i=> i===0 ? `\u2265 ${c[0]}${m.unit}`
@@ -1675,6 +1735,10 @@ function computeZone(){
     document.getElementById('lgFoot').innerHTML=msg;
     document.getElementById('lgTitle').textContent =
       'Shooting zone — ' + (dual?'RED, both flip states':SHOT.tgt);
+    const capEl=document.getElementById('LXcap');
+          if(capEl) capEl.innerHTML = METRICS[SHOT.metric].lbl + ':<br>' +
+            '<b>'+nf+'</b> of '+(N*N)+' tiles reachable' +
+            (best?' · best <b>'+(SHOT.metric==='all'?best.t.toFixed(0)+'%':'\u00b1'+best.t.toFixed(1)+U)+'</b>':'');
     // a down-CELL mouth faces below horizontal: a ball that enters falls back out
     const dn = !dual && gA.n.z < 0;
     document.getElementById('lgFoot').innerHTML = dn
@@ -1880,13 +1944,25 @@ function zoneDirty(){
   document.getElementById('zStat').textContent='recomputing…';
   zoneTimer=setTimeout(()=>{TABLE_KEY=''; computeZone();}, 420);
 }
+{ const ls=document.getElementById('LXa'), lh=document.getElementById('LXh'),
+        lv=document.getElementById('LXv');
+  const pull=()=>{ if(SHOT.mode==='fix') SHOT.hood=+ls.value;
+                   SHOT.h0=+lh.value; SHOT.vmax=+lv.value;
+                   TABLE_KEY=''; syncShooterUI(); };
+  for(const el of [ls,lh,lv]){ el.oninput=pull; el.onchange=()=>{pull(); zoneDirty();}; }
+  document.getElementById('LXmodeVar').onclick=()=>{SHOT.mode='var';syncShooterUI();zoneDirty();};
+  document.getElementById('LXmodeFix').onclick=()=>{SHOT.mode='fix';syncShooterUI();zoneDirty();};
+}
+for(const id of ['zH0','zH0n','zVm','zVmn','zHd','zHdn'])
+  document.getElementById(id).addEventListener('input', syncShooterUI);
+document.getElementById('zMode').addEventListener('change', syncShooterUI);
 for(const id of ['zH0','zH0n','zVm','zVmn','zAp','zApn','zHd','zHdn'])
   document.getElementById(id).addEventListener('input', zoneDirty);
 for(const id of ['zMode','zTgt','zFine','sOff','nOff','sWid','nWid','sPln','nPln'])
   document.getElementById(id).addEventListener('change', zoneDirty);
 
 rebuild(); goView('zone'); resize();
-applyTarget(); drawLegend(); updateCalSens();
+applyTarget(); drawLegend(); updateCalSens(); syncShooterUI();
 setTimeout(computeZone, 260);   // show the zone straight away
 (function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,cam);})();
 </script>
