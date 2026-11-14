@@ -1378,16 +1378,11 @@ nav {
   display: block;
 }
 
-/* Keep the supplied black artwork unchanged in every theme. The Apple card
-   retains a light surface in dark mode so the logo still has full contrast.
-   The card padding supplies Apple's required 22px clear space at 1x. */
+/* Use the supplied black and white SVGs without recoloring them. The card
+   padding supplies Apple's required 22px clear space at 1x. */
 .sponsor-logo-apple {
   width: 84px;
   height: 84px;
-}
-
-.sponsor-item.sponsor-item-apple {
-  background: #ffffff;
 }
 
 .sponsor-item p {
